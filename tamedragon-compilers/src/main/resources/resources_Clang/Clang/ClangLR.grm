@@ -1,0 +1,433 @@
+// CUP specification for a simple expression evaluator (w/ actions)
+
+package com.compilervision.compilers.clang.abssyntree;
+import java_cup.runtime.*;
+
+/* Terminals (tokens returned by the scanner). */
+terminal AUTO, BREAK, CASE, CHAR, CONST, CONTINUE, DEFAULT, DO, DOUBLE, ELSE, ENUM;
+terminal EXTERN, FLOAT, FOR, GOTO, IF, INT, LONG, REGISTER, RETURN, SHORT, SIGNED, SIZEOF;
+terminal STATIC, STRUCT, SWITCH, TYPEDEF, UNION, UNSIGNED, VOID, VOLATILE, WHILE;
+terminal ASM, LBRACE, RBRACE, COLON, DOT, COMMA, SEMICOLON, LPAREN, RPAREN, LBRACK, RBRACK;
+terminal POINTER_MEM_ACCESS, NOT, ONES_COMPLEMENT, INCREMENT, DECREMENT, PLUS, MINUS, STAR;
+terminal BITWISE_AND, DIVIDE, MODULO, LEFT_SHIFT, RIGHT_SHIFT, LT, GT, LTE, GTE, EQUALS;
+terminal NOT_EQUALS, BITWISE_XOR, BITWISE_OR, AND, OR, QUESTION, ASSIGN, ADD_ASSIGN, MINUS_ASSIGN;
+terminal MULTIPLY_ASSIGN, DIVIDE_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_XOR_ASSIGN;
+terminal BITWISE_OR_ASSIGN, LEFT_SHIFT_ASSIGN, RIGHT_SHIFT_ASSIGN;
+terminal String IDENTIFIER;
+terminal String CHAR_LITERAL;
+terminal String STRING_LITERAL;
+terminal Double FLOATING_POINT_LITERAL;
+terminal Integer INTEGER_LITERAL;
+
+non terminal Absyn absyn;
+non terminal TranslationUnit trans_unit;    
+non terminal ExternDeclaration extern_decl;
+non terminal FunctionDef func_def; 
+non terminal Declaration decl ;   
+non terminal DeclarationList dec_list ;
+non terminal DeclarationSpecifiers decl_specs ;
+non terminal StorageClassSpecifiers storage_cls_specs ;
+non terminal TypeSpecifier type_specifier;
+non terminal TypeQualifier type_qualifier;
+non terminal StructOrUnionSpecifier struct_or_union_spec ;
+non terminal StructOrUnion struct_or_union;
+non terminal StructDeclarationList struct_dec_list;
+non terminal InitDeclaratorList init_declarator_list; 
+non terminal InitDeclarator init_declarator;
+non terminal StructDeclaration struct_decl;
+non terminal SpecifierQualifierList spec_qual_list; 
+non terminal StructDeclaratorList struct_declarator_list;
+non terminal StructDeclarator struct_declarator;
+non terminal EnumSpecifier enum_spec;
+non terminal EnumList enumarator_list; 
+non terminal Enumerator enumerator;
+non terminal Declarator declarator;
+non terminal DirectDeclarator direct_declarator;
+non terminal Pointer pointer;
+non terminal TypeQualifierList type_ql_list;
+non terminal ParamTypeList param_type_list;
+non terminal ParamList param_list;
+non terminal ParamDeclaration param_declaration;
+non terminal Initializer initializer;
+non terminal InitializerList initializer_list;
+non terminal TypeName type_name;
+non terminal AbstractDeclarator abstract_declarator;
+non terminal DirectAbstractDeclarator direct_abstract_declarator;
+non terminal Statement stmt;
+non terminal LabeledStatement labeled_stmt;
+non terminal ExprStatement expr_stmt;
+non terminal CompoundStatement compound_stmt;
+non terminal StatementList stmt_list;
+non terminal SelectionStatement selection_stmt;
+non terminal IterationStatement iteration_stmt;
+non terminal JumpStatement jump_stmt;
+non terminal RootExpr expr;	
+non terminal AssignmentExpr assignment_expr;
+non terminal ConditionalExpr conditional_expr;
+non terminal ConstExpr const_expr;
+non terminal LogicalOrExpr logical_or_expr;
+non terminal LogicalAndExpr logical_and_expr;
+non terminal InclusiveOrExpr inclusive_or_expr; 
+non terminal ExclusiveOrExpr exclusive_or_expr;
+non terminal AndExpr and_expr;   
+non terminal EqualityExpr equality_expr;
+non terminal RelationalExpr relational_expr; 
+non terminal ShiftExpr shift_expr; 
+non terminal AdditiveExpr additive_expr; 
+non terminal MultiplicativeExpr multiplicative_expr; 
+non terminal CastExpr cast_expr; 
+non terminal UnaryExpr unary_expr; 
+non terminal PostfixExpr postfix_expr;
+non terminal PrimaryExpr primary_expr;
+non terminal ArgumentExpressionList argument_expr_list; 
+non terminal Constant constant;
+				
+/* The grammar */
+
+start with dec_list;
+
+absyn ::= trans_unit:tu {: RESULT = tu; :}
+		;
+trans_unit ::=  extern_decl:ed {: RESULT = new TranslationUnit(0, ed, null); :}
+		  |  trans_unit:tu extern_decl:ed  {: RESULT = new TranslationUnit(0, ed, tu); :} 
+	      ;      
+extern_decl ::= func_def:fd {: RESULT = fd; :}
+			| decl:dl {: RESULT = dl; :}
+			;
+func_def ::=  decl_specs:ds declarator:dr compound_stmt:cs 
+			 {: RESULT = new FunctionDef(ds, dr, null, cs); :} 
+			 | declarator:dr compound_stmt:cs 
+			 {: RESULT = new FunctionDef(null, dr, null, cs); :}
+			;
+decl ::= decl_specs:ds init_declarator_list:idl SEMICOLON 
+		{: RESULT = new Declaration(ds, idl, false); :}    
+		| decl_specs:ds SEMICOLON                  // This is possible if decl_specs is struct, 
+		{: RESULT = new Declaration(ds, null, false); :}  // union or enum spec, so an init_declarator_list 
+												   // is not required.
+		| TYPEDEF decl_specs:ds init_declarator_list:idl SEMICOLON  // Special case for typedef declaration
+		{: RESULT = new Declaration(ds, idl, true); :}      // it is actually regarded as a storage type
+		;
+dec_list ::= decl:d  {: RESULT = new DeclarationList(d, null); :}
+          |  decl:d  dec_list:dlNext {: RESULT = new DeclarationList(d, dlNext); :}
+          ;
+decl_specs ::= storage_cls_specs:scs 
+			 {: RESULT = new DeclarationSpecifiers(null, null, scs, null); :}
+			| storage_cls_specs:scs decl_specs:dsNext
+			{: RESULT = new DeclarationSpecifiers(null, null, scs, dsNext); :}
+			| type_specifier:ts 
+			{: RESULT = new DeclarationSpecifiers(ts, null, null, null); :}
+			| type_specifier:ts decl_specs:dsNext
+			{: RESULT = new DeclarationSpecifiers(ts, null, null, dsNext); :}
+			| type_qualifier:tq 
+			{: RESULT = new DeclarationSpecifiers(null, tq, null, null); :}
+			| type_qualifier:tq decl_specs:dsNext 
+			{: RESULT = new DeclarationSpecifiers(null, tq, null, dsNext); :}
+			;
+storage_cls_specs ::= AUTO {: RESULT = new StorageClassSpecifiers(StorageClassSpecifiers.AUTO); :}
+				   | REGISTER {: RESULT = new StorageClassSpecifiers(StorageClassSpecifiers.REGISTER); :}
+				   | STATIC {: RESULT = new StorageClassSpecifiers(StorageClassSpecifiers.STATIC); :}
+				   | EXTERN {: RESULT = new StorageClassSpecifiers(StorageClassSpecifiers.EXTERN); :}
+				   //| TYPEDEF {: RESULT = new StorageClassSpecifiers(StorageClassSpecifiers.TYPEDEF); :}
+				   ;
+type_specifier ::= VOID {: RESULT = new TypeSpecifier(TypeSpecifier.VOID); :}
+				| CHAR {: RESULT = new TypeSpecifier(TypeSpecifier.CHAR); :}
+				| SHORT {: RESULT = new TypeSpecifier(TypeSpecifier.SHORT); :}
+				| INT {: RESULT = new TypeSpecifier(TypeSpecifier.INT); :}
+				| LONG {: RESULT = new TypeSpecifier(TypeSpecifier.LONG); :}
+				| FLOAT {: RESULT = new TypeSpecifier(TypeSpecifier.FLOAT); :}
+				| DOUBLE {: RESULT = new TypeSpecifier(TypeSpecifier.DOUBLE); :}
+				| SIGNED {: RESULT = new TypeSpecifier(TypeSpecifier.SIGNED); :}
+				| UNSIGNED {: RESULT = new TypeSpecifier(TypeSpecifier.UNSIGNED); :}
+				| struct_or_union_spec:sus {: RESULT = sus; :}
+				| enum_spec:es {: RESULT = es; :}
+				;
+type_qualifier ::= CONST {: RESULT = new TypeQualifier(TypeQualifier.CONST); :}
+				| VOLATILE {: RESULT = new TypeQualifier(TypeQualifier.VOLATILE); :}
+				;
+struct_or_union_spec ::= struct_or_union:sou IDENTIFIER:id LBRACE struct_dec_list:sdl RBRACE 
+						{: RESULT = new StructOrUnionSpecifier(sou, id, sdl); :}
+					  | struct_or_union:sou LBRACE struct_dec_list:sdl RBRACE 
+					  {: RESULT = new StructOrUnionSpecifier(sou, null, sdl); :}
+					  |struct_or_union:sou IDENTIFIER:id 
+					  {: RESULT = new StructOrUnionSpecifier(sou, id, null); :}
+				;
+struct_or_union ::= STRUCT {: RESULT = new StructOrUnion(StructOrUnion.STRUCT); :}
+					 | UNION {: RESULT = new StructOrUnion(StructOrUnion.UNION); :}
+				;
+struct_dec_list ::= struct_decl:sd {: RESULT = new StructDeclarationList(sd, null); :}
+				 |  struct_decl:sd struct_dec_list:sdlNext {: RESULT = new StructDeclarationList(sd, sdlNext); :}
+				 ;
+init_declarator_list ::= init_declarator:id {: RESULT = new InitDeclaratorList(id, null); :}
+					  | init_declarator:id  COMMA init_declarator_list:idlNext
+					  {: RESULT = new InitDeclaratorList(id, idlNext); :}
+					  ;
+init_declarator ::= declarator:d {: RESULT = new InitDeclarator(d, null); :}
+				 | declarator:d ASSIGN initializer:i {: RESULT = new InitDeclarator(d, i); :}
+				 ;
+struct_decl ::= spec_qual_list:sql struct_declarator_list:sdl SEMICOLON
+				{: RESULT = new StructDeclaration(sql, sdl); :}
+			 ;
+spec_qual_list ::= type_specifier:ts {: RESULT = new SpecifierQualifierList(ts, null, null); :}
+				| type_specifier:ts spec_qual_list:sqlNext 
+				{: RESULT = new SpecifierQualifierList(ts, null, sqlNext); :}
+				| type_qualifier:tq {: RESULT = new SpecifierQualifierList(null, tq, null); :}
+				| type_qualifier:tq spec_qual_list:sqlNext 
+				{: RESULT = new SpecifierQualifierList(null, tq, sqlNext); :}
+				;
+struct_declarator_list ::= struct_declarator:sd  {: RESULT = new StructDeclaratorList(sd, null); :}
+						| struct_declarator:sd COMMA struct_declarator_list:sdlNext 
+						{: RESULT = new StructDeclaratorList(sd, sdlNext); :}
+						;
+struct_declarator ::= declarator:d  {: RESULT = new StructDeclarator(d, null); :}
+				   | declarator:d COLON const_expr:bfValue {: RESULT = new StructDeclarator(d, bfValue); :}
+				   | COLON const_expr:bfValue  {: RESULT = new StructDeclarator(null, bfValue); :}
+				   ;
+enum_spec ::= ENUM IDENTIFIER:id LBRACE enumarator_list:el RBRACE 
+			{: RESULT = new EnumSpecifier(id, el); :}
+		   |  ENUM LBRACE enumarator_list:el RBRACE 
+		   {: RESULT = new EnumSpecifier(null, el); :}
+		   |  ENUM IDENTIFIER:id {: RESULT = new EnumSpecifier(id, null); :}
+		   ;
+enumarator_list ::= enumerator:e {: RESULT = new EnumList(e, null); :}
+				| enumerator:e COMMA enumarator_list:elNext {: RESULT = new EnumList(e, elNext); :}
+				;
+enumerator ::= IDENTIFIER:id {: RESULT = new Enumerator(id, null); :}
+			| IDENTIFIER:id ASSIGN const_expr:initValue {: RESULT = new Enumerator(id, initValue); :}
+			;
+declarator ::= direct_declarator:dd {: RESULT = new Declarator(dd, null); :}
+			| pointer:p direct_declarator:dd {: RESULT = new Declarator(dd, p); :}
+			;
+direct_declarator ::= IDENTIFIER:id 
+					{: RESULT = new DirectDeclarator(id,null,null, null,null, DirectDeclarator.ID); :}
+					| LPAREN declarator:d RPAREN 
+					{: RESULT = new DirectDeclarator(null, d, null, null,null, DirectDeclarator.DECLR); :}
+					| direct_declarator:dd LBRACK const_expr:ce RBRACK 
+					{: RESULT = new DirectDeclarator(null, null,dd, ce, null, DirectDeclarator.CONST_ARRAY); :}
+					| direct_declarator:dd LBRACK RBRACK 
+					{: RESULT = new DirectDeclarator(null, null,dd, null, null, DirectDeclarator.EMPTY_ARRAY); :}
+					| direct_declarator:dd LPAREN param_type_list:ptl RPAREN 
+					{: RESULT = new DirectDeclarator(null, null,dd, null, ptl, DirectDeclarator.FUNC); :}
+					| direct_declarator:dd LPAREN RPAREN 
+					{: RESULT = new DirectDeclarator(null, null,dd, null, null, DirectDeclarator.NO_ARG_FUNC); :}
+					;
+pointer ::= STAR {: RESULT = new Pointer(null, null); :}
+		 | STAR type_ql_list:tql  {: RESULT = new Pointer(tql, null); :} 
+		 | STAR type_ql_list:tql pointer:p {: RESULT = new Pointer(tql, p); :} 
+		 | STAR pointer:p {: RESULT = new Pointer(null, p); :} 
+		 ;
+type_ql_list ::= type_qualifier:tq {: RESULT = new TypeQualifierList(tq, null); :}
+			  | type_qualifier:tq type_ql_list:tqlNext  {: RESULT = new TypeQualifierList(tq, tqlNext); :}
+			  ;
+param_type_list ::= param_list:pl {: RESULT = new ParamTypeList(pl); :} 
+				|   param_list:pl COMMA DOT DOT DOT {: RESULT = new ParamTypeList(pl); :} 
+				;
+param_list ::= param_declaration:pd {: RESULT = new ParamList(pd, null); :} 
+			| param_declaration:pd COMMA param_list:plNext {: RESULT = new ParamList(pd, plNext); :}
+			;
+param_declaration ::= decl_specs:ds {: RESULT = new ParamDeclaration(ds, null, null); :}
+					| decl_specs:ds declarator:d {: RESULT = new ParamDeclaration(ds, d, null); :}
+					| decl_specs:ds abstract_declarator:ad 
+					{: RESULT = new ParamDeclaration(ds, null, ad); :}
+					;
+initializer ::= assignment_expr:ae {: RESULT = new Initializer(ae, null); :}
+			| LBRACE initializer_list:il RBRACE {: RESULT = new Initializer(null, il); :}
+			| LBRACE initializer_list:il COMMA RBRACE {: RESULT = new Initializer(null, il); :}
+			;
+initializer_list ::= initializer:i {: RESULT = new InitializerList(i, null); :}
+				 | initializer_list:ilNext COMMA initializer:i {: RESULT = new InitializerList(i, ilNext); :}
+				 ;
+type_name ::= spec_qual_list:sql {: RESULT = new TypeName(sql, null); :}
+		   | spec_qual_list:sql abstract_declarator:ad 
+		   {: RESULT = new TypeName(sql, ad); :}
+		   ;
+abstract_declarator ::= pointer:p  {: RESULT = new AbstractDeclarator(p, null); :}
+					|  direct_abstract_declarator:dad {: RESULT = new AbstractDeclarator(null, dad) ; :}
+					|  pointer:p direct_abstract_declarator:dad {: RESULT = new AbstractDeclarator(p, dad) ; :}
+					;
+direct_abstract_declarator ::= 
+		LPAREN abstract_declarator:ad RPAREN
+		{: RESULT = new DirectAbstractDeclarator(ad, null, null, null, DirectAbstractDeclarator.ABS_DECL); :}
+		| direct_abstract_declarator:dad LBRACK const_expr:e RBRACK  
+		{: RESULT = new DirectAbstractDeclarator(null, dad, e, null, DirectAbstractDeclarator.ARRAY); :}
+		| direct_abstract_declarator:dad LBRACK RBRACK  
+		{: RESULT = new DirectAbstractDeclarator(null, dad, null, null, DirectAbstractDeclarator.EMPTY_ARRAY ); :}
+		| LBRACK RBRACK 
+		{: RESULT = new DirectAbstractDeclarator(null, null, null, null, DirectAbstractDeclarator.EMPTY_ARRAY); :}
+		| LBRACK const_expr:e RBRACK 
+		{: RESULT = new DirectAbstractDeclarator(null, null, e, null, DirectAbstractDeclarator.ARRAY); :}
+		| direct_abstract_declarator:dad LPAREN param_type_list:ptl RPAREN  
+		{: RESULT = new DirectAbstractDeclarator(null, dad, null, ptl, DirectAbstractDeclarator.FUNC); :}
+		| direct_abstract_declarator:dad LPAREN RPAREN  
+		{: RESULT = new DirectAbstractDeclarator(null, dad, null, null, DirectAbstractDeclarator.NO_ARGS_FUNC); :}
+		| LPAREN RPAREN  {: RESULT = new DirectAbstractDeclarator(null, null, null, null, DirectAbstractDeclarator.NO_ARGS_FUNC ); :}
+		| LPAREN param_type_list:ptl RPAREN  {: RESULT = new DirectAbstractDeclarator(null, null, null, ptl, DirectAbstractDeclarator.FUNC ); :}
+		;
+stmt ::= labeled_stmt:ls {: RESULT = ls; :}
+	  |  expr_stmt:es {: RESULT = es; :}
+	  |  compound_stmt:cs {: RESULT = cs; :}
+	  | selection_stmt:ss {: RESULT = ss; :}
+	  | iteration_stmt:is {: RESULT = is; :}
+	  | jump_stmt:js {: RESULT = js; :}
+	  ;
+labeled_stmt ::= IDENTIFIER:labelId COLON stmt:s {: RESULT = new LabeledStatement(labelId, null, s); :}
+			  | CASE const_expr:constExpr COLON stmt:s {: RESULT = new LabeledStatement(null, constExpr, s); :}
+			  | DEFAULT COLON stmt:defaultStmt {: RESULT = new LabeledStatement(null, null, defaultStmt); :}
+			  ;
+expr_stmt ::= expr:e SEMICOLON{: RESULT = new ExprStatement(e); :}
+			| SEMICOLON  {: RESULT = new ExprStatement(null); :}
+			;
+compound_stmt ::= LBRACE dec_list:dl stmt_list:sl RBRACE 
+				{: RESULT = new CompoundStatement(dl, sl); :}
+			   | LBRACE dec_list:dl RBRACE 
+			   {: RESULT = new CompoundStatement(dl, null); :}
+			   | LBRACE stmt_list:sl RBRACE 
+			   {: RESULT = new CompoundStatement(null, sl); :}
+			   | LBRACE RBRACE 
+			   {: RESULT =new CompoundStatement(null, null); :}
+			   ;
+stmt_list ::= stmt:s {: RESULT = new StatementList(s, null); :}
+			| stmt:s stmt_list:sl {: RESULT = new StatementList(s, sl); :}
+			;
+selection_stmt  ::= IF LPAREN expr:e RPAREN stmt:s 
+				{: RESULT = new SelectionStatement(e, s, null, null, null); :}
+				|  IF  LPAREN expr:e RPAREN stmt:s1 ELSE stmt:s2 
+				{: RESULT = new SelectionStatement(e, s1, s2, null, null); :}
+				 | SWITCH LPAREN expr:e RPAREN stmt:s 
+				 {: RESULT = new SelectionStatement(null,null, null, e, s); :}
+				;
+iteration_stmt ::= WHILE LPAREN expr:e RPAREN stmt:s 
+				{: RESULT = new IterationStatement(e, s, IterationStatement.WHILE); :}
+				| DO stmt:s WHILE LPAREN expr:e RPAREN SEMICOLON 
+				{: RESULT = new IterationStatement(e, s, IterationStatement.DO_WHILE); :}
+				| FOR LPAREN expr:e1 SEMICOLON expr:e2 SEMICOLON expr:e3 RPAREN stmt:s 
+				{: RESULT = new IterationStatement(e1, e2, e3, s); :}
+				| FOR LPAREN SEMICOLON expr:e2 SEMICOLON expr:e3 RPAREN stmt:s 
+				{: RESULT = new IterationStatement(null, e2, e3, s); :}
+				| FOR LPAREN expr:e1 SEMICOLON SEMICOLON expr:e3 RPAREN stmt:s 
+				{: RESULT = new IterationStatement( e1, null, e3, s); :}
+				| FOR LPAREN expr:e1 SEMICOLON expr:e2 SEMICOLON RPAREN stmt:s 
+				{: RESULT = new IterationStatement(e1, e2, null, s); :}
+				| FOR LPAREN expr:e1 SEMICOLON SEMICOLON RPAREN stmt:s 
+				{: RESULT = new IterationStatement(e1, null,null, s); :}
+				| FOR LPAREN  SEMICOLON expr:e2 SEMICOLON  RPAREN stmt:s 
+				{: RESULT = new IterationStatement(null, e2,null, s) ; :}
+				| FOR LPAREN SEMICOLON SEMICOLON expr:e3 RPAREN stmt:s 
+				{: RESULT = new IterationStatement(null, null, e3, s); :}
+				;
+jump_stmt ::= GOTO IDENTIFIER:id SEMICOLON 
+			{: RESULT = new JumpStatement(JumpStatement.GOTO, id, null); :}
+		   | CONTINUE SEMICOLON 
+		   {: RESULT = new JumpStatement(JumpStatement.CONTINUE, null, null); :}
+		   | BREAK SEMICOLON 
+		   {: RESULT = new JumpStatement(JumpStatement.BREAK, null, null); :}
+		   | RETURN SEMICOLON 
+		   {: RESULT = new JumpStatement(JumpStatement.RETURN, null, null); :}
+		   | RETURN expr:e SEMICOLON 
+		   {: RESULT = new JumpStatement(JumpStatement.RETURN, null, e); :}
+		   ;	   
+expr ::= assignment_expr:ae  {: RESULT = new RootExpr(ae); :}
+	  | expr:e COMMA assignment_expr:ae {: RESULT = new RootExpr(e, ae); :}
+      ;
+assignment_expr ::= conditional_expr:ce {: RESULT = new AssignmentExpr(ce);  :}
+				| unary_expr:lhs ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.ASSIGN); :}
+				| unary_expr:lhs MULTIPLY_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.MULTIPLY_ASSIGN); :}
+				| unary_expr:lhs DIVIDE_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.DIVIDE_ASSIGN); :}
+				| unary_expr:lhs ADD_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.ADD_ASSIGN); :}
+				| unary_expr:lhs MINUS_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.MINUS_ASSIGN); :}
+				| unary_expr:lhs MODULO_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.MODULO_ASSIGN); :}
+				| unary_expr:lhs BITWISE_AND_ASSIGN assignment_expr:rhs
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.BITWISE_AND_ASSIGN); :}
+				| unary_expr:lhs BITWISE_XOR_ASSIGN assignment_expr:rhs
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.BITWISE_XOR_ASSIGN); :}
+				| unary_expr:lhs BITWISE_OR_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.BITWISE_OR_ASSIGN); :}
+				| unary_expr:lhs LEFT_SHIFT_ASSIGN assignment_expr:rhs
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.LEFT_SHIFT_ASSIGN); :}
+				|unary_expr:lhs RIGHT_SHIFT_ASSIGN assignment_expr:rhs 
+				{: RESULT = new AssignmentExpr(lhs, rhs, AssignmentOperator.RIGHT_SHIFT_ASSIGN); :}
+				;
+conditional_expr ::= logical_or_expr:loe {: RESULT = new ConditionalExpr(loe);  :}
+					| logical_or_expr:loe QUESTION expr:re COLON COLON conditional_expr:ce
+					{: RESULT = new ConditionalExpr(loe, re, ce); :}
+					;
+const_expr ::= conditional_expr:ce {: RESULT = new ConstExpr(ce); :}
+	;
+logical_or_expr ::= logical_and_expr:lae {: RESULT = new LogicalOrExpr(null, lae); :}
+				 |  logical_or_expr:loe OR logical_and_expr:lae {: RESULT = new LogicalOrExpr(loe, lae); :}
+				 ;
+logical_and_expr ::= inclusive_or_expr:ioe {: RESULT = new LogicalAndExpr(null, ioe); :}
+				  | logical_and_expr:lae AND inclusive_or_expr:ioe {: RESULT = new LogicalAndExpr(lae, ioe); :}
+				  ;
+inclusive_or_expr ::= exclusive_or_expr:eoe {: RESULT = new InclusiveOrExpr(null, eoe); :}
+		| inclusive_or_expr:ioe BITWISE_OR exclusive_or_expr:eoe  {: RESULT = new InclusiveOrExpr(ioe, eoe); :}
+		;
+exclusive_or_expr ::= and_expr:ae {: RESULT = new ExclusiveOrExpr(null, ae); :}
+             | exclusive_or_expr:eoe BITWISE_XOR and_expr:ae {: RESULT = new ExclusiveOrExpr(eoe, ae); :}
+             ;
+and_expr ::= equality_expr: ee {: RESULT = new AndExpr(null, ee); :}
+		| and_expr:ae BITWISE_AND  equality_expr: ee {: RESULT = new AndExpr(ae, ee); :}
+		;      
+equality_expr ::= relational_expr:re {: RESULT = new EqualityExpr(null, re, -1); :}
+			| equality_expr:ee EQUALS  relational_expr:re {: RESULT = new EqualityExpr(ee, re, EqualityExpr.EQUALS); :}
+			| equality_expr:ee NOT_EQUALS  relational_expr:re {: RESULT = new EqualityExpr(ee, re, EqualityExpr.NOT_EQUALS); :}
+			;
+relational_expr ::= shift_expr:se {: RESULT = new RelationalExpr(null, se, -1); :}
+			| relational_expr:re LT shift_expr:se {: RESULT = new RelationalExpr(re, se, RelationalExpr.LESSER_THAN); :}
+			| relational_expr:re GT shift_expr:se {: RESULT = new RelationalExpr(re, se, RelationalExpr.GREATER_THAN); :}
+			| relational_expr:re LTE shift_expr:se {: RESULT = new RelationalExpr(re, se, RelationalExpr.LESSER_THAN_OR_EQUAL_TO); :}
+			| relational_expr:re GTE shift_expr:se {: RESULT = new RelationalExpr(re, se, RelationalExpr.GREATER_THAN_OR_EQUAL_TO); :}
+			;
+shift_expr ::= additive_expr:ae {: RESULT = new ShiftExpr(null, ae, -1); :}
+			| shift_expr:se RIGHT_SHIFT additive_expr:ae {: RESULT = new ShiftExpr(se, ae, ShiftExpr.RIGHT_SHIFT); :}
+			| shift_expr:se LEFT_SHIFT additive_expr:ae {: RESULT = new ShiftExpr(se, ae, ShiftExpr.LEFT_SHIFT); :}
+			;
+additive_expr ::= multiplicative_expr:me {: RESULT = new AdditiveExpr(null, me, -1); :}
+			| additive_expr:ae PLUS multiplicative_expr:me {: RESULT = new AdditiveExpr(ae, me, AdditiveExpr.ADD); :}
+			| additive_expr:ae MINUS multiplicative_expr:me {: RESULT = new AdditiveExpr(ae, me, AdditiveExpr.SUBTRACT); :}
+			;
+multiplicative_expr ::= cast_expr:ce  {: RESULT = new MultiplicativeExpr(null, ce, -1); :}
+				| multiplicative_expr:me STAR cast_expr:ce {: RESULT = new MultiplicativeExpr(me, ce, MultiplicativeExpr.MULTIPLY); :}
+				| multiplicative_expr:me DIVIDE cast_expr:ce {: RESULT = new MultiplicativeExpr(me, ce, MultiplicativeExpr.DIVIDE); :}
+				| multiplicative_expr:me MODULO cast_expr:ce {: RESULT = new MultiplicativeExpr(me, ce, MultiplicativeExpr.MODULO); :}
+				;
+cast_expr ::= unary_expr:ue {: RESULT = new CastExpr(ue); :}
+			| LPAREN type_name:tn RPAREN cast_expr:ce {: RESULT = new CastExpr(tn, ce); :}
+			;
+unary_expr ::= postfix_expr:pe {: RESULT = new UnaryExpr(pe); :}
+			| INCREMENT unary_expr:ue {: RESULT = new UnaryExpr(UnaryExpr.INCR, ue); :}
+			| DECREMENT unary_expr:ue {: RESULT = new UnaryExpr(UnaryExpr.DECR, ue); :}
+			| PLUS cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.PLUS, ce); :}
+			| MINUS cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.MINUS, ce); :}
+			| BITWISE_AND cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.AMPERSAND, ce); :}
+			| STAR cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.STAR, ce); :}
+			| ONES_COMPLEMENT cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.TILDE, ce); :}
+			| NOT cast_expr:ce {: RESULT = new UnaryExpr(UnaryExpr.NOT, ce); :}
+			| SIZEOF unary_expr:ue {: RESULT = new UnaryExpr(UnaryExpr.SIZEOF, ue); :}
+			| SIZEOF LPAREN type_name:tn RPAREN {: RESULT = new UnaryExpr( tn); :}
+			;
+postfix_expr ::= primary_expr:pre {: RESULT = new PostfixExpr(pre); :}
+			| postfix_expr:poe LBRACK expr:e RBRACK {: RESULT = new PostfixExpr(poe, e); :}
+			| postfix_expr:poe LPAREN argument_expr_list:ael RPAREN {: RESULT = new PostfixExpr(poe, ael); :}
+			| postfix_expr:poe DOT IDENTIFIER:id {: RESULT = new PostfixExpr(poe, id, PostfixExpr.DOT); :}
+			| postfix_expr:poe POINTER_MEM_ACCESS IDENTIFIER:id {: RESULT = new PostfixExpr(poe, id, PostfixExpr.DEREFERENCE); :}
+			| postfix_expr:poe INCREMENT{: RESULT = new PostfixExpr(poe, PostfixExpr.INCR); :}
+			| postfix_expr:poe DECREMENT{: RESULT = new PostfixExpr(poe, PostfixExpr.DECR); :}
+			;
+primary_expr ::= IDENTIFIER:id {: RESULT = new PrimaryExpr(PrimaryExpr.IDENTIFIER_TYPE, id); :}
+			| constant : cns {: RESULT = new PrimaryExpr(cns); :}
+			//| string : str {: RESULT = new PrimaryExpr(PrimaryExpr.STRING_TYPE, cns); :}
+			| LPAREN expr:e RPAREN {: RESULT = new PrimaryExpr( e); :}
+			;
+argument_expr_list ::= assignment_expr:asgnexpr  {: RESULT = new ArgumentExpressionList(asgnexpr, null); :}
+					| argument_expr_list:ael COMMA assignment_expr:asgnexpr {: RESULT = new ArgumentExpressionList(asgnexpr, ael); :}
+					;
+constant ::= INTEGER_LITERAL:il {: RESULT = new Constant(Constant.INT_CONST, "" + il.intValue()); :}
+			| CHAR_LITERAL: cl  {: RESULT = new Constant(Constant.CHAR_CONST, cl); :}
+			| FLOATING_POINT_LITERAL : fl {: RESULT = new Constant(Constant.FLOAT_CONST, "" + fl.doubleValue()); :}
+			;

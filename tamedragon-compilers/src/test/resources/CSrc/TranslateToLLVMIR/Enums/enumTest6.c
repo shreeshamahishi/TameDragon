@@ -1,0 +1,1 @@
+enum BOOLEAN { false, true } end_flag, match_flag;

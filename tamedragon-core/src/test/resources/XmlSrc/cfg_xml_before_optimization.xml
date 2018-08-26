@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cfg-set>
+  <cfg>
+    <node name='main' id='1' startNode='y'>
+      <instruction ins='main:' type='label' label='main'/>
+      <instruction ins='move t120, $a0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$a0</use>
+        <def>t120</def>
+      </instruction>
+      <instruction ins='move t121, $a1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$a1</use>
+        <def>t121</def>
+      </instruction>
+      <instruction ins='li t123, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t123</def>
+      </instruction>
+      <instruction ins='li t125, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t125</def>
+      </instruction>
+      <instruction ins='li t127, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t127</def>
+      </instruction>
+      <instruction ins='li t129, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t129</def>
+      </instruction>
+      <instruction ins='li t131, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t131</def>
+      </instruction>
+      <instruction ins='sub t141, $fp, 0' type='MINUS' im='0'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t141</def>
+      </instruction>
+      <instruction ins='move t135, t141' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t141</use>
+        <use type='var'>t141</use>
+        <def>t135</def>
+      </instruction>
+      <instruction ins='li t143, 10' type='LOAD_IMMEDIATE_VALUE' im='10'>
+        <def>t143</def>
+      </instruction>
+      <instruction ins='sw t143, (t135)' type='STORE_WORD_INTO_ADDRESS_AT_TEMP' im='0'>
+        <use type='var'>t143</use>
+        <use type='var'>t135</use>
+      </instruction>
+      <instruction ins='sub t144, $fp, 4' type='MINUS' im='4'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t144</def>
+      </instruction>
+      <instruction ins='move t136, t144' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t144</use>
+        <use type='var'>t144</use>
+        <def>t136</def>
+      </instruction>
+      <instruction ins='li t146, 20' type='LOAD_IMMEDIATE_VALUE' im='20'>
+        <def>t146</def>
+      </instruction>
+      <instruction ins='sw t146, (t136)' type='STORE_WORD_INTO_ADDRESS_AT_TEMP' im='0'>
+        <use type='var'>t146</use>
+        <use type='var'>t136</use>
+      </instruction>
+      <instruction ins='li t131, 30' type='LOAD_IMMEDIATE_VALUE' im='30'>
+        <def>t131</def>
+      </instruction>
+      <instruction ins='sub t147, $fp, 0' type='MINUS' im='0'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t147</def>
+      </instruction>
+      <instruction ins='move t123, t147' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t147</use>
+        <use type='var'>t147</use>
+        <def>t123</def>
+      </instruction>
+      <instruction ins='sub t148, $fp, 4' type='MINUS' im='4'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t148</def>
+      </instruction>
+      <instruction ins='move t125, t148' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t148</use>
+        <use type='var'>t148</use>
+        <def>t125</def>
+      </instruction>
+      <instruction ins='move t137, t123' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t123</use>
+        <def>t137</def>
+      </instruction>
+      <instruction ins='lw t151, (t125)' type='LOAD_FROM_TEMP_OFFSET_EXP_MEM' im='0'>
+        <use type='var'>t125</use>
+        <def>t151</def>
+      </instruction>
+      <instruction ins='add t153, t151, t131' type='ADD'>
+        <use type='var'>t151</use>
+        <use type='var'>t131</use>
+        <def>t153</def>
+      </instruction>
+      <instruction ins='sw t153, (t137)' type='STORE_WORD_INTO_ADDRESS_AT_TEMP' im='0'>
+        <use type='var'>t153</use>
+        <use type='var'>t137</use>
+      </instruction>
+      <instruction ins='la t134, L1' type='LOAD_ADDRESS' label='L1'>
+        <def>t134</def>
+      </instruction>
+      <instruction ins='move t138, t134' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t134</use>
+        <def>t138</def>
+      </instruction>
+      <instruction ins='lw t133, ($fp)' type='LOAD_FROM_TEMP_OFFSET_EXP_MEM' im='-0'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t133</def>
+      </instruction>
+      <instruction ins='move t139, t133' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t133</use>
+        <def>t139</def>
+      </instruction>
+      <instruction ins='lw t132, -4($fp)' type='LOAD_FROM_TEMP_OFFSET_EXP_MEM' im='-4'>
+        <use type='var' pr='y'>$fp</use>
+        <def>t132</def>
+      </instruction>
+      <instruction ins='move $a0, t138' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t138</use>
+        <def pr='y'>$a0</def>
+      </instruction>
+      <instruction ins='move $a1, t139' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t139</use>
+        <def pr='y'>$a1</def>
+      </instruction>
+      <instruction ins='move $a2, t132' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t132</use>
+        <def pr='y'>$a2</def>
+      </instruction>
+      <instruction ins='move $a3, t131' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t131</use>
+        <def pr='y'>$a3</def>
+      </instruction>
+      <instruction ins='jal printf' type='call' fname='printf'/>
+      <instruction ins='move t140, $v0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$v0</use>
+        <def>t140</def>
+      </instruction>
+      <instruction ins='j L2' type='jump' label='L2'/>
+      <left_child>2</left_child>
+    </node>
+    <node name='L2' id='2' endNode='y'>
+      <instruction ins='L2:' type='label' label='L2'/>
+    </node>
+  </cfg>
+</cfg-set>

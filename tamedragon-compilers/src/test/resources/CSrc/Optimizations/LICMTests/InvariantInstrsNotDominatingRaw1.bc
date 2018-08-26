@@ -1,0 +1,65 @@
+define i32 @foobar(i32 %a, i32 %b, i32 %c) nounwind uwtable {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %3 = alloca i32, align 4
+  %m = alloca i32, align 4
+  %n = alloca i32, align 4
+  %p = alloca i32, align 4
+  %k = alloca i32, align 4
+  %result = alloca i32, align 4
+  store i32 %a, i32* %1, align 4
+  store i32 %b, i32* %2, align 4
+  store i32 %c, i32* %3, align 4
+  store i32 78, i32* %k, align 4
+  store i32 0, i32* %m, align 4
+  br label %4
+
+; <label>:4                                       ; preds = %29, %0
+  %5 = load i32* %m, align 4
+  %6 = load i32* %1, align 4
+  %7 = icmp slt i32 %5, %6
+  br i1 %7, label %8, label %32
+
+; <label>:8                                       ; preds = %4
+  %9 = load i32* %m, align 4
+  %10 = load i32* %3, align 4
+  %11 = icmp slt i32 %9, %10
+  br i1 %11, label %12, label %19
+
+; <label>:12                                      ; preds = %8
+  %13 = load i32* %2, align 4
+  store i32 %13, i32* %n, align 4
+  %14 = load i32* %n, align 4
+  %15 = load i32* %k, align 4
+  %16 = add i32 %14, %15
+  %17 = load i32* %result, align 4
+  %18 = add i32 %17, %16
+  store i32 %18, i32* %result, align 4
+  br label %25
+
+; <label>:19                                      ; preds = %8
+  %20 = load i32* %n, align 4
+  %21 = load i32* %3, align 4
+  %22 = add i32 %20, %21
+  %23 = load i32* %result, align 4
+  %24 = add i32 %23, %22
+  store i32 %24, i32* %result, align 4
+  br label %25
+
+; <label>:25                                      ; preds = %19, %12
+  %26 = load i32* %3, align 4
+  %27 = load i32* %n, align 4
+  %28 = add i32 %26, %27
+  store i32 %28, i32* %p, align 4
+  br label %29
+
+; <label>:29                                      ; preds = %25
+  %30 = load i32* %m, align 4
+  %31 = add i32 %30, 1
+  store i32 %31, i32* %m, align 4
+  br label %4
+
+; <label>:32                                      ; preds = %4
+  %33 = load i32* %result, align 4
+  ret i32 %33
+}

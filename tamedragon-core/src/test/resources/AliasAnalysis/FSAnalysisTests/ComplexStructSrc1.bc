@@ -1,0 +1,50 @@
+target datalayout="e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-f80:128:128-v64:64:64-v128:128:128-a0:0:64-f80:32:32-n8:16:32"
+
+%struct.addressStruct = type { i32, i8*, i8*, i8*, i8*, i8* }
+%struct.contactDetails = type { %struct.addressStruct, i8* }
+%struct.PersonAttr = type { i8*, i8*, double, %struct.contactDetails, %struct.contactDetails, i64 }
+
+@refPerson = external global %struct.PersonAttr
+
+define i32 @foo(%struct.PersonAttr* %allPersons, i32 %m, i32 %n) nounwind {
+  %1 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0
+  %2 = getelementptr inbounds %struct.PersonAttr* %1, i32 0, i32 3
+  %3 = getelementptr inbounds %struct.contactDetails* %2, i32 0, i32 0
+  %4 = getelementptr inbounds %struct.addressStruct* %3, i32 0, i32 0
+  %5 = load i32* %4, align 4
+  %6 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0
+  %7 = getelementptr inbounds %struct.PersonAttr* %6, i32 0, i32 3
+  %8 = getelementptr inbounds %struct.contactDetails* %7, i32 0, i32 0
+  %9 = getelementptr inbounds %struct.addressStruct* %8, i32 0, i32 0
+  %10 = load i32* %9, align 4
+  %11 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 1
+  %12 = getelementptr inbounds %struct.PersonAttr* %11, i32 0, i32 3
+  %13 = getelementptr inbounds %struct.contactDetails* %12, i32 0, i32 0
+  %14 = getelementptr inbounds %struct.addressStruct* %13, i32 0, i32 0
+  %15 = load i32* %14, align 4
+  %16 = icmp eq i32 %5, %15
+  br i1 %16, label %17, label %21
+
+; <label>:17                                         		; preds = %0
+  %18 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0
+  %19 = getelementptr inbounds %struct.PersonAttr* %18, i32 0, i32 0
+  %20 = load i8** %19, align 8
+  br label %21
+
+; <label>:21		; preds = %17, %0
+  %22 = icmp eq i32 %5, %10
+  br i1 %22, label %23, label %28
+
+; <label>:23                                        		; preds = %21
+  %24 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0
+  %25 = getelementptr inbounds %struct.PersonAttr* %24, i32 0, i32 0
+  %26 = load i8** %25, align 8
+  %27 = ptrtoint i8* %26 to i8
+  br label %28
+
+; <label>:28		; preds = %23, %21
+  %29 = add i32 %5, %10
+  %30 = getelementptr inbounds %struct.PersonAttr* @refPerson, i32 0, i32 3, i32 0, i32 0
+  store i32 %29, i32* %30, align 4
+  ret i32 0
+}

@@ -1,0 +1,27 @@
+@glb = global i32 20, align 4
+
+define i32 @foo(i32 %m, i32 %n) nounwind {
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  store i32 45, i32* %a, align 4
+  store i32 43, i32* %b, align 4
+  %1 = icmp sgt i32 %m, %n
+  br i1 %1, label %2, label %3
+
+; <label>:2		; preds = %0
+  br label %3
+
+; <label>:3          		; preds = %2, %0
+  %p1.0 = phi i32* [ %b, %2 ], [ %a, %0 ]
+  %4 = load i32* @glb, align 4
+  %5 = add i32 %4, 1
+  store i32 %5, i32* @glb, align 4
+  %6 = load i32* %p1.0, align 4
+  %7 = load i32* %b, align 4
+  %8 = add i32 %6, %7
+  %9 = load i32* %b, align 4
+  %10 = add i32 %8, %9
+  %11 = load i32* @glb, align 4
+  %12 = add i32 %10, %11
+  ret i32 %12
+}

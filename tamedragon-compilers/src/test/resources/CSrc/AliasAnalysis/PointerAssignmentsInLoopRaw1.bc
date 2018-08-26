@@ -1,0 +1,118 @@
+@MAX = global i32 100, align 4
+
+define i32 @foo(i32 %m, i32 %n) nounwind {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  %p1 = alloca i32*, align 8
+  %p2 = alloca i32*, align 8
+  %p3 = alloca i32*, align 8
+  %interim_result = alloca i32, align 4
+  %i = alloca i32, align 4
+  store i32 %m, i32* %1, align 4
+  store i32 %n, i32* %2, align 4
+  store i32* %a, i32** %p1, align 8
+  store i32* %b, i32** %p2, align 8
+  store i32* %c, i32** %p3, align 8
+  store i32 10, i32* %interim_result, align 4
+  store i32 0, i32* %i, align 4
+  br label %3
+
+; <label>:3		; preds = %57, %0
+  %4 = load i32* %i, align 4
+  %5 = load i32* @MAX, align 4
+  %6 = icmp slt i32 %4, %5
+  br i1 %6, label %7, label %60
+
+; <label>:7      		; preds = %3
+  %8 = load i32* %b, align 4
+  %9 = load i32* %c, align 4
+  %10 = add i32 %8, %9
+  %11 = load i32** %p1, align 8
+  store i32 %10, i32* %11, align 4
+  %12 = load i32* %i, align 4
+  %13 = icmp slt i32 %12, 75
+  br i1 %13, label %14, label %29
+
+; <label>:14                  		; preds = %7
+  %15 = load i32** %p2, align 8
+  %16 = load i32* %1, align 4
+  %17 = load i32* %15, align 4
+  %18 = add i32 %17, %16
+  store i32 %18, i32* %15, align 4
+  %19 = load i32** %p3, align 8
+  %20 = load i32* %2, align 4
+  %21 = load i32* %19, align 4
+  %22 = add i32 %21, %20
+  store i32 %22, i32* %19, align 4
+  %23 = load i32** %p2, align 8
+  store i32* %23, i32** %p1, align 8
+  %24 = load i32** %p1, align 8
+  %25 = load i32* %24, align 4
+  %26 = add i32 %25, 3
+  %27 = load i32* %interim_result, align 4
+  %28 = add i32 %27, %26
+  store i32 %28, i32* %interim_result, align 4
+  br label %45
+
+; <label>:29                  		; preds = %7
+  %30 = load i32** %p2, align 8
+  %31 = load i32* %1, align 4
+  %32 = load i32* %30, align 4
+  %33 = sub i32 %32, %31
+  store i32 %33, i32* %30, align 4
+  %34 = load i32* %2, align 4
+  %35 = sub i32 0, %34
+  %36 = load i32** %p3, align 8
+  %37 = load i32* %36, align 4
+  %38 = sub i32 %37, %35
+  store i32 %38, i32* %36, align 4
+  %39 = load i32** %p3, align 8
+  store i32* %39, i32** %p1, align 8
+  %40 = load i32** %p1, align 8
+  %41 = load i32* %40, align 4
+  %42 = add i32 %41, 3
+  %43 = load i32* %interim_result, align 4
+  %44 = add i32 %43, %42
+  store i32 %44, i32* %interim_result, align 4
+  br label %45
+
+; <label>:45            		; preds = %29, %14
+  %46 = load i32** %p3, align 8
+  store i32* %46, i32** %p2, align 8
+  %47 = load i32** %p3, align 8
+  %48 = load i32** %p1, align 8
+  %49 = load i32** %p2, align 8
+  %50 = load i32* %48, align 4
+  %51 = load i32* %49, align 4
+  %52 = add i32 %50, %51
+  %53 = load i32* %47, align 4
+  %54 = add i32 %52, %53
+  %55 = load i32* %interim_result, align 4
+  %56 = add i32 %55, %54
+  store i32 %56, i32* %interim_result, align 4
+  br label %57
+
+; <label>:57    		; preds = %45
+  %58 = load i32* %i, align 4
+  %59 = add i32 %58, 1
+  store i32 %59, i32* %i, align 4
+  br label %3
+
+; <label>:60              		; preds = %3
+  %61 = load i32** %p1, align 8
+  store i32* %61, i32** %p2, align 8
+  %62 = load i32** %p3, align 8
+  %63 = load i32** %p2, align 8
+  %64 = load i32** %p1, align 8
+  %65 = load i32* %interim_result, align 4
+  %66 = load i32* %64, align 4
+  %67 = add i32 %65, %66
+  %68 = load i32* %63, align 4
+  %69 = add i32 %67, %68
+  %70 = load i32* %62, align 4
+  %71 = add i32 %69, %70
+  ret i32 %71
+}

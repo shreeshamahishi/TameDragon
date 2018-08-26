@@ -1,0 +1,271 @@
+// CUP specification for a simple expression evaluator (w/ actions)
+
+package org.codetranslators.compiler.tiger.abssyntree;
+import java_cup.runtime.*;
+
+/* Terminals (tokens returned by the scanner). */
+terminal TYPE, ARRAY, OF, VAR, FUNCTION, LET, IN, END;
+terminal ASSIGN, UMINUS;
+terminal IF, THEN, ELSE, WHILE, FOR, DO, LPAREN, RPAREN, LBRACK, RBRACK;
+terminal LBRACE, RBRACE, COLON;
+terminal TO, COMMA, SEMICOLON, DOT;
+terminal EQUAL, NEQ, GT, LT, GTE, LTE;
+terminal AND, OR;
+terminal MINUS, PLUS;
+terminal MULTIPLY, DIVIDE;
+
+terminal String NIL;
+terminal String BREAK;
+terminal String INT;
+terminal String STRING;
+
+terminal String IDENTIFIER;
+terminal Integer INTEGER_LITERAL;
+terminal String STRING_LITERAL;
+
+/* Non-terminals */
+
+non terminal Absyn absyn;
+non terminal Exp expr;
+non terminal BreakExp break_expr;
+non terminal CallExp  call_expr;
+non terminal ParamExpList  param_exp_list;
+non terminal ForExp  for_expr;
+non terminal IfExp  if_expr;
+non terminal IntExp  int_expr;
+non terminal LetExp  let_expr;
+non terminal NilExp  nil_expr;
+non terminal OpExp  op_expr;
+non terminal RecordExp  record_expr;
+non terminal SeqExp  seq_expr;
+non terminal StringExp  string_expr;
+non terminal VarExp  var_expr;
+non terminal WhileExp  while_expr;
+non terminal ArrayExp  array_expr;
+non terminal AssignExp  assign_expr;
+
+non terminal ArrayTy  array_ty;
+non terminal Dec  dec;
+non terminal DecList  dec_list;
+non terminal ExpList  exp_list;
+non terminal FieldExpList  field_exp_list;
+non terminal FieldList field_list;
+non terminal FieldVar  field_var;
+non terminal FunctionDec  function_dec;
+non terminal NameTy  name_ty;
+non terminal RecordTy  record_ty;
+non terminal SubscriptVar subscript_var;
+non terminal Ty  ty;
+non terminal TypeDec type_dec;
+non terminal Var  var;
+non terminal VarDec  var_dec;
+
+/* Precedences */
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence nonassoc EQUAL, NEQ, GT, LT, GTE, LTE, SEMICOLON;
+precedence left MINUS, PLUS;
+precedence left MULTIPLY, DIVIDE;
+precedence left DOT, LBRACK, RBRACK, LPAREN, RPAREN;
+precedence left UMINUS;
+
+/* The grammar */
+absyn ::= expr:e1 {: RESULT = e1; :}
+		;
+expr ::=  assign_expr:e1 {: RESULT = e1; :} 
+		  | break_expr:e1  {: RESULT = e1; :} 
+	      | call_expr:e1  {: RESULT = e1; :} 
+          | for_expr:e1   {: RESULT = e1; :}
+	      | if_expr:e1    {: RESULT = e1; :} 
+	      | int_expr:e1    {: RESULT = e1; :} 
+	      | let_expr:e1    {: RESULT = e1; :} 
+	      | nil_expr:e1    {: RESULT = e1; :} 
+	      | op_expr:e1    {: RESULT = e1; :} 
+	      | record_expr:e1    {: RESULT = e1; :}  
+	      | string_expr:e1    {: RESULT = e1; :}
+	      | var_expr:e1    {: RESULT = e1; :} 
+	      | while_expr:e1    {: RESULT = e1; :} 
+	      | array_expr:e1 {: RESULT = e1; :} 
+	      | MINUS expr:e1 {: RESULT = new OpExp(0, 
+								new IntExp(e1left +1, 0), OpExp.MINUS, e1); :}
+	      %prec UMINUS				
+	      | seq_expr:e1 {: RESULT = e1; :} 
+	      | LPAREN RPAREN {: RESULT = null; :} 
+   	      | LPAREN expr:e RPAREN {: RESULT = e; :} 
+	      ;      
+break_expr ::= BREAK:br {: RESULT = new BreakExp(brleft +1); :}
+			;
+call_expr ::= IDENTIFIER:id LPAREN param_exp_list:e2 RPAREN
+						{: RESULT = new CallExp(idleft +1, Symbol.symbol(id) , e2); :}
+			| IDENTIFIER:id LPAREN RPAREN
+						{: RESULT = new CallExp(idleft +1, Symbol.symbol(id) , null); :}
+			;
+for_expr ::= //FOR var_dec:vd TO expr:e2 DO expr:e3
+			//			{: RESULT = new ForExp(vdleft +1, vd, e2, e3); :}
+			FOR IDENTIFIER:id ASSIGN expr:e1 TO expr:e2 DO expr:e3
+						{: RESULT = new ForExp(idleft +1, 
+						  new VarDec(idleft +1, Symbol.symbol(id), null, e1), e2, e3); :}
+			;
+if_expr ::= IF expr:e1 THEN expr:e2
+						{: RESULT = new IfExp(e1left +1, e1, e2); :}
+		  | IF expr:e1 THEN expr:e2 ELSE expr:e3
+						{: RESULT = new IfExp(e1left +1, e1, e2, e3); :}
+		  | expr:e1 AND expr:e2
+						{: RESULT =  new IfExp(e1left +1, e1, e2, new IntExp(e1left, 0)); :}
+		 | expr:e1 OR expr:e2
+						{: RESULT =  new IfExp(e1left +1, e1, new IntExp(e1left, 1), e2); :}
+			;
+int_expr ::= INTEGER_LITERAL:num
+						{: RESULT = new IntExp(numleft +1, num.intValue()); :}
+			;
+let_expr ::= LET dec_list:dl IN exp_list:se END
+						{: RESULT = new LetExp(dl.getFirstDec().getPosition(), dl, se); :}
+			;
+nil_expr ::= NIL:nl  {: RESULT = new NilExp(nlleft +1); :}
+			;		
+op_expr ::= expr:e1 PLUS expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.PLUS, e2); :}			
+         | expr:e1 MINUS expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.MINUS, e2); :}			
+		 | expr:e1 MULTIPLY expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.MUL, e2); :}
+         | expr:e1 DIVIDE expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.DIV, e2); :}
+         | expr:e1 EQUAL expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.EQ, e2); :}						
+         | expr:e1 NEQ expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.NE, e2); :}
+         | expr:e1 LT expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.LT, e2); :}
+         | expr:e1 LTE expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.LE, e2); :}
+         | expr:e1 GT expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.GT, e2); :}	
+         | expr:e1 GTE expr:e2
+						{: RESULT = new OpExp(e1left +1, e1, OpExp.GE, e2); :}
+		;	
+record_expr ::= IDENTIFIER:iden LBRACE field_exp_list:fel RBRACE
+			{: RESULT = new RecordExp(idenleft +1, Symbol.symbol(iden), fel); :}
+			;
+seq_expr ::=  LPAREN exp_list:el RPAREN
+			{: RESULT = new SeqExp(el.getFirstExp().getPosition(), el); :}
+         //| exp_list:el {: RESULT = new SeqExp(0, el); :}
+			;
+string_expr ::= STRING_LITERAL:str  {: RESULT = new StringExp(strleft +1, str); :}
+			;
+var_expr    ::= var:v {: RESULT = new VarExp(vleft +1, v); :}
+			;
+while_expr  ::= WHILE expr:e1 DO expr:e2 
+			{: RESULT = new WhileExp(e1left +1, e1, e2); :}
+			;	
+exp_list  ::= expr:ex  {: RESULT = new ExpList(ex, null); :}
+          |   expr:ex SEMICOLON exp_list:el {: RESULT = new ExpList(ex, el); :}
+          ;
+array_expr ::= IDENTIFIER:id LBRACK expr:size RBRACK OF expr:init
+			{: RESULT = new ArrayExp(idleft +1, Symbol.symbol(id), size, init); :}
+			;
+array_ty ::= ARRAY OF IDENTIFIER:id
+			{: RESULT = new ArrayTy(idleft +1, Symbol.symbol(id)); :}
+		  | ARRAY OF INT:i
+		   {: RESULT = new ArrayTy(ileft +1, Symbol.symbol("int")); :}
+		  | ARRAY OF STRING:s
+		  	{: RESULT = new ArrayTy(sleft +1, Symbol.symbol("string")); :}
+		  ;
+assign_expr ::= var:v ASSIGN expr:e {: RESULT = new AssignExp(vleft +1, v, e); :}
+		  ;
+dec ::= type_dec:td {: RESULT = td; :}	
+	 | var_dec:vd  {: RESULT = vd; :}
+	 |  function_dec:fd {: RESULT = fd; :}
+	 ;	 
+	 // TODO :review the type_dec production
+type_dec ::= TYPE IDENTIFIER:id EQUAL ty:t
+		 {: RESULT = new TypeDec(idleft +1, Symbol.symbol(id),t, null); :}
+		 | TYPE IDENTIFIER:id EQUAL ty:t type_dec:next
+		 {: RESULT = new TypeDec(idleft +1, Symbol.symbol(id),t, next); :} 
+		  ; 
+var_dec ::= VAR IDENTIFIER:id ASSIGN expr:init
+		 {: RESULT = new VarDec(idleft +1, Symbol.symbol(id),null, init); :}
+		 | VAR IDENTIFIER:id1 COLON IDENTIFIER:id2  ASSIGN expr:init
+		 {: RESULT = new VarDec(id1left +1, Symbol.symbol(id1),
+					new NameTy(id2left +1, Symbol.symbol(id2)), init); :}
+		 | VAR IDENTIFIER:id COLON INT:i ASSIGN expr:init
+		 {: RESULT = new VarDec(idleft +1, Symbol.symbol(id),
+		 				new NameTy(idleft +1, Symbol.symbol("int")), init); :}
+		 | VAR IDENTIFIER:id COLON STRING:s ASSIGN expr:init
+		 {: RESULT = new VarDec(idleft +1, Symbol.symbol(id),
+		 				new NameTy(idleft +1, Symbol.symbol("string")), init); :}
+		;
+		// TODO :review the function_dec production
+function_dec ::= FUNCTION IDENTIFIER:id LPAREN RPAREN EQUAL expr:ex
+				{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), null,
+					 null, ex, null); :}
+				| FUNCTION IDENTIFIER:id LPAREN field_list:fl RPAREN EQUAL expr:ex
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), fl, null,ex, null); :}
+				|  FUNCTION IDENTIFIER:id LPAREN RPAREN COLON name_ty:nt EQUAL expr:ex
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), null, nt, ex, null); :}
+				|  FUNCTION IDENTIFIER:id LPAREN field_list:fl RPAREN COLON name_ty:nt EQUAL expr:ex 
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), fl, nt, ex, null); :}							
+				| FUNCTION IDENTIFIER:id LPAREN RPAREN EQUAL expr:ex function_dec:next
+				{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), null,
+					 null, ex, next); :}
+				| FUNCTION IDENTIFIER:id LPAREN field_list:fl RPAREN EQUAL expr:ex function_dec:next
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), fl, null,ex, next); :}
+				|  FUNCTION IDENTIFIER:id LPAREN RPAREN COLON name_ty:nt EQUAL expr:ex function_dec:next
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), null, nt, ex, next); :}
+				|  FUNCTION IDENTIFIER:id LPAREN field_list:fl RPAREN COLON name_ty:nt EQUAL expr:ex function_dec:next
+					{: RESULT = new FunctionDec(idleft +1, Symbol.symbol(id), fl, nt, ex, next); :}	
+				;
+ty ::=  name_ty:nt {: RESULT = nt; :}
+    | record_ty:rt {: RESULT = rt; :}
+    | array_ty:at {: RESULT = at; :}
+    ;
+name_ty ::= IDENTIFIER: id 	
+			{: RESULT = new NameTy(idleft +1,Symbol.symbol(id)); :}
+	     | INT:i  {: RESULT = new NameTy(ileft +1, Symbol.symbol("int")); :}
+	     | STRING:s {: RESULT = new NameTy(sleft +1, Symbol.symbol("string")); :}
+		;
+dec_list ::= dec:dc 	{: RESULT = new DecList(dc, null); :}
+		 |   dec:dc dec_list:dl {: RESULT = new DecList(dc, dl); :}
+		 ;
+param_exp_list ::= expr:ex  {: RESULT = new ParamExpList(ex, null); :}
+          |   expr:ex COMMA param_exp_list:el {: RESULT = new ParamExpList(ex, el); :}
+          ;
+          	 // TODO :review the field_exp_list production
+field_exp_list ::= IDENTIFIER:id EQUAL expr:ex
+				{: RESULT = new FieldExpList(idleft +1, Symbol.symbol(id), ex, null); :}
+               | IDENTIFIER:id EQUAL expr:ex COMMA field_exp_list:fel
+               	{: RESULT = new FieldExpList(idleft +1, Symbol.symbol(id), ex, fel); :}
+			;
+			// TODO :review the field_list production
+field_list ::= IDENTIFIER:name COLON IDENTIFIER:type
+				{: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol(type), null); :}
+			   | IDENTIFIER:name COLON INT:i
+				{: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol("int"), null); :}
+			   | IDENTIFIER:name COLON STRING:s
+				{: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol("string"), null); :}
+			    | IDENTIFIER:name COLON IDENTIFIER:type COMMA field_list:fl 
+			    {: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol(type), fl); :} 
+			    |   IDENTIFIER:name COLON INT:i COMMA field_list:fl 
+			    {: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol("int"), fl); :} 
+			    |   IDENTIFIER:name COLON STRING:s COMMA field_list:fl 
+			    {: RESULT = new FieldList(nameleft +1, Symbol.symbol(name), Symbol.symbol("string"), fl); :} 
+			;
+record_ty  ::= LBRACE field_list:fl RBRACE 
+			{: RESULT = new RecordTy(flleft +1, fl); :}
+	;
+var ::= IDENTIFIER:id {: RESULT = new SimpleVar(idleft +1, Symbol.symbol(id)); :}
+     | subscript_var:sub_var  {: RESULT = sub_var; :}
+     | field_var:fv {: RESULT = fv; :}
+     | LPAREN var:v RPAREN {: RESULT = v; :}
+     ;
+field_var  ::= var:vr DOT IDENTIFIER:id 
+			{: RESULT = new FieldVar(vrleft +1, vr, Symbol.symbol(id)); :}
+	;
+subscript_var ::= //var:vr LBRACK expr:ex RBRACK 
+					//{: RESULT = new SubscriptVar(0, vr, ex); :}
+						IDENTIFIER:id LBRACK expr:ex RBRACK 
+				{: RESULT = new SubscriptVar(idleft +1, new SimpleVar(idleft, Symbol.symbol(id)), ex); :}
+					| field_var:fv LBRACK expr:ex RBRACK
+					{: RESULT = new SubscriptVar(fvleft +1, fv, ex); :}
+	;

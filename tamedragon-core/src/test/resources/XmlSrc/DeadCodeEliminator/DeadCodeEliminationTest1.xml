@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cfg-set>
+  <cfg ssa='y'>
+    <node name='main' id='1' startNode='y'>
+      <instruction ins='main:' type='label' label='main'/>
+      <left_child>2</left_child>
+    </node>
+    <node name='L1' id='2'>
+      <instruction ins='L1:' type='label' label='L1'/>
+      <instruction ins='t124_n1 &lt;- phi(t124_n3, t124_n0)' type='phi_func'>
+        <use type='var' value_type='i' signed='y' size='32'>t124_n3</use>
+        <use type='var' value_type='i' signed='y' size='32'>t124_n0</use>
+        <def value_type='f' size='0'>t124_n1</def>
+      </instruction>
+      <instruction ins='t123_n2 &lt;- phi(t123_n3, 0)' type='phi_func'>
+        <use type='var' value_type='i' signed='y' size='32'>t123_n3</use>
+        <use type='literal' value_type='i' size='32'>0</use>
+        <def value_type='f' size='0'>t123_n2</def>
+      </instruction>
+      <instruction ins='move t125_n1, t123_n2' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t123_n2</use>
+        <def value_type='f' size='0'>t125_n1</def>
+      </instruction>
+      <instruction ins='bge t125_n1, 10, L4' type='cjump' ifLabel='L4' falseLabel='L3' relop='GE'>
+        <use type='var' value_type='i' signed='y' size='32'>t125_n1</use>
+        <use type='literal' value_type='i' size='32'>10</use>
+      </instruction>
+      <left_child>3</left_child>
+      <right_child>6</right_child>
+    </node>
+    <node name='L4' id='3'>
+      <instruction ins='L4:' type='label' label='L4'/>
+      <left_child>4</left_child>
+    </node>
+    <node name='L5' id='4'>
+      <instruction ins='L5:' type='label' label='L5'/>
+      <instruction ins='t124_n3 &lt;- phi(1, 0)' type='phi_func'>
+        <use type='literal' value_type='i' size='32'>1</use>
+        <use type='literal' value_type='i' size='32'>0</use>
+        <def value_type='f' size='0'>t124_n3</def>
+      </instruction>
+      <instruction ins='move t130_n1, t124_n3' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t124_n3</use>
+        <def value_type='f' size='0'>t130_n1</def>
+      </instruction>
+      <instruction ins='bgtz t130_n1, L7' type='cjump' ifLabel='L7' falseLabel='L2' relop='GT' im='0'>
+        <use type='var' value_type='i' signed='y' size='32'>t130_n1</use>
+      </instruction>
+      <left_child>5</left_child>
+      <right_child>7</right_child>
+    </node>
+    <node name='L2' id='5'>
+      <instruction ins='L2:' type='label' label='L2'/>
+      <instruction ins='j L8' type='jump' label='L8'/>
+      <left_child>8</left_child>
+    </node>
+    <node name='L3' id='6'>
+      <instruction ins='L3:' type='label' label='L3'/>
+      <instruction ins='j L5' type='jump' label='L5'/>
+      <left_child>4</left_child>
+    </node>
+    <node name='L7' id='7'>
+      <instruction ins='L7:' type='label' label='L7'/>
+      <instruction ins='la t127_n1, L6' type='LOAD_ADDRESS' label='L6'>
+        <def value_type='f' size='0'>t127_n1</def>
+      </instruction>
+      <instruction ins='move t131_n1, t127_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t127_n1</use>
+        <def value_type='f' size='0'>t131_n1</def>
+      </instruction>
+      <instruction ins='move t132_n1, t123_n2' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t123_n2</use>
+        <def value_type='f' size='0'>t132_n1</def>
+      </instruction>
+      <instruction ins='call printf' type='call' fname='printf'>
+        <use type='var' value_type='i' signed='y' size='32'>t131</use>
+        <use type='var' value_type='i' signed='y' size='32'>t132</use>
+        <def value_type='i' signed='y' size='32'>t128</def>
+      </instruction>
+      <instruction ins='move t133_n1, t128_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t128_n1</use>
+        <def value_type='f' size='0'>t133_n1</def>
+      </instruction>
+      <instruction ins='add t137_n1, t123_n2, 1' type='ADD' im='1'>
+        <use type='var' value_type='i' signed='y' size='32'>t123_n2</use>
+        <def value_type='f' size='0'>t137_n1</def>
+      </instruction>
+      <instruction ins='move t129_n1, t137_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='f' size='0'>t137_n1</use>
+        <use type='var' value_type='f' size='0'>t137_n1</use>
+        <def value_type='f' size='0'>t129_n1</def>
+      </instruction>
+      <instruction ins='move t123_n3, t129_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' value_type='i' signed='y' size='32'>t129_n1</use>
+        <def value_type='f' size='0'>t123_n3</def>
+      </instruction>
+      <instruction ins='j L1' type='jump' label='L1'/>
+      <left_child>2</left_child>
+    </node>
+    <node name='L8' id='8' endNode='y'>
+      <instruction ins='L8:' type='label' label='L8'/>
+    </node>
+  </cfg>
+</cfg-set>

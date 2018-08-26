@@ -1,0 +1,25 @@
+target datalayout="e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-f80:128:128-v64:64:64-v128:128:128-a0:0:64-f80:32:32-n8:16:32"
+
+define i32 @foo(i32 %m, i32 %n) nounwind {
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  store i32 21, i32* %a, align 4
+  store i32 67, i32* %b, align 4
+  %1 = icmp eq i32 %m, %n
+  br i1 %1, label %2, label %3
+
+; <label>:2		; preds = %0
+  br label %4
+
+; <label>:3		; preds = %0
+  br label %4
+
+; <label>:4          		; preds = %3, %2
+  %p3.0 = phi i32* [ %b, %3 ], [ %a, %2 ]
+  %5 = load i32* %a, align 4
+  %6 = load i32* %b, align 4
+  %7 = add i32 %5, %6
+  %8 = load i32* %p3.0, align 4
+  %9 = add i32 %7, %8
+  ret i32 %9
+}

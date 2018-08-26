@@ -1,0 +1,69 @@
+target datalayout="e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-f80:128:128-v64:64:64-v128:128:128-a0:0:64-f80:32:32-n8:16:32"
+
+%struct.PersonAttr = type { i8*, i8*, double, %struct.contactDetails, %struct.contactDetails, i32 }
+%struct.addressStruct = type { i32, i8*, i8*, i8*, i8*, i8* }
+%struct.contactDetails = type { %struct.addressStruct, i8* }
+
+@m = common global i32 0, align 4
+@n = common global i32 0, align 4
+
+define i32 @foo(%struct.PersonAttr* %allPersons) nounwind {
+  %1 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0, i32 3, i32 0, i32 0
+  %2 = load i32* %1, align 4
+  %3 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 1, i32 3, i32 0, i32 0
+  %4 = load i32* %3, align 4
+  %5 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 2, i32 3, i32 0, i32 0
+  %6 = load i32* %5, align 4
+  %7 = icmp eq i32 %2, %6
+  br i1 %7, label %8, label %11
+
+; <label>:8                                      ; preds = %0
+  %9 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0, i32 0
+  %10 = load i8** %9, align 4
+  br label %11
+
+; <label>:11                                      ; preds = %8, %0
+  %12 = icmp eq i32 %2, %4
+  br i1 %12, label %13, label %18
+
+; <label>:13                                      ; preds = %11
+  %14 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 0, i32 0
+  %15 = load i8** %14, align 4
+  %16 = ptrtoint i8* %15 to i8
+  %17 = sext i8 %16 to i32
+  br label %18
+
+; <label>:18                                      ; preds = %13, %11
+  %19 = load i32* @m, align 4
+  %20 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 %19, i32 3, i32 0, i32 0
+  %21 = load i32* %20, align 4
+  %22 = load i32* @m, align 4
+  %23 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 %22, i32 3, i32 0, i32 0
+  %24 = load i32* %23, align 4
+  %25 = load i32* @n, align 4
+  %26 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 %25, i32 3, i32 0, i32 0
+  %27 = load i32* %26, align 4
+  %28 = icmp eq i32 %21, %24
+  br i1 %28, label %29, label %33
+
+; <label>:29                                      ; preds = %18
+  %30 = load i32* @m, align 4
+  %31 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 %30, i32 1
+  %32 = load i8** %31, align 4
+  br label %33
+
+; <label>:33                                      ; preds = %29, %18
+  %34 = icmp eq i32 %21, %27
+  br i1 %34, label %35, label %41
+
+; <label>:35                                      ; preds = %33
+  %36 = load i32* @n, align 4
+  %37 = getelementptr inbounds %struct.PersonAttr* %allPersons, i32 %36, i32 1
+  %38 = load i8** %37, align 4
+  %39 = ptrtoint i8* %38 to i8
+  %40 = sext i8 %39 to i32
+  br label %41
+
+; <label>:41                                      ; preds = %35, %33
+  ret i32 0
+}

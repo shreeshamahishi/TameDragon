@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cfg-set>
+  <cfg>
+    <node name='main' id='1' startNode='y'>
+      <instruction ins='main:' type='label' label='main'/>
+      <instruction ins='la t5, L1' type='LOAD_ADDRESS' label='L1'>
+        <def>t5</def>
+      </instruction>
+      <instruction ins='move t20, t5' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t5</use>
+        <def>t20</def>
+      </instruction>
+      <instruction ins='li t3, 2' type='LOAD_IMMEDIATE_VALUE' im='2'>
+        <def>t3</def>
+      </instruction>
+      <instruction ins='move t18, t3' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t3</use>
+        <def>t18</def>
+      </instruction>
+      <instruction ins='li t2, 3' type='LOAD_IMMEDIATE_VALUE' im='3'>
+        <def>t2</def>
+      </instruction>
+      <instruction ins='move a0, t18' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t18</use>
+        <def pr='y'>a0</def>
+      </instruction>
+      <instruction ins='move a1, t2' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t2</use>
+        <def pr='y'>a1</def>
+      </instruction>
+      <instruction ins='jal foo' type='call' fname='foo'/>
+      <instruction ins='move t19, v0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>v0</use>
+        <def>t19</def>
+      </instruction>
+      <instruction ins='move t4, t19' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t19</use>
+        <def>t4</def>
+      </instruction>
+      <instruction ins='move a0, t20' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t20</use>
+        <def pr='y'>a0</def>
+      </instruction>
+      <instruction ins='move a1, t4' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t4</use>
+        <def pr='y'>a1</def>
+      </instruction>
+      <instruction ins='jal printf' type='call' fname='printf'/>
+      <instruction ins='move t21, v0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>v0</use>
+        <def>t21</def>
+      </instruction>
+      <instruction ins='com.compilervision.common.intermrep.Jump@5cdf8f5e' type='jump' label='L3'/>
+      <left_child>2</left_child>
+    </node>
+    <node name='L3' id='2' endNode='y'>
+      <instruction ins='L3:' type='label' label='L3'/>
+    </node>
+  </cfg>
+</cfg-set>

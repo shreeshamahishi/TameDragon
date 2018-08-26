@@ -1,0 +1,13 @@
+union
+{
+	int id;
+	char nm[10][10];
+}tch;
+
+
+int main()
+{
+    tch.id = 1;
+    tch.nm[0][0] = 'V';
+    return 0;
+}

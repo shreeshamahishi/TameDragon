@@ -1,0 +1,2 @@
+#define IPTH2_VAR1 IPTH1_VAR1
+#define IPTH2_VAR2 24

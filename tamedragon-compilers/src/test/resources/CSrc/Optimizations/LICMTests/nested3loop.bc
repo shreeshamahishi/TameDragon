@@ -1,0 +1,46 @@
+define i32 @nestes3loop(i32 %a, i32 %b, i32 %c) nounwind {
+  %1 = add i32 %c, 50
+  %2 = icmp slt i32 %c, 15
+  %3 = add i32 %20, %1
+  br label %4
+
+; <label>:4         		; preds = %17, %0
+  %.01 = phi i32 [ %11, %17 ], [ %b, %0 ]
+  %.0 = phi i32 [ %18, %17 ], [ %a, %0 ]
+  %5 = add i32 %.0, 50
+  br label %6
+
+; <label>:6          		; preds = %12, %4
+  %.1 = phi i32 [ %11, %12 ], [ %.01, %4 ]
+  %7 = add i32 %.1, 50
+  br label %8
+
+; <label>:8		; preds = %9, %6
+  br label %9
+
+; <label>:9    		; preds = %8
+  br i1 %2, label %8, label %10
+
+; <label>:10		; preds = %9
+  %11 = add i32 %.1, 1
+  br label %12
+
+; <label>:12   		; preds = %10
+  %13 = icmp slt i32 %11, 10
+  br i1 %13, label %6, label %14
+
+; <label>:14    		; preds = %12
+  %15 = icmp slt i32 %.0, 5
+  br i1 %15, label %16, label %17
+
+; <label>:16		; preds = %14
+  br label %19
+
+; <label>:17		; preds = %14
+  %18 = add i32 %.0, 1
+  br label %4
+
+; <label>:19		; preds = %16
+  %20 = add i32 %5, %7
+  ret i32 %3
+}

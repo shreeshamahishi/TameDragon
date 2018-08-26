@@ -1,0 +1,21 @@
+define i32 @foobar(i32 %a, i32 %b) nounwind {
+  %1 = add i32 %b, 78
+  br label %2
+
+; <label>:2                                       ; preds = %6, %0
+  %result.0 = phi i32 [ %5, %6 ], [ undef, %0 ]
+  %m.0 = phi i32 [ %7, %6 ], [ 0, %0 ]
+  %3 = icmp slt i32 %m.0, %a
+  br i1 %3, label %4, label %8
+
+; <label>:4                                       ; preds = %2
+  %5 = add i32 %result.0, %1
+  br label %6
+
+; <label>:6                                       ; preds = %4
+  %7 = add i32 %m.0, 1
+  br label %2
+
+; <label>:8                                       ; preds = %2
+  ret i32 %result.0
+}

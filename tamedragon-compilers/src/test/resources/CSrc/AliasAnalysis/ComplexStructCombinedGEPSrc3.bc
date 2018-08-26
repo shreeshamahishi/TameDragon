@@ -1,0 +1,27 @@
+target datalayout = "e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-f80:128:128-v64:64:64-v128:128:128-a0:0:64-f80:32:32-n8:16:32"
+
+%struct.CompanyStruct = type { i8*, i8*, %struct.PersonStruct* }
+%struct.PersonStruct = type { i8*, i8*, i32, double }
+
+define i32 @foo(i32 %compIndex1, i32 %personIndex1, i32 %compIndex2, i32 %personIndex2, %struct.CompanyStruct* %companies) nounwind {
+  %1 = getelementptr inbounds %struct.CompanyStruct* %companies, i32 %compIndex1, i32 2
+  %2 = load %struct.PersonStruct** %1, align 4
+  %3 = getelementptr inbounds %struct.PersonStruct* %2, i32 %personIndex1, i32 2
+  %4 = load i32* %3, align 4
+  %5 = getelementptr inbounds %struct.CompanyStruct* %companies, i32 %compIndex2, i32 2
+  %6 = load %struct.PersonStruct** %5, align 4
+  %7 = getelementptr inbounds %struct.PersonStruct* %6, i32 %personIndex2, i32 2
+  %8 = load i32* %7, align 4
+  %9 = icmp sgt i32 %4, %8
+  br i1 %9, label %10, label %11
+
+; <label>:10                                      ; preds = %0
+  br label %12
+
+; <label>:11                                      ; preds = %0
+  br label %12
+
+; <label>:12                                      ; preds = %11, %10
+  %elder.0 = phi i32 [ 1, %10 ], [ 0, %11 ]
+  ret i32 %elder.0
+}

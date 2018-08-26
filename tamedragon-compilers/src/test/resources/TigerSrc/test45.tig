@@ -1,0 +1,66 @@
+let
+	function foo(a:int, b:int) =
+	(
+		let 
+			var x := a
+			var y := b
+			var c := 20 
+		in
+			if x > y then
+			(
+				while x > y do
+				(
+					x := x - 3;
+					y := y + 4
+				);
+				y := x + y + c;
+				
+				while y < x do
+				(
+					y := y + 2;
+					x := x - 3
+				);
+				x := y - 32;
+				
+				while x < y do
+				(
+					x := y + 2;
+					y := x - 3
+				);
+				x := y + 32
+			)
+			else
+			(
+				while x< y do
+				(
+					x := x + 4;
+					y := y -  4;
+					
+					c := 30;
+					while y < c do
+					(
+						x := x - 42;
+						y := y + 2
+					)
+				);
+				while y > x do
+				( 
+					y := x + 4;
+					x := y -  4;
+					
+					c := 42;
+					while x > c do
+					(
+						y := x - 42;
+						x := y + 2;
+						y := x
+					)
+				);
+				y := y + 2 * c
+			);
+			printInt(y)
+		end	
+	 )
+in
+	foo(91, 67) 
+end

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cfg-set>
+  <cfg ssa='y'>
+    <node name='main' id='1' startNode='y'>
+      <instruction ins='main:' type='label' label='main'/>
+      <instruction ins='move t120_n1, $a0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$a0</use>
+        <def>t120_n1</def>
+      </instruction>
+      <instruction ins='move t121_n1, $a1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$a1</use>
+        <def>t121_n1</def>
+      </instruction>
+      <instruction ins='li t123_n1, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t123_n1</def>
+      </instruction>
+      <left_child>2</left_child>
+    </node>
+    <node name='L1' id='2'>
+      <instruction ins='L1:' type='label' label='L1'/>
+      <instruction ins='t124_n1 &lt;- phi(t124_n4, t124_n0)' type='phi_func'>
+        <use type='var'>t124_n4</use>
+        <use type='var'>t124_n0</use>
+        <def>t124_n1</def>
+      </instruction>
+      <instruction ins='t123_n2 &lt;- phi(t123_n3, t123_n1)' type='phi_func'>
+        <use type='var'>t123_n3</use>
+        <use type='var'>t123_n1</use>
+        <def>t123_n2</def>
+      </instruction>
+      <instruction ins='$a1 &lt;- phi($a1_n0, $a1_n0)' type='phi_func'>
+        <use type='var'>$a1_n0</use>
+        <use type='var'>$a1_n0</use>
+        <def pr='y'>$a1</def>
+      </instruction>
+      <instruction ins='$a0 &lt;- phi($a0_n0, $a0_n0)' type='phi_func'>
+        <use type='var'>$a0_n0</use>
+        <use type='var'>$a0_n0</use>
+        <def pr='y'>$a0</def>
+      </instruction>
+      <instruction ins='move t125_n1, t123_n2' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t123_n2</use>
+        <def>t125_n1</def>
+      </instruction>
+      <instruction ins='li t126_n1, 10' type='LOAD_IMMEDIATE_VALUE' im='10'>
+        <def>t126_n1</def>
+      </instruction>
+      <instruction ins='bge t125_n1, t126_n1, L4' type='cjump' ifLabel='L4' falseLabel='L3' relop='GE'>
+        <use type='var'>t125_n1</use>
+        <use type='var'>t126_n1</use>
+      </instruction>
+      <left_child>3</left_child>
+      <right_child>6</right_child>
+    </node>
+    <node name='L4' id='3'>
+      <instruction ins='L4:' type='label' label='L4'/>
+      <instruction ins='li t124_n3, 0' type='LOAD_IMMEDIATE_VALUE' im='0'>
+        <def>t124_n3</def>
+      </instruction>
+      <left_child>4</left_child>
+    </node>
+    <node name='L5' id='4'>
+      <instruction ins='L5:' type='label' label='L5'/>
+      <instruction ins='t124_n4 &lt;- phi(t124_n2, t124_n3)' type='phi_func'>
+        <use type='var'>t124_n2</use>
+        <use type='var'>t124_n3</use>
+        <def>t124_n4</def>
+      </instruction>
+      <instruction ins='move t129_n1, t124_n4' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t124_n4</use>
+        <def>t129_n1</def>
+      </instruction>
+      <instruction ins='bgtz t129_n1, L7' type='cjump' ifLabel='L7' falseLabel='L2' relop='GT' im='0'>
+        <use type='var'>t129_n1</use>
+      </instruction>
+      <left_child>5</left_child>
+      <right_child>7</right_child>
+    </node>
+    <node name='L2' id='5'>
+      <instruction ins='L2:' type='label' label='L2'/>
+      <instruction ins='j L8' type='jump' label='L8'/>
+      <left_child>8</left_child>
+    </node>
+    <node name='L3' id='6'>
+      <instruction ins='L3:' type='label' label='L3'/>
+      <instruction ins='li t124_n2, 1' type='LOAD_IMMEDIATE_VALUE' im='1'>
+        <def>t124_n2</def>
+      </instruction>
+      <instruction ins='j L5' type='jump' label='L5'/>
+      <left_child>4</left_child>
+    </node>
+    <node name='L7' id='7'>
+      <instruction ins='L7:' type='label' label='L7'/>
+      <instruction ins='la t127_n1, L6' type='LOAD_ADDRESS' label='L6'>
+        <def>t127_n1</def>
+      </instruction>
+      <instruction ins='move $a0, t127_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t127_n1</use>
+        <def pr='y'>$a0</def>
+      </instruction>
+      <instruction ins='move $a1, t123_n2' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t123_n2</use>
+        <def pr='y'>$a1</def>
+      </instruction>
+      <instruction ins='jal printf' type='call' fname='printf'/>
+      <instruction ins='move t130_n1, $v0' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var' pr='y'>$v0</use>
+        <def>t130_n1</def>
+      </instruction>
+      <instruction ins='add t134_n1, t123_n2, 1' type='ADD' im='1'>
+        <use type='var'>t123_n2</use>
+        <def>t134_n1</def>
+      </instruction>
+      <instruction ins='move t128_n1, t134_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t134_n1</use>
+        <use type='var'>t134_n1</use>
+        <def>t128_n1</def>
+      </instruction>
+      <instruction ins='move t123_n3, t128_n1' type='MOVE_TEMP_TO_TEMP'>
+        <use type='var'>t128_n1</use>
+        <def>t123_n3</def>
+      </instruction>
+      <instruction ins='j L1' type='jump' label='L1'/>
+      <left_child>2</left_child>
+    </node>
+    <node name='L8' id='8' endNode='y'>
+      <instruction ins='L8:' type='label' label='L8'/>
+    </node>
+  </cfg>
+</cfg-set>
