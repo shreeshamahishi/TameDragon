@@ -376,6 +376,10 @@ public class ErrorHandler {
 	 */
 	public void addError(String fileName, SourceLocation location, String preMsg, String additionalInfo, 
 					String mainMsg) {
+		
+		if(fileName.contains("h2.h")) {
+			System.out.println("WAIT HERE");
+		}
 		 
 		String finalMsg = ""; // The final message that will be ultimately displayed
 		

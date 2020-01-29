@@ -5,18 +5,18 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestDynamicMemoryAllocation extends LLVMBaseTest{
 	
-	private String projectPath = "TranslateToLLVMIR/DynamicMemoryAllocation";
+	private String projectPath = "CSrc/TranslateToLLVMIR/DynamicMemoryAllocation";
 	
 	@Test
 	public void testSimpleMallocEg(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SimpleMallocEg.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleMallocEgLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleMallocEgLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

@@ -9,162 +9,150 @@ import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.GVN;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class GVNTests extends LLVMBaseTest{
 	private static final String ROOT_PATH = "CSrc/Optimizations/GVNTests";
-	//test 1 for simple local  congruent value
+
 	@Ignore
 	@Test
 	public void runGVN1() throws Exception {
 		String cSrcfilename =  "GVN1.c";
-		String llvmOutFileName = "GVN1.bc";
+		String llvmOutFileName = "GVN1.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	//test 2 for commutative Binary Operator like + *;
+
 	@Test
 	public void runGVNForcommutativeTest() throws Exception {
 		String cSrcfilename =  "GVNForCommutativeTest.c";
-		String llvmOutFileName = "GVNForCommutativeTest.bc";
+		String llvmOutFileName = "GVNForCommutativeTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	//test 3 For Compare Instruction ICMP
+
 	@Test
 	public void cmpInstGVNTest() throws Exception {
 		String cSrcfilename =  "IcmpData.c";
-		String llvmOutFileName = "IcmpData.bc";
+		String llvmOutFileName = "IcmpData.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	//test 4 for Casting Instruction
+
 	@Test
 	public void castInstGVNTest() throws Exception {
 		String cSrcfilename =  "CastInstrTest.c";
-		String llvmOutFileName = "CastInstrTest.bc";
+		String llvmOutFileName = "CastInstrTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	//test 5 for FCMP Instruction
+
 	@Test
 	public void fcmpInstrGVNTest() throws Exception {
 		String cSrcfilename =  "FCMPInstrTest.c";
-		String llvmOutFileName = "FCMPInstrTest.bc";
+		String llvmOutFileName = "FCMPInstrTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 6 for Simple GVN in For loop.
 	@Ignore
 	@Test
 	public void simpleGVNinForLoop() throws Exception {
 		String cSrcfilename =  "SimpleGVNinForLoop.c";
-		String llvmOutFileName = "SimpleGVNinForLoop.bc";
+		String llvmOutFileName = "SimpleGVNinForLoop.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 7 for Simple GVN for global Variable Updating in between.
 	@Test
 	public void gvnForGlobalVariable() throws Exception {
 		String cSrcfilename =  "GVNForGlobalVariable.c";
-		String llvmOutFileName = "GVNForGlobalVariable.bc";
+		String llvmOutFileName = "GVNForGlobalVariable.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-
-	//test 8 for Simple GVN for global Variable not Updating in between.
 	@Test
 	public void gvnForGlobalVariable1() throws Exception {
 		String cSrcfilename =  "GVNForGlobalVariable1.c";
-		String llvmOutFileName = "GVNForGlobalVariable1.bc";
+		String llvmOutFileName = "GVNForGlobalVariable1.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 9 for Simple GVN for Array.
 	@Test
 	public void gvnTestForArrays() throws Exception {
 		String cSrcfilename =  "ArraysTests.c";
-		String llvmOutFileName = "ArraysTests.bc";
+		String llvmOutFileName = "ArraysTests.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 10 for structure.
 	@Ignore
 	@Test
 	public void castInstrInStructure() throws Exception {
 		String cSrcfilename =  "CastInstrInStructure.c";
-		String llvmOutFileName = "CastInstrInStructure.bc";
+		String llvmOutFileName = "CastInstrInStructure.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	// Random Test cases for the Different Algorithm	
-	//test 11 Addition of two number. Fail
+	@Ignore
 	@Test
 	public void addingTwoNumbersTest() throws Exception {
 		String cSrcfilename =  "AddingTwoNumbers.c";
-		String llvmOutFileName = "AddingTwoNumbers.bc";
+		String llvmOutFileName = "AddingTwoNumbers.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 12 Binary Search.
 	@Ignore
 	@Test
 	public void binarySearchTest() throws Exception {
 		String cSrcfilename =  "BinarySearch.c";
-		String llvmOutFileName = "BinarySearch.bc";
+		String llvmOutFileName = "BinarySearch.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	//test 13 for Simple GVN in For loop.
 	@Ignore
 	@Test
 	public void acessingStructureElement() throws Exception {
 		String cSrcfilename =  "AcessingStructureElement.c";
-		String llvmOutFileName = "AcessingStructureElement.bc";
+		String llvmOutFileName = "AcessingStructureElement.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	// Test 14 for Accessing Array Element
+
 	@Test
 	public void acessingArrayElement() throws Exception {
 		String cSrcfilename =  "AcessingArrayElement.c";
-		String llvmOutFileName = "AcessingArrayElement.bc";
+		String llvmOutFileName = "AcessingArrayElement.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-
-	// Test 15 for Accessing  Element through Pointer
 	@Test
 	public void pointerTest() throws Exception {
 		String cSrcfilename =  "pointerTest.c";
-		String llvmOutFileName = "pointerTest.bc";
+		String llvmOutFileName = "pointerTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
 
-	// Test 16 Adding Zero to the variable (dead code Elimination)
 	@Test
 	public void addingZeroTest() throws Exception {
 		String cSrcfilename =  "addingZeroTest.c";
-		String llvmOutFileName = "addingZeroTest.bc";
+		String llvmOutFileName = "addingZeroTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
-	// Test 16 Adding Zero to the variable (dead code Elimination)
+
 	@Test
 	public void subZeroTest() throws Exception {
 		String cSrcfilename =  "SubZeroTest.c";
-		String llvmOutFileName = "SubZeroTest.bc";
+		String llvmOutFileName = "SubZeroTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName);
 	}
@@ -175,10 +163,6 @@ public class GVNTests extends LLVMBaseTest{
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();
-
-		// There can be only one function to test SCCP in the module.
-
-		//List<String> instrsAfterOpt = new ArrayList<String>();
 
 		for(Function function : functions){
 			// Mem2reg
@@ -201,6 +185,6 @@ public class GVNTests extends LLVMBaseTest{
 		System.out.println("AFTER GVN: ");
 		printAsm(instrsAfterOpt);
 
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
 	}
 }

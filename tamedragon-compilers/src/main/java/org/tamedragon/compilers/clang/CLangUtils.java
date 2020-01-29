@@ -10,7 +10,6 @@ import java.util.Properties;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
-
 import org.tamedragon.compilers.clang.abssyntree.ClangLLLexer;
 import org.tamedragon.compilers.clang.abssyntree.ClangLLParser;
 import org.tamedragon.compilers.clang.abssyntree.TranslationUnit;
@@ -23,8 +22,12 @@ public class CLangUtils {
 	
 	public static void populateSettings(){		
 		Properties settings = new Properties();
+		
+		ClassLoader classLoader = new CLangUtils().getClass().getClassLoader();
+		File propertiesRefFile = new File(classLoader.getResource("CompilerSettings.properties").getFile());
+		
 		try{
-			settings.load(new FileReader(new File("CompilerSettings.properties")));
+			settings.load(new FileReader(propertiesRefFile));
 		}
 		catch(Exception e){
 			ErrorHandler errorHandler = ErrorHandler.getInstance();

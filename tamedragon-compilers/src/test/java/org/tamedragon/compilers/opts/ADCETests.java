@@ -8,7 +8,7 @@ import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.ADCE;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class ADCETests extends LLVMBaseTest {
@@ -18,7 +18,7 @@ public class ADCETests extends LLVMBaseTest {
 	@Test
 	public void runADCE1() throws Exception {
 		String cSrcfilename =  "ADCE1.c";
-		String llvmOutFileName = "ADCEOut1.bc";
+		String llvmOutFileName = "ADCEOut1.ll";
 
 		runAdce(cSrcfilename, llvmOutFileName);
 	}
@@ -26,7 +26,7 @@ public class ADCETests extends LLVMBaseTest {
 	@Test
 	public void runADCE2() throws Exception {
 		String cSrcfilename =  "ADCE2.c";
-		String llvmOutFileName = "ADCEOut2.bc";
+		String llvmOutFileName = "ADCEOut2.ll";
 
 		runAdce(cSrcfilename, llvmOutFileName);
 	}
@@ -58,6 +58,6 @@ public class ADCETests extends LLVMBaseTest {
 		instrsAfterOpt = emitter.emitInstructions(function);
 		printAsm(instrsAfterOpt);
 		
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 
@@ -17,7 +17,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testSimpleSwitchImpl(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "simpleSwitchImpl.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "simpleSwitchImplLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "simpleSwitchImplLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testEmulateUnconditionalBr(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "EmulateUnconditionalBr.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "EmulateUnconditionalBrLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "EmulateUnconditionalBrLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -41,7 +41,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testFallthrough(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "Fallthrough.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FallthroughLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FallthroughLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -53,7 +53,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testSwitchOnChar(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SwitchOnChar.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnCharLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnCharLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -65,7 +65,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testSwitchOnShortValue(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SwitchOnShortValue.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnShortValueLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnShortValueLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public class IRTreeGenTestSwitch extends LLVMBaseTest{
 	public void testSwitchOnLongValue(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SwitchOnLongValue.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnLongValueLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SwitchOnLongValueLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

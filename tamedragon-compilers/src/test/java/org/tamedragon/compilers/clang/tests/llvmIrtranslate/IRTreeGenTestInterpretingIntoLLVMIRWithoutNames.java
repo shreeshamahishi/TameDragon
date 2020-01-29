@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestInterpretingIntoLLVMIRWithoutNames extends LLVMBaseTest{
@@ -16,7 +16,7 @@ public class IRTreeGenTestInterpretingIntoLLVMIRWithoutNames extends LLVMBaseTes
 	public void testSimpleProgram(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SimpleIfElse.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleIfElseLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleIfElseLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

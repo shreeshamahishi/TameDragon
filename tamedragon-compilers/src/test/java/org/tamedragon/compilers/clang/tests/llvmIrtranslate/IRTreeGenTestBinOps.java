@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestBinOps extends LLVMBaseTest {
@@ -15,7 +15,7 @@ public class IRTreeGenTestBinOps extends LLVMBaseTest {
 	public void testSimpleAddition() {
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SimpleBinOp.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleBinOpLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleBinOpLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -27,7 +27,7 @@ public class IRTreeGenTestBinOps extends LLVMBaseTest {
 	public void testAdditionWithGlobalVariable() {
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SimpleBinOpWithGlobalVar.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleBinOpWithGlobalVarLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleBinOpWithGlobalVarLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

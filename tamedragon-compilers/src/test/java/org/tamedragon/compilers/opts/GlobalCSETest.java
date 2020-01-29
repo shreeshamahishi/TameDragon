@@ -11,7 +11,7 @@ import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.GlobalCSE;
 import org.tamedragon.common.optimization.LocalCSE;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class GlobalCSETest extends LLVMBaseTest{
@@ -21,7 +21,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test1() throws Exception {
 		String cSrcfilename =  "GlobalCSETest1.c";
-		String llvmGlobalCSEOutFileName = "GlobalCSETest1.bc";
+		String llvmGlobalCSEOutFileName = "GlobalCSETest1.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -29,7 +29,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test2() throws Exception {
 		String cSrcfilename =  "IfElseIfTest.c";
-		String llvmGlobalCSEOutFileName = "IfElseIfTest.bc";
+		String llvmGlobalCSEOutFileName = "IfElseIfTest.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -37,7 +37,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test3() throws Exception {
 		String cSrcfilename =  "IfElseIfWithinForLoop.c";
-		String llvmGlobalCSEOutFileName = "IfElseIfWithinForLoop.bc";
+		String llvmGlobalCSEOutFileName = "IfElseIfWithinForLoop.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -45,7 +45,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test4() throws Exception {
 		String cSrcfilename =  "IfElseIfWithinLoopWithBreakContinueReturn.c";
-		String llvmGlobalCSEOutFileName = "IfElseIfWithinLoopWithBreakContinueReturn.bc";
+		String llvmGlobalCSEOutFileName = "IfElseIfWithinLoopWithBreakContinueReturn.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -53,7 +53,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test5() throws Exception {
 		String cSrcfilename =  "ForWithIfElse2.c";
-		String llvmGlobalCSEOutFileName = "ForWithIfElse2.bc";
+		String llvmGlobalCSEOutFileName = "ForWithIfElse2.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -61,7 +61,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test6() throws Exception {
 		String cSrcfilename =  "BinarySearch.c";
-		String llvmGlobalCSEOutFileName = "BinarySearch.bc";
+		String llvmGlobalCSEOutFileName = "BinarySearch.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -69,7 +69,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test7() throws Exception {
 		String cSrcfilename =  "hello.c";
-		String llvmGlobalCSEOutFileName = "hello.bc";
+		String llvmGlobalCSEOutFileName = "hello.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -77,7 +77,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test8() throws Exception {
 		String cSrcfilename =  "BubbleSort.c";
-		String llvmGlobalCSEOutFileName = "BubbleSort.bc";
+		String llvmGlobalCSEOutFileName = "BubbleSort.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -85,7 +85,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test9() throws Exception {
 		String cSrcfilename =  "insert.c";
-		String llvmGlobalCSEOutFileName = "insert.bc";
+		String llvmGlobalCSEOutFileName = "insert.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -93,7 +93,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 	@Test
 	public void test10() throws Exception {
 		String cSrcfilename =  "SimpleAA1.c";
-		String llvmGlobalCSEOutFileName = "SimpleAA1.bc";
+		String llvmGlobalCSEOutFileName = "SimpleAA1.ll";
 
 		runGlobalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -135,7 +135,7 @@ public class GlobalCSETest extends LLVMBaseTest{
 		instrsAfterOpt = emitter.emitInstructions(function);
 		printAsm(instrsAfterOpt);
 
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
 	}
 
 }

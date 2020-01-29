@@ -11,6 +11,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.tamedragon.common.dataflowanalysis.LoadStoreAnalysis;
 import org.tamedragon.common.llvmir.instructions.LoadInst;
@@ -21,6 +22,7 @@ import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.llvmir.utils.LLVMIREmitter;
 import org.tamedragon.common.utils.LLVMIRUtils;
 
+@Ignore
 public class LoadStoreAnalysisTests {
 
 	private static final String ROOT_PATH = "CSrc/LoadStoreAnalysis/";

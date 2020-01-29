@@ -3,6 +3,7 @@ package org.tamedragon.compilers.clang.tests.semanticanalysis;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -33,6 +34,10 @@ public class PointersTest6  extends TestInitializer {
 		Environments environments = Environments.getInstance();
 		environments.reset();
 		sourceFilePath ="CSrc/Semantic/PointersTest6.c"; 
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		sourceFilePath = new File(classLoader.getResource(sourceFilePath).getFile()).getAbsolutePath();
+		
 		errorHandler = ErrorHandler.getInstance();
 		errorHandler.reset();
 		assertTrue(errorHandler.getNumErrors() == 0);

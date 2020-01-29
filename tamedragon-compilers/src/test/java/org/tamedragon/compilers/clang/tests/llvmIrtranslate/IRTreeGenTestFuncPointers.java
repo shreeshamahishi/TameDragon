@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestFuncPointers extends LLVMBaseTest{
@@ -17,7 +17,7 @@ public class IRTreeGenTestFuncPointers extends LLVMBaseTest{
 	public void testSimpleFunctionPointer(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "SimpleFuncPointer.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleFuncPointerLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "SimpleFuncPointerLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class IRTreeGenTestFuncPointers extends LLVMBaseTest{
 	public void testFunctionPointer(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "FunctionPointer.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FunctionPointerLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FunctionPointerLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -42,7 +42,7 @@ public class IRTreeGenTestFuncPointers extends LLVMBaseTest{
 	public void testFunctionPointerAsMethodArg(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "FunctionPointerAsMethodArg.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FunctionPointerAsMethodArgLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "FunctionPointerAsMethodArgLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

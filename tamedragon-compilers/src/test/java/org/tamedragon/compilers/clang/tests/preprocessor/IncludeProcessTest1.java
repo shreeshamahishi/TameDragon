@@ -45,12 +45,15 @@ public class IncludeProcessTest1 extends TestInitializer {
 		properties = LLVMUtility.getDefaultProperties();
 		CLangUtils.populateSettings();
 		compilerSettings = CompilerSettings.getInstance();
-		compilerSettings.setInstanceIncludePath("resources/include");
+		compilerSettings.setInstanceIncludePath("include");
 		compilerSettings.setInstanceProjectPath("CSrc/Preprocessor");
 		CompilationContext compilationContext = new CompilationContext();
 		compilerSettings.setCompilationContext(compilationContext);
 		
 		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest1.c"; 
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
 		
 		// Start with a clean slate
 		errorHandler = ErrorHandler.getInstance();
@@ -100,14 +103,16 @@ public class IncludeProcessTest1 extends TestInitializer {
 		assertTrue( defsMap.getDefinition("MIN").equals("2"));
 		
 		// Check the inputstreams for the included files
-		String includeFile1 = compilerSettings.getInstanceProjectPath() + File.separator + "h1.h";
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + File.separator + "h2.h";
+		String includeFile1 = compilerSettings.getInstanceProjectPath() + "/" + "h1.h";
+		includeFile1 = getFullFilePath(includeFile1);
+		String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "h2.h";
+		includeFile2 = getFullFilePath(includeFile2);
 		
 		HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
 		keys = includesPreProcessed.keySet();
 		assertTrue(keys.size() == 2);
 		
-		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(sourceFilePath);
+		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(getFileName(sourceFilePath));
 		assertTrue(includesMapInFile1 != null);
 		assertTrue(includesMapInFile1.size() == 2);
 		String includeStr1 = "# \"h1.h\" #";
@@ -116,7 +121,7 @@ public class IncludeProcessTest1 extends TestInitializer {
 		verifyPreprocessedInclude(includesMapInFile1, includeStr1, includeFile1);
 		verifyPreprocessedInclude(includesMapInFile1, includeStr2, includeFile2);
 				
-		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(includeFile1);
+		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(getFileName(includeFile1));
 		assertTrue(includesMapInFile2 != null);
 		assertTrue(includesMapInFile2.size() == 1);
 		String includeStr3 = "# \"h2.h\" #";
@@ -131,16 +136,17 @@ public class IncludeProcessTest1 extends TestInitializer {
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
 		InputStream sourceFileInputStream = ppMain.process(true); 
 		
-		String includeFile1 = compilerSettings.getInstanceProjectPath() + File.separator + "h1.h";
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + File.separator + "h2.h";		
+		String includeFile1 ="CSrc/Preprocessor/h1.h";
+		//includeFile1 = getFullFilePath(includeFile1);
+		String includeFile2 ="CSrc/Preprocessor/h2.h";
+		//includeFile2 = getFullFilePath(includeFile2);
 		
 		// Translate to abstract syntax tree
 		TranslationUnit translationUnit = CLangUtils.getTranslationByLLParsing(sourceFileInputStream);
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext);
-//		SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(sourceFilePath, targetDesc); 	    
+		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext);
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		

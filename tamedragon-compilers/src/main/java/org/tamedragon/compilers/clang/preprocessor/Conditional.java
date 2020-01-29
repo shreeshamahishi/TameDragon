@@ -134,6 +134,11 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 		sb.append("\n");    // For the #if line
 
 		for(PreprocessorUnit pu: preprocessorUnits){
+			if(pu.getPreprocessorUnitType() == PreprocessorUnit.DEFINITION &&
+					((Definition)pu).getId() != null && ((Definition)pu).getId().contains("FILENAME_MAX")) {
+				System.out.println("WAIT HERE");
+				
+			}
 			StringBuffer sbOfPu = pu.process();
 			sb.append(sbOfPu);
 		}		

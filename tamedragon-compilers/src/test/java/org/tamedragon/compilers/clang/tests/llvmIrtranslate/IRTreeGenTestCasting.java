@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestCasting extends LLVMBaseTest{
@@ -16,7 +16,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testIntToDouble(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "intToDouble.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToDoubleLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToDoubleLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -28,7 +28,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testIntToFloat(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "intToFloat.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToFloatLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToFloatLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -40,7 +40,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testFloatToDouble(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "floatToDouble.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "floatToDoubleLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "floatToDoubleLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -52,7 +52,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testDoubleToFloat(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "doubleToFloat.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "doubleToFloatLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "doubleToFloatLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testCharToI32(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "charToI32.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "charToI32LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "charToI32LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -76,7 +76,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testShortToInt(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "shortToInt.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "shortToIntLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "shortToIntLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -88,7 +88,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testIntToShort(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "intToShort.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToShortLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToShortLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -100,7 +100,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testIntToLong(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "intToLong.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToLongLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "intToLongLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -112,7 +112,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testLongToInt(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "longToInt.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "longToIntLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "longToIntLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +124,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testPointerToInt(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "castingPointerToInt.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "castingPointerToIntLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "castingPointerToIntLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -136,7 +136,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testRandomCasting(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "randomCastingTest.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "randomCastingTestLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "randomCastingTestLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +148,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testExplicitCasting(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "LoopsWithMultipleBasicIndVars.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "LoopsWithMultipleBasicIndVarsLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "LoopsWithMultipleBasicIndVarsLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -160,7 +160,7 @@ public class IRTreeGenTestCasting extends LLVMBaseTest{
 	public void testCastingOperation(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "CastOperation.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "CastOperationLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "CastOperationLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

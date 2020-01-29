@@ -4862,7 +4862,10 @@ public class Translator {
 		indexVsType.add(pair2);
 		GetElementPtrInst elementPtrInst = null;
 		try {
-			elementPtrInst = GetElementPtrInst.create(null, irTreeDeclaration.getMemoryTree().getMemory(), indexVsType , null);
+			Value ptr = irTreeDeclaration.getMemoryTree().getMemory();
+			PointerType ptrType = (PointerType) ptr.getType();
+			Type pointeeType = ptrType.getContainedType();
+			elementPtrInst = GetElementPtrInst.create(null, ptr, indexVsType, pointeeType.toString(), null);
 			elementPtrInst.setIsInBounds(true);
 			List<Value> operands = new ArrayList<Value>();
 			operands.add(elementPtrInst);

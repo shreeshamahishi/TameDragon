@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestArrays extends LLVMBaseTest {
@@ -17,7 +17,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testSimpleArrManipulation() {
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "simpleArrayManipulation.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "simpleArrayManipulationLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "simpleArrayManipulationLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayValue(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "returningArrayValue.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningArrayValueLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningArrayValueLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -41,7 +41,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayValue2(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "returningArrayValue2.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningArrayValue2LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningArrayValue2LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -53,7 +53,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testMultiDimensionalArrayTest(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "MultiDimensionalArrayTest.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArrayTestLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArrayTestLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -65,7 +65,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningMultiDimensionalArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "returningMultiDimensionalArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningMultiDimensionalArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "returningMultiDimensionalArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testArrayOfFloatType(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ArrayOfFloatType.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfFloatTypeLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfFloatTypeLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -89,7 +89,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testPopulatingArrayInLoop(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "populatingArrayInLoop.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "populatingArrayInLoopLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "populatingArrayInLoopLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -101,7 +101,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointerLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointerLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -113,7 +113,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer2(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer2.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer2LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer2LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -125,7 +125,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer3(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer3.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer3LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer3LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer4(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer4.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer4LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer4LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -149,7 +149,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer5(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer5.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer5LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer5LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer6(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer6.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer6LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer6LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -173,7 +173,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer7(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer7.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer7LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer7LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -185,7 +185,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer8(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer8.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer8LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer8LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -197,7 +197,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer9(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer9.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer9LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer9LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -209,7 +209,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer10(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer10.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer10LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer10LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -221,7 +221,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer11(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer11.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer11LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer11LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -233,7 +233,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testReturningArrayPointer12(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ReturningArrayPointer12.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer12LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ReturningArrayPointer12LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -245,7 +245,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testAddressOfArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "addressOfArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "addressOfArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "addressOfArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -257,7 +257,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testManipulatingArrElePtr(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "manipulatingArrElePtr.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "manipulatingArrElePtrLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "manipulatingArrElePtrLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -269,7 +269,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testGlobalArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "GlobalArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "GlobalArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "GlobalArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -281,7 +281,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testPassingSingleDimensionalArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "PassingSingleDimensionalArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "PassingSingleDimensionalArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "PassingSingleDimensionalArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -293,7 +293,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testPassingDoubleDimensionalArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "PassingDoubleDimensionalArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "PassingDoubleDimensionalArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "PassingDoubleDimensionalArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -305,7 +305,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testVariableSizedArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "VariableLengthArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "VariableLengthArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "VariableLengthArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -317,7 +317,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testMultiDimensionalArray(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "MultiDimensionalArray.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArrayLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArrayLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -329,7 +329,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testArrayOfStrings(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ArrayOfStrings.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfStringsLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfStringsLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -342,7 +342,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testArrayOfStructs(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "ArrayOfStructs.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfStructsLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "ArrayOfStructsLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -354,7 +354,7 @@ public class IRTreeGenTestArrays extends LLVMBaseTest {
 	public void testMultiDimensionalArray1(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "MultiDimensionalArray1.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArray1LLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "MultiDimensionalArray1LLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 
@@ -17,7 +17,7 @@ public class IRTreeGenTestIFElseIf extends LLVMBaseTest{
 	public void testSimpleIfElseIf(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "IfElseIfTest.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfTestLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfTestLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class IRTreeGenTestIFElseIf extends LLVMBaseTest{
 	public void testIfElseIfWithinForLoop(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "IfElseIfWithinForLoop.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfWithinForLoopLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfWithinForLoopLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -41,7 +41,7 @@ public class IRTreeGenTestIFElseIf extends LLVMBaseTest{
 	public void testIfElseIfWithinLoopWithBreakContinueReturn(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "IfElseIfWithinLoopWithBreakContinueReturn.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfWithinLoopWithBreakContinueReturnLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "IfElseIfWithinLoopWithBreakContinueReturnLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

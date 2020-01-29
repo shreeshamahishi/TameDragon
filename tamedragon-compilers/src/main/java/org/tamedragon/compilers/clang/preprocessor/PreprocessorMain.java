@@ -39,7 +39,7 @@ public class PreprocessorMain {
 	}
 
 	private static final Logger LOG = LoggerFactory.getLogger(PreprocessorMain.class);
-	private static final String CANNOT_READ_SRC = "Error reading into source input stream";
+	private static final String CANNOT_READ_SRC = "Error reading into source input stream";	
 	
 	public InputStream process(boolean clearPreviousDefinitions){
 		

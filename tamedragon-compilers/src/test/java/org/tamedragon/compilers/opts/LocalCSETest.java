@@ -11,7 +11,7 @@ import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.LocalCSE;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class LocalCSETest extends LLVMBaseTest {
@@ -21,7 +21,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test1() throws Exception {
 		String cSrcfilename =  "LocalCSETest1.c";
-		String llvmLocalCSEOutFileName = "LocalCSETest1.bc";
+		String llvmLocalCSEOutFileName = "LocalCSETest1.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -29,7 +29,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test2() throws Exception {
 		String cSrcfilename =  "LocalCSETest2.c";
-		String llvmLocalCSEOutFileName = "LocalCSETest2.bc";
+		String llvmLocalCSEOutFileName = "LocalCSETest2.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -37,7 +37,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test3() throws Exception {
 		String cSrcfilename =  "LocalCSETest3.c";
-		String llvmLocalCSEOutFileName = "LocalCSETest3.bc";
+		String llvmLocalCSEOutFileName = "LocalCSETest3.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -45,7 +45,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test4() throws Exception {
 		String cSrcfilename =  "LocalCSETest4.c";
-		String llvmLocalCSEOutFileName = "LocalCSETest4.bc";
+		String llvmLocalCSEOutFileName = "LocalCSETest4.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -53,7 +53,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test5() throws Exception {
 		String cSrcfilename =  "LocalCSETest5.c";
-		String llvmLocalCSEOutFileName = "LocalCSETest5.bc";
+		String llvmLocalCSEOutFileName = "LocalCSETest5.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -61,7 +61,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test6() throws Exception {
 		String cSrcfilename =  "VariableLengthArray.c";
-		String llvmLocalCSEOutFileName = "VariableLengthArray.bc";
+		String llvmLocalCSEOutFileName = "VariableLengthArray.ll";
 
 		runLocalCSE(cSrcfilename, llvmLocalCSEOutFileName);
 	}
@@ -69,7 +69,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test7() throws Exception {
 		String cSrcfilename =  "DereferencingAStructureMember.c";
-		String llvmGlobalCSEOutFileName = "DereferencingAStructureMember.bc";
+		String llvmGlobalCSEOutFileName = "DereferencingAStructureMember.ll";
 
 		runLocalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -77,7 +77,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test8() throws Exception {
 		String cSrcfilename =  "addressOfArray.c";
-		String llvmGlobalCSEOutFileName = "addressOfArray.bc";
+		String llvmGlobalCSEOutFileName = "addressOfArray.ll";
 
 		runLocalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -86,7 +86,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test10() throws Exception {
 		String cSrcfilename =  "FunctionPointer.c";
-		String llvmGlobalCSEOutFileName = "FunctionPointer.bc";
+		String llvmGlobalCSEOutFileName = "FunctionPointer.ll";
 
 		runLocalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -94,7 +94,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test11() throws Exception {
 		String cSrcfilename =  "Global.c";
-		String llvmGlobalCSEOutFileName = "Global.bc";
+		String llvmGlobalCSEOutFileName = "Global.ll";
 
 		runLocalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -102,7 +102,7 @@ public class LocalCSETest extends LLVMBaseTest {
 	@Test
 	public void test12() throws Exception {
 		String cSrcfilename =  "AnotherExampleOnScope.c";
-		String llvmGlobalCSEOutFileName = "AnotherExampleOnScope.bc";
+		String llvmGlobalCSEOutFileName = "AnotherExampleOnScope.ll";
 
 		runLocalCSE(cSrcfilename, llvmGlobalCSEOutFileName);
 	}
@@ -136,6 +136,6 @@ public class LocalCSETest extends LLVMBaseTest {
 		emitter.reset();
 		instrsAfterOpt = emitter.emitInstructions(function);
 		printAsm(instrsAfterOpt);
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmLocalCSEOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmLocalCSEOutFileName));
 	}
 }

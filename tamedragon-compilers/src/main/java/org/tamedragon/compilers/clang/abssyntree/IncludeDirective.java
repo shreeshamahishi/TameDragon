@@ -85,12 +85,12 @@ public class IncludeDirective extends ExternDeclaration {
 		String includeStr = "";
 		if(includeType == LIB){
 			includeStr = "# " + fileNameLib + " #";
-			includeFilePath = includePath + File.separator + fileNameLib;
+			includeFilePath = includePath + "/" + fileNameLib;
 		}
 		else{
 			// TODO Do we need to process this each time?
 			includeStr = "# \"" + fileName + "\" #";
-			includeFilePath = projectPath + File.separator + fileName;
+			includeFilePath = projectPath + "/" + fileName;
 		}
 
 		InputStream preprocesedIncludedFileStream = null;		
@@ -127,6 +127,9 @@ public class IncludeDirective extends ExternDeclaration {
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
+		
+		System.out.println("SEMANTIC PROCESSING OF INCLUDED FILE : " + includeFilePath);
+		
 		Semantic semanticAnalyzer = new Semantic(properties, includeFilePath, compilationContext); 	    
 		List<ClangTransUnit> translationUnitsOfIncludedFile =  semanticAnalyzer.translateAbstractTree(translationUnit);  
 

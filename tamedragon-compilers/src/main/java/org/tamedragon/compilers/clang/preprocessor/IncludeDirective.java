@@ -92,22 +92,28 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 			String libFileName = fileNameLib.getLibraryFileName();
 			if(libFileName.contains("/") || libFileName.contains("\\")
 					|| newIncludePath == null)
-				includeFilePath = includePath + File.separator + fileNameLib;
+				includeFilePath = includePath + "/" + fileNameLib;
 			else
-				includeFilePath = newIncludePath + File.separator + fileNameLib;
+				includeFilePath = newIncludePath + "/" + fileNameLib;
 			
 			// Update the include path, based on current include path location
 			if(libFileName.contains("/")){
-				newIncludePath = includePath + File.separator + fileNameLib.getLibraryFileName().substring(0, fileNameLib.getLibraryFileName().lastIndexOf('/'));
+				newIncludePath = includePath + "/"+ fileNameLib.getLibraryFileName().substring(0, fileNameLib.getLibraryFileName().lastIndexOf('/'));
 				//compilerSettings.setNewIncludePath(newIncludePath);
 			}
 		}
 		else{
 			modifiedIncludeLine = "# \"" + fileName + "\" #" + newLine;
-			includeFilePath = projectPath + File.separator + fileName;
+			includeFilePath = projectPath + "/" + fileName;
 		}
 		
 		sb.append(modifiedIncludeLine);
+		
+		// Get the absolute path of the include file
+		ClassLoader classLoader = getClass().getClassLoader();
+		includeFilePath = new File(classLoader.getResource(includeFilePath).getFile()).getAbsolutePath();
+		
+		String sourceFileName = new File(sourceFilePath).getName();
 		
 		// Process the included header file too
 		PreprocessorMain ppMain = new PreprocessorMain(includeFilePath);
@@ -116,7 +122,7 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		HashMap<String, HashMap<String, List<InputStream>>> includesVsPreProcessed = 
 			IncludesPreProcessed.getInstance();
 		HashMap<String, List<InputStream>> preprocessedIncludesListMap = 
-			includesVsPreProcessed.get(sourceFilePath);
+			includesVsPreProcessed.get(sourceFileName);
 		if(preprocessedIncludesListMap == null){
 			preprocessedIncludesListMap = new HashMap<String, List<InputStream>>();
 		}
@@ -129,14 +135,14 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		
 		preprocessedIncludesListMap.put(modifiedIncludeLine.trim(), preprocessedIncludes);
 		
-		includesVsPreProcessed.put(sourceFilePath, preprocessedIncludesListMap);
+		includesVsPreProcessed.put(sourceFileName, preprocessedIncludesListMap);
 		
 		//Reset to original include Path
 		compilerSettings.setIncludePath(includePath);
 		
 		return sb;
 	}
-
+	
 	public String toString(){
 		if(includeType == LIB)
 			return fileNameLib.toString();

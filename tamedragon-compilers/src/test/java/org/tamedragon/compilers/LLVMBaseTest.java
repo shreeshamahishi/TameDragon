@@ -48,8 +48,7 @@ public class LLVMBaseTest {
 	// should be moved to Core.
 	protected List<String> getRawLLVRIRInstrs(String rootPath, String srcFileName) throws Exception {
 		CompilationContext compilationContext = new CompilationContext();
-		List<IRTree> irTreeList = 
-			generateIRTreeFromCSource(properties, rootPath, srcFileName, compilationContext);
+		List<IRTree> irTreeList = generateIRTreeFromCSource(properties, rootPath, srcFileName, compilationContext);
 
 		LLVMIRGenerator llvmirGenerator = new LLVMIRGenerator(properties, compilationContext, srcFileName);
 		for(IRTree body : irTreeList)

@@ -1,36 +1,26 @@
 package org.tamedragon.compilers.clang.tests;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.CommonTokenStream;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tamedragon.assemblyabstractions.constructs.AssemStm;
 import org.tamedragon.assemblyabstractions.constructs.AssemStmList;
-import org.tamedragon.compilers.clang.abssyntree.ClangLLLexer;
-import org.tamedragon.compilers.clang.abssyntree.ClangLLParser;
-import org.tamedragon.compilers.clang.abssyntree.TranslationUnit;
-import org.tamedragon.compilers.clang.preprocessor.CPreprocessorLLLexer;
-import org.tamedragon.compilers.clang.preprocessor.CPreprocessorLLParser;
 import org.tamedragon.compilers.clang.preprocessor.DefinitionsMap;
-import org.tamedragon.compilers.clang.preprocessor.PreprocessorSegments;
-import org.tamedragon.compilers.clang.semantics.Environments;
 
 public class TestInitializer {
 	
 	protected Properties settings;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(TestInitializer.class);
 	
 	public TestInitializer(){
 		
@@ -39,7 +29,7 @@ public class TestInitializer {
 			settings.load(new FileReader(new File("CompilerSettings.properties")));
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			LOG.warn("Configuration file not found.");
 		}
 	}
 	
@@ -114,5 +104,16 @@ public class TestInitializer {
 		
 		return flatList;
 		
+	}
+	
+	protected String getFileName(String filePath) {
+		File file = new File(filePath);
+		return file.getName();
+	}
+	
+	protected String getFullFilePath(String filePath) {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(filePath).getFile());
+		return file.getAbsolutePath();
 	}
 }

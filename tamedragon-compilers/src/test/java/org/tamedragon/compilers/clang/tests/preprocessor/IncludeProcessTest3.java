@@ -42,6 +42,9 @@ public class IncludeProcessTest3 extends TestInitializer {
 		compilerSettings.setCompilationContext(compilationContext);
 
 		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest3.c"; 
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);		
 
@@ -88,14 +91,14 @@ public class IncludeProcessTest3 extends TestInitializer {
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext); 	    
+		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext); 	    
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		assertTrue(errorHandler.getNumErrors() == 3);
-
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + File.separator + "IdDir3Header2.h";		
 		
 		// Check the errors in IdDir3Header2.h
+		String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "IdDir3Header2.h";		
+		
 		int count = 1;	
 		
 		ErrorIterator iter = new ErrorIterator(includeFile2);
@@ -123,31 +126,6 @@ public class IncludeProcessTest3 extends TestInitializer {
 		}
 		
 		assertTrue(count == 3);		
-
-		// Check the errors in the main test file
-		count = 1;	
 		
-		iter = new ErrorIterator(sourceFilePath);
-		try{
-			while(iter.hasNext()){
-				SourceLocationAndMsg srcLcAndMsg =  iter.next();
-				SourceLocation srcLc = srcLcAndMsg.getSrcLocation();
-				String msg = srcLcAndMsg.getMsg();
-				
-				int line = srcLc.getLineNum();
-				
-				if(count == 1){
-					assertTrue(line == 14); 
-					assertTrue(msg.equals(ErrorHandler.ERROR + "xyz" + ErrorHandler.E_NOT_DEFINED));
-				}
-				
-				count++;
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		assertTrue(count == 2);		
 	}
 }

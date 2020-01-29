@@ -3,6 +3,7 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -25,8 +26,12 @@ public class MultipleIncludeTest1 extends TestInitializer {
 	public void setUp(){		
 		sourceFilePath ="CSrc/Preprocessor/MultipleIncludeTest1.c"; 
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
-		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		String absolutePath = file.getAbsolutePath();
+		
+		PreprocessorMain ppMain = new PreprocessorMain(absolutePath);
+		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(absolutePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
 		assertNotNull(preprocessorSegments);			

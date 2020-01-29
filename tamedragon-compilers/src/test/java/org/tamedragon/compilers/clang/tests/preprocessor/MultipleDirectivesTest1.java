@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -35,6 +36,9 @@ public class MultipleDirectivesTest1 extends TestInitializer {
 	@Before
 	public void setUp(){		
 		sourceFilePath ="CSrc/Preprocessor/MultipleDirectivesTest1.c"; 
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
 		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);

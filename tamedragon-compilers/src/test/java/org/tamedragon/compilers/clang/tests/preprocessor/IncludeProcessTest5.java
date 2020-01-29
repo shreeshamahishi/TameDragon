@@ -50,6 +50,9 @@ public class IncludeProcessTest5 extends TestInitializer {
 		compilerSettings.setCompilationContext(compilationContext);
 		
 		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest5.c"; 
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
 		
 		// Start with a clean slate
 		errorHandler = ErrorHandler.getInstance();
@@ -100,14 +103,16 @@ public class IncludeProcessTest5 extends TestInitializer {
 		assertTrue( defsMap.getDefinition("_H4_").equals(""));
 		
 		// Check the inputstreams for the included files
-		String includeFile1 = compilerSettings.getInstanceProjectPath() + File.separator + "h3.h";
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + File.separator + "h4.h";
+		String includeFile1 = compilerSettings.getInstanceProjectPath() + "/" + "h3.h";
+		includeFile1 = getFullFilePath(includeFile1);
+		String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "h4.h";
+		includeFile2 = getFullFilePath(includeFile2);
 		
 		HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
 		keys = includesPreProcessed.keySet();
 		assertTrue(keys.size() == 2);
 		
-		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(sourceFilePath);
+		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(getFileName(sourceFilePath));
 		assertTrue(includesMapInFile1 != null);
 		assertTrue(includesMapInFile1.size() == 2);
 		String includeStr1 = "# \"h3.h\" #";
@@ -116,7 +121,7 @@ public class IncludeProcessTest5 extends TestInitializer {
 		verifyPreprocessedInclude(includesMapInFile1, includeStr1, includeFile1);
 		verifyPreprocessedInclude(includesMapInFile1, includeStr2, includeFile2);
 				
-		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(includeFile1);
+		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(getFileName(includeFile1));
 		assertTrue(includesMapInFile2 != null);
 		assertTrue(includesMapInFile2.size() == 1);
 		String includeStr3 = "# \"h4.h\" #";

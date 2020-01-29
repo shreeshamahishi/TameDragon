@@ -8,7 +8,7 @@ import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.common.optimization.SparseConditionalConstantPropagation;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class SccpTests extends LLVMBaseTest {
@@ -18,7 +18,7 @@ public class SccpTests extends LLVMBaseTest {
 	@Test
 	public void runSCCP1() throws Exception {
 		String cSrcfilename =  "SCCP1.c";
-		String llvmOutFileName = "SccpOut1.bc";
+		String llvmOutFileName = "SccpOut1.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}
@@ -26,7 +26,7 @@ public class SccpTests extends LLVMBaseTest {
 	@Test
 	public void runSCCP2() throws Exception {
 		String cSrcfilename =  "SCCP2.c";
-		String llvmOutFileName = "SccpOut2.bc";
+		String llvmOutFileName = "SccpOut2.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}
@@ -34,7 +34,7 @@ public class SccpTests extends LLVMBaseTest {
 	@Test
 	public void runSCCP3() throws Exception {
 		String cSrcfilename =  "SCCP3.c";
-		String llvmOutFileName = "SccpOut3.bc";
+		String llvmOutFileName = "SccpOut3.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}
@@ -66,6 +66,6 @@ public class SccpTests extends LLVMBaseTest {
 		instrsAfterOpt = emitter.emitInstructions(function);
 		printAsm(instrsAfterOpt);
 		
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
 	}
 }

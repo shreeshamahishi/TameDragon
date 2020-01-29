@@ -5,7 +5,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
@@ -16,7 +16,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testSimplePostfix(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "testPostfix.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPostfixLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPostfixLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -28,7 +28,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testAssigningAPostfixExpr(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "assigningAPostfixExpr.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningAPostfixExprLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningAPostfixExprLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -40,7 +40,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPostFixSub(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "testPostFixSubtraction.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPostFixSubtractionLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPostFixSubtractionLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -52,7 +52,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testAssigningADecrPostfixExpr(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "assigningADecrPostfixExpr.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningADecrPostfixExprLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningADecrPostfixExprLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPrefix(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "testPrefix.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPrefixLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "testPrefixLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -76,7 +76,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testAssigningPrefixExpr(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "assigningAPrefixExpr.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningAPrefixExprLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "assigningAPrefixExprLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -88,7 +88,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPostfixReturn(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "postfixReturn.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "postfixReturnLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "postfixReturnLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -100,7 +100,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPrefixReturn(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "prefixReturn.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "prefixReturnLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "prefixReturnLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -112,7 +112,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testDoublePostfix(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "doublepostfix.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "doublepostfixLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "doublepostfixLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +124,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPostfixFollowedByPrefix(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "postfixFollowedByPrefix.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "postfixFollowedByPrefixLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "postfixFollowedByPrefixLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -136,7 +136,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testRandomTest(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "randomTest.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "randomTestLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "randomTestLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +148,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPointerPrefixArithmatic(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "pointerPrefixArithmatic.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "pointerPrefixArithmaticLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "pointerPrefixArithmaticLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -160,7 +160,7 @@ public class IRTreeGenTestPostfixAndPrefixExprs extends LLVMBaseTest{
 	public void testPointerPostfixArithmatic(){
 		try {
 			List<String> listOfDynamicInstrsCreated = getRawLLVRIRInstrs(projectPath, "pointerPostfixArithmatic.c");
-			assertTrue(ComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "pointerPostfixArithmaticLLVMIR.bc"));
+			assertTrue(LLVMIRComparisionUtils.compare(listOfDynamicInstrsCreated, projectPath, "pointerPostfixArithmaticLLVMIR.ll"));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

@@ -3,6 +3,7 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -37,8 +38,12 @@ public class ConditionalTest10 extends TestInitializer {
 		environments.reset();
 		sourceFilePath ="CSrc/Preprocessor/ConditionalTest10.c"; 
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
-		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		String absolutePath = file.getAbsolutePath();
+		
+		PreprocessorMain ppMain = new PreprocessorMain(absolutePath);
+		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(absolutePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
 		assertNotNull(preprocessorSegments);			
@@ -58,7 +63,11 @@ public class ConditionalTest10 extends TestInitializer {
 		assertTrue(units.get(3).getPreprocessorUnitType() == PreprocessorUnit.CONDITIONAL);
 		assertTrue(units.get(4).getPreprocessorUnitType() == PreprocessorUnit.PROGRAM_CODE);
 		
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);		
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		String absolutePath = file.getAbsolutePath();
+		
+		StringBuffer sb = preprocessorSegments.process(absolutePath, true);		
 		String codeText = sb.toString();
 		
 		/*System.out.println("************ FINAL PROCESSED CODE: ");
@@ -71,7 +80,7 @@ public class ConditionalTest10 extends TestInitializer {
 		assertTrue(!codeText.contains("#else"));   // should not have any more directives
 		assertTrue(!codeText.contains("#elif"));   // should not have any more directives
 		
-		int numLinesInCode = getNumLinesInFile(sourceFilePath);
+		int numLinesInCode = getNumLinesInFile(absolutePath);
 		int numLinesInProcessedCode = getNumLinesInString(codeText);
 		
 		System.out.println(codeText);
@@ -87,7 +96,11 @@ public class ConditionalTest10 extends TestInitializer {
 		ErrorHandler errorHandler = ErrorHandler.getInstance();
 		errorHandler.reset();
 
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		String absolutePath = file.getAbsolutePath();
+		
+		PreprocessorMain ppMain = new PreprocessorMain(absolutePath);			
 		InputStream sourceFileInputStream = ppMain.process(true); 
 		TranslationUnit translationUnit = CLangUtils.getTranslationByLLParsing(sourceFileInputStream);
 		CompilationContext compilationContext = new CompilationContext();

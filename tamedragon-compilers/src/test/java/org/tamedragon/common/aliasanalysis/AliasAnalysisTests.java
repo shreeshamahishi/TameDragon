@@ -27,7 +27,18 @@ import org.tamedragon.compilers.LLVMBaseTest;
 
 public class AliasAnalysisTests extends LLVMBaseTest{
 
-//	private static final String ROOT_PATH = "CSrc/AliasAnalysis/";
+	private static final String ROOT_PATH = "CSrc/AliasAnalysis/";
+	
+	@Test
+	public void test1() throws Exception {
+		String cSrcfilename =  "Prog1.c";
+		
+		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+	}
+	
+	
+	
+//	
 //
 //	private BasicAliasAnalysis basicAliasAnalysis;
 //

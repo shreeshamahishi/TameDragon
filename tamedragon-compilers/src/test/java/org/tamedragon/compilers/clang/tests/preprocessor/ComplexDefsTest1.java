@@ -3,6 +3,7 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.junit.Before;
@@ -25,6 +26,9 @@ public class ComplexDefsTest1 extends TestInitializer {
 		environments.reset();	
 		
 		sourceFilePath ="CSrc/Preprocessor/ComplexDefsTest1.c"; 
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
 		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);

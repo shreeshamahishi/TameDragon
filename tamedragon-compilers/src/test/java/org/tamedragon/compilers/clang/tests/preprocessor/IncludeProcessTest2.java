@@ -3,6 +3,7 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -40,6 +41,11 @@ public class IncludeProcessTest2 extends TestInitializer {
 		compilerSettings.setCompilationContext(compilationContext);
 
 		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest2.c"; 
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource(sourceFilePath).getFile());
+		sourceFilePath = file.getAbsolutePath();
+		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);		
 
@@ -82,14 +88,14 @@ public class IncludeProcessTest2 extends TestInitializer {
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext);	    
+		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext);	    
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		assertTrue(errorHandler.getNumErrors() == 1);
 
 		int count = 1;	
 
-		ErrorIterator iter = new ErrorIterator(sourceFilePath);
+		ErrorIterator iter = new ErrorIterator(getFileName(sourceFilePath));
 		try{
 			while(iter.hasNext()){
 				SourceLocationAndMsg srcLcAndMsg =  iter.next();

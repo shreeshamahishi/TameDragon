@@ -10,7 +10,7 @@ import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.LoopStrengthReduce;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
 
 public class IndVarLoopReduce extends LLVMBaseTest {
@@ -21,7 +21,7 @@ public class IndVarLoopReduce extends LLVMBaseTest {
 	@Test
 	public void runLoopNewVarsInsideLoop() throws Exception {
 		String cSrcfilename =  "LoopNewVarsInsideLoop.c";
-		String llvmOutFileName = "LoopNewVarsInsideLoopOut.bc";
+		String llvmOutFileName = "LoopNewVarsInsideLoopOut.ll";
 
 		runIndVarLoopReduce(cSrcfilename, llvmOutFileName);
 	}
@@ -32,8 +32,6 @@ public class IndVarLoopReduce extends LLVMBaseTest {
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();
-
-		// There can be only one function to test Loop reduce in the module.
 
 		Function function = functions.get(0);
 
@@ -53,7 +51,7 @@ public class IndVarLoopReduce extends LLVMBaseTest {
 		instrsAfterOpt = emitter.emitInstructions(function);
 		printAsm(instrsAfterOpt);
 		
-		assertTrue(ComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
 		
 	}
 }
