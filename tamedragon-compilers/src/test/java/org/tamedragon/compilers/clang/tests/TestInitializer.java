@@ -105,15 +105,4 @@ public class TestInitializer {
 		return flatList;
 		
 	}
-	
-	protected String getFileName(String filePath) {
-		File file = new File(filePath);
-		return file.getName();
-	}
-	
-	protected String getFullFilePath(String filePath) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource(filePath).getFile());
-		return file.getAbsolutePath();
-	}
 }

@@ -7,6 +7,7 @@ public class CompilerSettings {
 	private String target;
 	private String includePath;	
 	private String newIncludePath;
+	private String projectRoot;
 	private String projectPath;
 	private String replaceTrigraphSequences;
 	private String newLine;
@@ -146,5 +147,13 @@ public class CompilerSettings {
 
 	public void setDebugMode(String debugMode) {
 		this.debugMode = debugMode;
+	}
+
+	public String getProjectRoot() {
+		return projectRoot;
+	}
+
+	public void setProjectRoot(String projectRoot) {
+		this.projectRoot = projectRoot;
 	} 
 }

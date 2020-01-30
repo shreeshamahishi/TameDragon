@@ -21,6 +21,7 @@ import org.tamedragon.common.controlflowanalysis.LoopNestingTree;
 import org.tamedragon.common.controlflowanalysis.LoopNestingTreeNode;
 import org.tamedragon.common.llvmir.instructions.CFG;
 import org.tamedragon.common.llvmir.instructions.CallingConv;
+import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.Function;
@@ -30,13 +31,19 @@ import org.tamedragon.common.llvmir.types.Type;
 import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.compilers.LLVMBaseTest;
+import org.tamedragon.compilers.clang.CLangUtils;
+import org.tamedragon.compilers.clang.CompilerSettings;
 
 public class LoopIdentifierTests extends LLVMBaseTest{
 
-	private static final String ROOT_PATH = "CSrc/ControlFlowAnalysis/LoopIdentifierTests";
 	private CompilationContext compilationContext;
 	private Function function;
 	
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/ControlFlowAnalysis/LoopIdentifierTests/";
+	private String projectRootPath;
+	
+
 	
 	@Before
 	public void setUp(){
@@ -55,6 +62,14 @@ public class LoopIdentifierTests extends LLVMBaseTest{
 		Module module = new Module("sampleModule", compilationContext, null);
 		CFG cfg = new CFG();
 		function = Function.create(module, ptrToFunctype, null, CallingConv.C, "foo", cfg);
+		
+		properties = LLVMUtility.getDefaultProperties();
+		
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
+
+		projectRootPath = compilerSettings.getProjectRoot();
 	}
 	
 	@Test
@@ -416,7 +431,7 @@ public class LoopIdentifierTests extends LLVMBaseTest{
 	private Function getCFGAfterMemRegAndEmptyBBRemoval(String cSrcfilename)
 			throws Exception{
 		
-		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+		getRawLLVRIRInstrs(projectRootPath + projectPath, cSrcfilename);
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();
@@ -436,7 +451,7 @@ public class LoopIdentifierTests extends LLVMBaseTest{
 
 	private LoopIdentifier runLoopAnalyzer(String cSrcfilename) throws Exception  {
 
-		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+		getRawLLVRIRInstrs(projectRootPath + projectPath, cSrcfilename);
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();

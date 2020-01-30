@@ -11,21 +11,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import org.tamedragon.common.controlflowanalysis.IndVarExpression;
 import org.tamedragon.common.controlflowanalysis.InductionVariable;
 import org.tamedragon.common.controlflowanalysis.InductionVariableAnalysis;
+import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.llvmir.types.Value;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.compilers.LLVMBaseTest;
+import org.tamedragon.compilers.clang.CLangUtils;
+import org.tamedragon.compilers.clang.CompilerSettings;
 
 public class IndVarTests extends LLVMBaseTest{
+	
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/ControlFlowAnalysis/IndVarIdentificationTests/";
+	private String projectRootPath;
+	
+	@Before
+	public void setUp(){		
+		super.setUp();
+		properties = LLVMUtility.getDefaultProperties();
+		
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
 
-	private static final String ROOT_PATH = "CSrc/ControlFlowAnalysis/IndVarIdentificationTests";
+		projectRootPath = compilerSettings.getProjectRoot();
+	}
+	
 
 	@Test
 	public void analyzeSimpleForLoop() throws Exception {
@@ -572,7 +591,7 @@ public class IndVarTests extends LLVMBaseTest{
 
 	private InductionVariableAnalysis runIndVarAnalyzer(String cSrcfilename) throws Exception  {
 
-		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+		getRawLLVRIRInstrs(projectRootPath + projectPath, cSrcfilename);
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();

@@ -77,10 +77,10 @@ public class LLVMBaseTest {
 	
 	private static List<IRTree> generateIRTreeFromCSource(Properties properties, String path, String filename, 
 			CompilationContext compilationContext) throws Exception {
-		CLangUtils.populateSettings();
+		//CLangUtils.populateSettings();
 		CompilerSettings compilerSettings = CompilerSettings.getInstance();
 		compilerSettings.setCompilationContext(compilationContext);
-		compilerSettings.setInstanceProjectPath(path);
+		//compilerSettings.setInstanceProjectPath(path);
 		ErrorHandler errorHandler = ErrorHandler.getInstance();
 		errorHandler.reset();
 		DefinitionsMap defsMap = DefinitionsMap.getInstance();
@@ -94,20 +94,17 @@ public class LLVMBaseTest {
 			EnvironmentConstants.VALUES.put(EnvironmentConstants.MODE, EnvironmentConstants.DEBUG_MODE);
 		}
 
-		String fullFilePath = path + "/" + filename;
-
-		ClassLoader classLoader = new LLVMBaseTest().getClass().getClassLoader();
-		File file = new File(classLoader.getResource(fullFilePath).getFile());
+		String fullFilePath = path + filename;
 
 		// Run the pre-processor			
-		PreprocessorMain ppMain = new PreprocessorMain(file.getAbsolutePath());
+		PreprocessorMain ppMain = new PreprocessorMain(fullFilePath);
 		InputStream is = ppMain.process(true); 
 
 		// Translate to abstract syntax tree
 		TranslationUnit translationUnit = CLangUtils.getTranslationByLLParsing(is);
 
 		// Pass through semantic analyzer and translate to assembly tree
-		Semantic semanticAnalyzer = new Semantic(properties, filename, compilationContext); 	    
+		Semantic semanticAnalyzer = new Semantic(properties, fullFilePath, compilationContext); 	    
 		List<ClangTransUnit> translationUnits =  semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		if(errorHandler.getNumErrors() != 0) 

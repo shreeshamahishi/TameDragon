@@ -2,18 +2,38 @@ package org.tamedragon.compilers.opts;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
+
+import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
+import org.tamedragon.compilers.clang.CLangUtils;
+import org.tamedragon.compilers.clang.CompilerSettings;
 
 public class Mem2RegTests extends LLVMBaseTest {
 
-	private final static String ROOT_PATH = "CSrc/Optimizations/Mem2RegTests";
+	
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/Optimizations/Mem2RegTests/";
+	private String projectRootPath;
+	
+	@Before
+	public void setUp(){		
+		super.setUp();
+		properties = LLVMUtility.getDefaultProperties();
+		
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
+
+		projectRootPath = compilerSettings.getProjectRoot();
+	}
 	
 	@Test
 	public void runSimpleStraightLineProg() throws Exception {
@@ -198,7 +218,7 @@ public class Mem2RegTests extends LLVMBaseTest {
 	private void runMem2Reg(String srcFileName, String llvmOutFileName)
 	throws Exception {
 
-		getRawLLVRIRInstrs(ROOT_PATH, srcFileName);
+		getRawLLVRIRInstrs(projectRootPath + projectPath, srcFileName);
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();
@@ -214,7 +234,7 @@ public class Mem2RegTests extends LLVMBaseTest {
 		emitter.reset();
 		List<String> instrsAfterOpt = emitter.emitInstructions(function.getParent());
 		printAsm(instrsAfterOpt);
-		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, projectPath, llvmOutFileName));
 
 	}
 }

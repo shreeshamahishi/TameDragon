@@ -19,13 +19,13 @@ import org.tamedragon.compilers.clang.abssyntree.TranslationUnit;
  */
 
 public class CLangUtils {
-	
+
 	public static void populateSettings(){		
 		Properties settings = new Properties();
-		
+
 		ClassLoader classLoader = new CLangUtils().getClass().getClassLoader();
 		File propertiesRefFile = new File(classLoader.getResource("CompilerSettings.properties").getFile());
-		
+
 		try{
 			settings.load(new FileReader(propertiesRefFile));
 		}
@@ -33,9 +33,9 @@ public class CLangUtils {
 			ErrorHandler errorHandler = ErrorHandler.getInstance();
 			errorHandler.addError(null, null, ErrorHandler.WARNING, null, ErrorHandler.W_SETTINGS_NO_PROPERTIES_FOUND);
 		}
-		
+
 		CompilerSettings compilerSettings = CompilerSettings.getInstance();
-		
+
 		// Set the mode (debug or release)
 		String debugMode = settings.getProperty("debugMode");
 		if(debugMode != null){
@@ -44,7 +44,7 @@ public class CLangUtils {
 		else{   // Default is true
 			compilerSettings.setInstanceReplaceTrigraphSequences("Y");
 		}	
-		
+
 		// Set the target		
 		String targetDesc = settings.getProperty("target");
 		if(targetDesc != null){
@@ -53,7 +53,7 @@ public class CLangUtils {
 		else{  // Use MIPS are default
 			compilerSettings.setInstanceTarget("MIPS");
 		}
-		
+
 		// Set the replace trigraph sequence flag
 		String replacets = settings.getProperty("replaceTrigraphSequences");
 		if(replacets != null){
@@ -62,7 +62,7 @@ public class CLangUtils {
 		else{   // Default is true
 			compilerSettings.setInstanceReplaceTrigraphSequences("Y");
 		}	
-		
+
 		// Set the include path
 		String includePathStr = settings.getProperty("includePath");
 		if(includePathStr != null){
@@ -71,7 +71,7 @@ public class CLangUtils {
 		else{   // Default is current folder
 			compilerSettings.setInstanceIncludePath(File.pathSeparator);
 		}	
-		
+
 		// Set the project path
 		String projectPathStr = settings.getProperty("projectPath");
 		if(includePathStr != null){
@@ -80,7 +80,17 @@ public class CLangUtils {
 		else{   // Default is current folder
 			compilerSettings.setInstanceProjectPath(File.pathSeparator);
 		}	
-		
+
+		// Set the project root path
+		String projectRootStr = settings.getProperty("projectRoot");
+		if(projectRootStr != null){
+			compilerSettings.setProjectRoot(projectRootStr);
+		}
+		else{   // Default is current folder
+			compilerSettings.setInstanceProjectPath(File.pathSeparator);
+		}	
+
+
 		// Set the project path
 		String newLineStr = settings.getProperty("newLine");
 		if(includePathStr != null){
@@ -90,7 +100,7 @@ public class CLangUtils {
 			compilerSettings.setInstanceNewLine("\r\n");
 		}	
 	}
-	
+
 	public static TranslationUnit getTranslationByLLParsing(InputStream sourceInputStream){
 		TranslationUnit tu = null;
 		try
@@ -124,7 +134,7 @@ public class CLangUtils {
 
 		return tu;
 	}
-	
+
 	public static TranslationUnit getTranslationByLLParsing(String sourceFilePath){
 		TranslationUnit tu = null;
 		try
@@ -136,13 +146,13 @@ public class CLangUtils {
 		catch(Exception e) {			
 			e.printStackTrace();
 		}
-		
+
 		return tu;
 	}  
-	
-	
+
+
 	public static StringBuffer getStringBufferFromInputStream(InputStream is){
-		
+
 		String text = "";
 		try{
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -155,8 +165,8 @@ public class CLangUtils {
 			e.printStackTrace();
 		}
 		return new StringBuffer(text);
-		
+
 	}
-	
-	
+
+
 }

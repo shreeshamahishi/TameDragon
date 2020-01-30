@@ -18,6 +18,7 @@ import org.tamedragon.compilers.clang.ErrorIterator;
 import org.tamedragon.compilers.clang.SourceLocation;
 import org.tamedragon.compilers.clang.SourceLocationAndMsg;
 import org.tamedragon.compilers.clang.abssyntree.TranslationUnit;
+import org.tamedragon.compilers.clang.preprocessor.DefinitionsMap;
 import org.tamedragon.compilers.clang.preprocessor.PreprocessorMain;
 import org.tamedragon.compilers.clang.preprocessor.PreprocessorSegments;
 import org.tamedragon.compilers.clang.semantics.Environments;
@@ -27,43 +28,49 @@ import org.tamedragon.compilers.clang.tests.TestInitializer;
 public class IncludeProcessTest4 extends TestInitializer {
 
 	private String sourceFilePath;
-	private Environments environments;
+	DefinitionsMap defsMap;
+	Environments environments;
 	private ErrorHandler errorHandler ;
-	private String targetDesc;
 	private Properties properties;
+	private CompilerSettings compilerSettings;
+	private String projectRootPath;
+
+	private String projectPath = "CSrc/Preprocessor/";
+
 	@Before
 	public void setUp(){		
 		properties = LLVMUtility.getDefaultProperties();
 		CLangUtils.populateSettings();
-		CompilerSettings compilerSettings = CompilerSettings.getInstance();
-		compilerSettings.setInstanceProjectPath("CSrc/Preprocessor");
+		compilerSettings = CompilerSettings.getInstance();
+		projectRootPath = compilerSettings.getProjectRoot();
+		compilerSettings.setProjectPath(projectPath);
 		CompilationContext compilationContext = new CompilationContext();
 		compilerSettings.setCompilationContext(compilationContext);
 
-		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest4.c"; 	
-		
+		sourceFilePath = projectRootPath + projectPath + "IncludeProcessTest4.c"; 
+
 		environments = Environments.getInstance();		
 		errorHandler = ErrorHandler.getInstance();
-		
-		targetDesc = compilerSettings.getInstanceTarget();
-		
+
+		// Start with a clean slate
+		errorHandler = ErrorHandler.getInstance();
+		errorHandler.reset();
+		defsMap = DefinitionsMap.getInstance();
+		defsMap.clearDefinitions();
+		environments = Environments.getInstance();
+		environments.reset();	
+
 	}
 
 	@Test
 	public void testInclude4() {     
-
-		
-		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest4.c"; 
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource(sourceFilePath).getFile());
-		sourceFilePath = file.getAbsolutePath();
 		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		PreprocessorSegments preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
 		assertNotNull(preprocessorSegments);
 		String codeText = preprocessorSegments.process(sourceFilePath, true).toString();
-				
+
 		int numLinesInCode = getNumLinesInFile(sourceFilePath);
 		int numLinesInProcessedCode = getNumLinesInString(codeText);
 
@@ -72,7 +79,7 @@ public class IncludeProcessTest4 extends TestInitializer {
 		assertTrue(numLinesInCode == numLinesInProcessedCode);
 
 		// Run the parser and the semantic analyzer
-//		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		//		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream sourceFileInputStream = ppMain.process(true); 
 
 		// Translate to abstract syntax tree

@@ -3,7 +3,6 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -32,24 +31,45 @@ public class IncludeProcessTest3 extends TestInitializer {
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;
 	private Properties properties;
+	
+	private CompilerSettings compilerSettings;
+	private String projectRootPath;
+	private ErrorHandler errorHandler ;
+	DefinitionsMap defsMap;
+	Environments environments;
+
+	private String projectPath = "CSrc/Preprocessor/";
+		
 	@Before
 	public void setUp(){		
 		properties = LLVMUtility.getDefaultProperties();
+		
 		CLangUtils.populateSettings();
-		CompilerSettings compilerSettings = CompilerSettings.getInstance();
-		compilerSettings.setInstanceProjectPath("CSrc/Preprocessor");
+		compilerSettings = CompilerSettings.getInstance();
+		projectRootPath = compilerSettings.getProjectRoot();
+		compilerSettings.setProjectPath(projectPath);
+		
 		CompilationContext compilationContext = new CompilationContext();
 		compilerSettings.setCompilationContext(compilationContext);
-
-		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest3.c"; 
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource(sourceFilePath).getFile());
-		sourceFilePath = file.getAbsolutePath();
+		
+		sourceFilePath = projectRootPath + projectPath + "IncludeProcessTest3.c"; 
+	
+		// Start with a clean slate
+		errorHandler = ErrorHandler.getInstance();
+		errorHandler.reset();
+		defsMap = DefinitionsMap.getInstance();
+		defsMap.clearDefinitions();
+		environments = Environments.getInstance();
+		environments.reset();		
+		//HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
+		//includesPreProcessed.clear();
+		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);		
 
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
-		assertNotNull(preprocessorSegments);				
+		assertNotNull(preprocessorSegments);			
+		
 	}
 
 	@Test
@@ -91,13 +111,14 @@ public class IncludeProcessTest3 extends TestInitializer {
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext); 	    
+		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext); 	    
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		assertTrue(errorHandler.getNumErrors() == 3);
 		
 		// Check the errors in IdDir3Header2.h
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "IdDir3Header2.h";		
+		//String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "IdDir3Header2.h";		
+		String includeFile2 = projectRootPath + projectPath + "IdDir3Header2.h";
 		
 		int count = 1;	
 		

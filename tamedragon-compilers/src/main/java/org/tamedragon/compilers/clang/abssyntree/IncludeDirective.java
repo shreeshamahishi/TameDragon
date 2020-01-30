@@ -78,6 +78,7 @@ public class IncludeDirective extends ExternDeclaration {
 	public List<ClangTransUnit>  process(Properties properties){
 
 		// GET THE INCLUDE PATH FOR SYSTEM LIBRARIES AND THE PROJECT PATH
+		String projectRootPath = CompilerSettings.getInstance().getProjectRoot();
 		String includePath = CompilerSettings.getInstance().getIncludePath();
 		String projectPath = CompilerSettings.getInstance().getProjectPath();
 
@@ -90,7 +91,7 @@ public class IncludeDirective extends ExternDeclaration {
 		else{
 			// TODO Do we need to process this each time?
 			includeStr = "# \"" + fileName + "\" #";
-			includeFilePath = projectPath + "/" + fileName;
+			includeFilePath = projectRootPath + projectPath + fileName;
 		}
 
 		InputStream preprocesedIncludedFileStream = null;		

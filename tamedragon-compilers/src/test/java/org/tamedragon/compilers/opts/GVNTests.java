@@ -2,19 +2,39 @@ package org.tamedragon.compilers.opts;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
+
+import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.optimization.GVN;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.common.utils.LLVMIRComparisionUtils;
 import org.tamedragon.compilers.LLVMBaseTest;
+import org.tamedragon.compilers.clang.CLangUtils;
+import org.tamedragon.compilers.clang.CompilerSettings;
 
 public class GVNTests extends LLVMBaseTest{
-	private static final String ROOT_PATH = "CSrc/Optimizations/GVNTests";
 
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/Optimizations/GVNTests/";
+	private String projectRootPath;
+	
+	@Before
+	public void setUp(){		
+		super.setUp();
+		properties = LLVMUtility.getDefaultProperties();
+		
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
+
+		projectRootPath = compilerSettings.getProjectRoot();
+	}
+	
 	@Ignore
 	@Test
 	public void runGVN1() throws Exception {
@@ -159,7 +179,7 @@ public class GVNTests extends LLVMBaseTest{
 
 	private void runGVN(String cSrcfilename, String llvmOutFileName) throws Exception  {
 
-		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+		getRawLLVRIRInstrs(projectRootPath + projectPath, cSrcfilename);
 
 		Module module = getModule();
 		List<Function> functions = module.getFunctions();
@@ -185,6 +205,6 @@ public class GVNTests extends LLVMBaseTest{
 		System.out.println("AFTER GVN: ");
 		printAsm(instrsAfterOpt);
 
-		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, ROOT_PATH, llvmOutFileName));
+		assertTrue(LLVMIRComparisionUtils.compare(instrsAfterOpt, projectPath, llvmOutFileName));
 	}
 }

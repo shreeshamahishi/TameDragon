@@ -3,8 +3,10 @@ package org.tamedragon.compilers.clang.tests.preprocessor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -37,24 +39,25 @@ public class IncludeProcessTest1 extends TestInitializer {
 	private ErrorHandler errorHandler ;
 	DefinitionsMap defsMap;
 	Environments environments;
-	
+
 	private Properties properties;
-		
+
+	private String projectPath = "CSrc/Preprocessor/";
+
 	@Before
 	public void setUp(){		
 		properties = LLVMUtility.getDefaultProperties();
+
 		CLangUtils.populateSettings();
 		compilerSettings = CompilerSettings.getInstance();
-		compilerSettings.setInstanceIncludePath("include");
-		compilerSettings.setInstanceProjectPath("CSrc/Preprocessor");
+		String projectRootPath = compilerSettings.getProjectRoot();
+		compilerSettings.setProjectPath(projectPath);
+
 		CompilationContext compilationContext = new CompilationContext();
 		compilerSettings.setCompilationContext(compilationContext);
-		
-		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest1.c"; 
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource(sourceFilePath).getFile());
-		sourceFilePath = file.getAbsolutePath();
-		
+
+		sourceFilePath = projectRootPath + projectPath + "IncludeProcessTest1.c"; 
+
 		// Start with a clean slate
 		errorHandler = ErrorHandler.getInstance();
 		errorHandler.reset();
@@ -65,32 +68,32 @@ public class IncludeProcessTest1 extends TestInitializer {
 		HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
 		includesPreProcessed.clear();
 	}
-	
+
 	@Test
 	public void test1() {   
-		
+
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
-		
+
 		PreprocessorSegments preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
 		assertNotNull(preprocessorSegments);	
-		
+
 		List<PreprocessorUnit> units = preprocessorSegments.getUnits();
 		assertNotNull(units);
 		assertTrue(units.size() == 7);
-		
+
 		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);
-				
+
 		System.out.println("Translated program = " + sb.toString());		
 	} 	
-	
+
 	@Test
 	public void test2() {   		
 
 		// Run the preprocessor on the sourceFile			
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
 		ppMain.process(true); 
-		
+
 		// Check the definitions map
 		Set<String> keys = defsMap.getKeys();
 		assertTrue(keys.size() == 7);
@@ -101,67 +104,66 @@ public class IncludeProcessTest1 extends TestInitializer {
 		assertTrue( defsMap.getDefinition("VAR5").equals("34"));
 		assertTrue( defsMap.getDefinition("MAX").equals("30"));
 		assertTrue( defsMap.getDefinition("MIN").equals("2"));
-		
+
 		// Check the inputstreams for the included files
-		String includeFile1 = compilerSettings.getInstanceProjectPath() + "/" + "h1.h";
-		includeFile1 = getFullFilePath(includeFile1);
-		String includeFile2 = compilerSettings.getInstanceProjectPath() + "/" + "h2.h";
-		includeFile2 = getFullFilePath(includeFile2);
-		
+		String projectRootPath = compilerSettings.getProjectRoot();
+
+		String includeFile1 = projectRootPath + projectPath + "h1.h";
+		String includeFile2 = projectRootPath + projectPath + "h2.h";
+
 		HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
 		keys = includesPreProcessed.keySet();
 		assertTrue(keys.size() == 2);
-		
-		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(getFileName(sourceFilePath));
+
+		HashMap<String, List<InputStream>> includesMapInFile1 = includesPreProcessed.get(sourceFilePath);
 		assertTrue(includesMapInFile1 != null);
 		assertTrue(includesMapInFile1.size() == 2);
 		String includeStr1 = "# \"h1.h\" #";
 		String includeStr2 = "# \"h2.h\" #";
-		
+
 		verifyPreprocessedInclude(includesMapInFile1, includeStr1, includeFile1);
 		verifyPreprocessedInclude(includesMapInFile1, includeStr2, includeFile2);
-				
-		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(getFileName(includeFile1));
+
+		HashMap<String, List<InputStream>> includesMapInFile2 = includesPreProcessed.get(includeFile1);
 		assertTrue(includesMapInFile2 != null);
 		assertTrue(includesMapInFile2.size() == 1);
 		String includeStr3 = "# \"h2.h\" #";
-		
+
 		verifyPreprocessedInclude(includesMapInFile2, includeStr3, includeFile2);		
 	} 
-	
+
 	@Test
-	public void test3() {   		
-		String targetDesc = compilerSettings.getInstanceTarget();
-				
+	public void test3() throws IOException {   		
+
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
 		InputStream sourceFileInputStream = ppMain.process(true); 
-		
-		String includeFile1 ="CSrc/Preprocessor/h1.h";
-		//includeFile1 = getFullFilePath(includeFile1);
-		String includeFile2 ="CSrc/Preprocessor/h2.h";
-		//includeFile2 = getFullFilePath(includeFile2);
-		
+
+		String projectRootPath = compilerSettings.getProjectRoot();
+
+		String includeFile1 = projectRootPath + projectPath + "h1.h";
+		String includeFile2 = projectRootPath + projectPath + "h2.h";
+
 		// Translate to abstract syntax tree
 		TranslationUnit translationUnit = CLangUtils.getTranslationByLLParsing(sourceFileInputStream);
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext);
+		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext);
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
-		
+
 		// Check the errors in h1.h
 		int count = 1;	
-		
+
 		ErrorIterator iter = new ErrorIterator(includeFile1);
 		try{
 			while(iter.hasNext()){
 				SourceLocationAndMsg srcLcAndMsg =  iter.next();
 				SourceLocation srcLc = srcLcAndMsg.getSrcLocation();
 				String msg = srcLcAndMsg.getMsg();
-				
+
 				int line = srcLc.getLineNum();
-				
+
 				if(count == 1){
 					assertTrue(line == 11); 
 					assertTrue(msg.equals(ErrorHandler.ERROR + "dup" + ErrorHandler.E_VARIABLE_ALREADY_INITIALIZED));		
@@ -172,21 +174,21 @@ public class IncludeProcessTest1 extends TestInitializer {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		
+
 		assertTrue(count == 2);		
 
 		// Check the errors in h2.h
 		count = 1;	
-		
+
 		iter = new ErrorIterator(includeFile2);
 		try{
 			while(iter.hasNext()){
 				SourceLocationAndMsg srcLcAndMsg =  iter.next();
 				SourceLocation srcLc = srcLcAndMsg.getSrcLocation();
 				String msg = srcLcAndMsg.getMsg();
-				
+
 				int line = srcLc.getLineNum();
-				
+
 				if(count == 1){
 					assertTrue(line == 4); 
 					assertTrue(msg.equals(ErrorHandler.ERROR + "h2def1" + ErrorHandler.E_VARIABLE_ALREADY_INITIALIZED));
@@ -205,13 +207,13 @@ public class IncludeProcessTest1 extends TestInitializer {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		
+
 		assertTrue(count == 4);		
-		
+
 	} 
-		
+
 	public void verifyPreprocessedInclude(HashMap<String, List<InputStream>> includesMapInFile,
-							String includeStr, String includee){
+			String includeStr, String includee){
 		List<InputStream> inclsFile1Incl1 =  includesMapInFile.get(includeStr);
 		assertNotNull(inclsFile1Incl1);
 		assertTrue(inclsFile1Incl1.size() == 1);
@@ -225,4 +227,17 @@ public class IncludeProcessTest1 extends TestInitializer {
 		assertTrue(numLinesInCode == numLinesInProcessedCode);
 
 	}	
+
+	private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = inputStream.read(buffer)) != -1) {
+			result.write(buffer, 0, length);
+		}
+
+		return result.toString(StandardCharsets.UTF_8.name());
+	}
+
 }

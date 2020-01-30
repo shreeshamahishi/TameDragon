@@ -75,8 +75,11 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		StringBuffer sb = new StringBuffer();
 		CompilerSettings compilerSettings = CompilerSettings.getInstance();
 		String newLine = compilerSettings.getInstanceNewLine();
-		String projectPath = compilerSettings.getInstanceProjectPath();
-		String includePath = compilerSettings.getInstanceIncludePath();
+		
+		String projectRootPath = CompilerSettings.getInstance().getProjectRoot();
+		String projectPath = compilerSettings.getProjectPath();
+		String includePath = compilerSettings.getIncludePath();
+		
 		String newIncludePath = compilerSettings.getNewIncludePath();
 		
 		if(newLine == null){
@@ -92,37 +95,31 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 			String libFileName = fileNameLib.getLibraryFileName();
 			if(libFileName.contains("/") || libFileName.contains("\\")
 					|| newIncludePath == null)
-				includeFilePath = includePath + "/" + fileNameLib;
+				includeFilePath = includePath + fileNameLib;
 			else
-				includeFilePath = newIncludePath + "/" + fileNameLib;
+				includeFilePath = newIncludePath + fileNameLib;
 			
 			// Update the include path, based on current include path location
 			if(libFileName.contains("/")){
-				newIncludePath = includePath + "/"+ fileNameLib.getLibraryFileName().substring(0, fileNameLib.getLibraryFileName().lastIndexOf('/'));
+				newIncludePath = includePath + fileNameLib.getLibraryFileName().substring(0, fileNameLib.getLibraryFileName().lastIndexOf('/'));
 				//compilerSettings.setNewIncludePath(newIncludePath);
 			}
 		}
 		else{
 			modifiedIncludeLine = "# \"" + fileName + "\" #" + newLine;
-			includeFilePath = projectPath + "/" + fileName;
+			includeFilePath = projectRootPath + projectPath + fileName;
 		}
 		
 		sb.append(modifiedIncludeLine);
 		
-		// Get the absolute path of the include file
-		ClassLoader classLoader = getClass().getClassLoader();
-		includeFilePath = new File(classLoader.getResource(includeFilePath).getFile()).getAbsolutePath();
 		
-		String sourceFileName = new File(sourceFilePath).getName();
 		
 		// Process the included header file too
 		PreprocessorMain ppMain = new PreprocessorMain(includeFilePath);
 		InputStream is = ppMain.process(false);
 		
-		HashMap<String, HashMap<String, List<InputStream>>> includesVsPreProcessed = 
-			IncludesPreProcessed.getInstance();
-		HashMap<String, List<InputStream>> preprocessedIncludesListMap = 
-			includesVsPreProcessed.get(sourceFileName);
+		HashMap<String, HashMap<String, List<InputStream>>> includesVsPreProcessed =  IncludesPreProcessed.getInstance();
+		HashMap<String, List<InputStream>> preprocessedIncludesListMap =  includesVsPreProcessed.get(sourceFilePath);
 		if(preprocessedIncludesListMap == null){
 			preprocessedIncludesListMap = new HashMap<String, List<InputStream>>();
 		}
@@ -135,7 +132,7 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		
 		preprocessedIncludesListMap.put(modifiedIncludeLine.trim(), preprocessedIncludes);
 		
-		includesVsPreProcessed.put(sourceFileName, preprocessedIncludesListMap);
+		includesVsPreProcessed.put(sourceFilePath, preprocessedIncludesListMap);
 		
 		//Reset to original include Path
 		compilerSettings.setIncludePath(includePath);

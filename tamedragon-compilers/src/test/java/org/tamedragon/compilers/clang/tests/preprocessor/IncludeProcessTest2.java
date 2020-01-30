@@ -31,21 +31,22 @@ public class IncludeProcessTest2 extends TestInitializer {
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;
 	private Properties properties;
+
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/Preprocessor/";
+	private String projectRootPath;
+
 	@Before
 	public void setUp(){		
 		properties = LLVMUtility.getDefaultProperties();
-		CLangUtils.populateSettings();
-		CompilerSettings compilerSettings = CompilerSettings.getInstance();
-		compilerSettings.setInstanceProjectPath("CSrc/Preprocessor");
-		CompilationContext compilationContext = new CompilationContext();
-		compilerSettings.setCompilationContext(compilationContext);
 
-		sourceFilePath ="CSrc/Preprocessor/IncludeProcessTest2.c"; 
-		
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource(sourceFilePath).getFile());
-		sourceFilePath = file.getAbsolutePath();
-		
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
+
+		projectRootPath = compilerSettings.getProjectRoot();
+		sourceFilePath = projectRootPath + projectPath + "IncludeProcessTest2.c"; 
+
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);		
 
@@ -58,7 +59,7 @@ public class IncludeProcessTest2 extends TestInitializer {
 
 		Environments environments = Environments.getInstance();
 		environments.reset();
-		
+
 		CompilerSettings compilerSettings = CompilerSettings.getInstance();
 		String targetDesc = compilerSettings.getInstanceTarget();
 
@@ -88,14 +89,14 @@ public class IncludeProcessTest2 extends TestInitializer {
 
 		// Pass through semantic analyzer and translate to assembly tree
 		CompilationContext compilationContext = CompilerSettings.getInstance().getInstanceCompilationContext();
-		Semantic semanticAnalyzer = new Semantic(properties, getFileName(sourceFilePath), compilationContext);	    
+		Semantic semanticAnalyzer = new Semantic(properties, sourceFilePath, compilationContext);	    
 		semanticAnalyzer.translateAbstractTree(translationUnit);    	  
 		errorHandler.displayResult();
 		assertTrue(errorHandler.getNumErrors() == 1);
 
 		int count = 1;	
 
-		ErrorIterator iter = new ErrorIterator(getFileName(sourceFilePath));
+		ErrorIterator iter = new ErrorIterator(sourceFilePath);
 		try{
 			while(iter.hasNext()){
 				SourceLocationAndMsg srcLcAndMsg =  iter.next();
