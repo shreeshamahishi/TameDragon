@@ -1,24 +1,20 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class Warning extends Absyn implements PreprocessorDirective {
 	
 	private TokenSequence tokenSequence;
 	
-	private String sourceFilePath;
-
 	@Override
 	public int getPreprocessorUnitType() {
 		return PreprocessorUnit.WARNING;
 	}
 
 	@Override
-	public StringBuffer process() {
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) {
 		return new StringBuffer(tokenSequence.toString());
-	}
-
-	@Override
-	public void setSourceFilePath(String path) {
-		this.sourceFilePath = path;
 	}
 
 	public TokenSequence getTokenSequence() {
@@ -28,9 +24,4 @@ public class Warning extends Absyn implements PreprocessorDirective {
 	public void setTokenSequence(TokenSequence tokenSequence) {
 		this.tokenSequence = tokenSequence;
 	}
-
-	public String getSourceFilePath() {
-		return sourceFilePath;
-	}
-
 }

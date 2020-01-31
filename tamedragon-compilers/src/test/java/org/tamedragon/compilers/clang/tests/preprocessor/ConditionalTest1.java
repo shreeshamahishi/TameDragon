@@ -20,6 +20,7 @@ public class ConditionalTest1 extends TestInitializer {
 
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;	
+	private PreprocessorMain ppMain;
 	
 	@Before
 	public void setUp(){		
@@ -28,15 +29,16 @@ public class ConditionalTest1 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		sourceFilePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
-		assertNotNull(preprocessorSegments);			
+		assertNotNull(preprocessorSegments);	
+		
 	}
 	
 	@Test
-	public void test1() {      		
+	public void test1() throws Exception {      		
 		
 		Environments environments = Environments.getInstance();
 		environments.reset();	
@@ -49,7 +51,7 @@ public class ConditionalTest1 extends TestInitializer {
 		assertTrue(units.get(3).getPreprocessorUnitType() == PreprocessorUnit.CONDITIONAL);
 		assertTrue(units.get(4).getPreprocessorUnitType() == PreprocessorUnit.PROGRAM_CODE);
 		
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);		
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);		
 		String codeText = sb.toString();
 		
 		System.out.println("************ FINAL PROCESSED CODE: ");

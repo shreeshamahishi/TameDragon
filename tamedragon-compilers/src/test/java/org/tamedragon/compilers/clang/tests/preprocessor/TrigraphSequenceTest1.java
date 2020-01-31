@@ -18,7 +18,7 @@ public class TrigraphSequenceTest1 extends TestInitializer {
 
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;
-	
+	private PreprocessorMain ppMain;
 	
 	@Before
 	public void setUp(){		
@@ -27,7 +27,7 @@ public class TrigraphSequenceTest1 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		sourceFilePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -35,12 +35,12 @@ public class TrigraphSequenceTest1 extends TestInitializer {
 	}
 	
 	@Test
-	public void test1() {      		
+	public void test1() throws Exception {      		
 		
 		Environments environments = Environments.getInstance();
 		environments.reset();	
 		
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);		
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);		
 		String codeText = sb.toString();
 		System.out.println("Code text after trigraph replacement AND processing:");
 		System.out.println(codeText);

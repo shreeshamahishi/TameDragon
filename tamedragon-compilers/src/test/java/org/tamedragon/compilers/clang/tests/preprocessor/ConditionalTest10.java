@@ -30,6 +30,7 @@ public class ConditionalTest10 extends TestInitializer {
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;
 	private Properties properties;
+	private PreprocessorMain ppMain;
 	
 	@Before
 	public void setUp(){	
@@ -42,7 +43,7 @@ public class ConditionalTest10 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		String absolutePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(absolutePath);
+		ppMain = new PreprocessorMain(absolutePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(absolutePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -50,7 +51,7 @@ public class ConditionalTest10 extends TestInitializer {
 	}
 	
 	@Test
-	public void test1() {      		
+	public void test1() throws Exception {      		
 		
 		Environments environments = Environments.getInstance();
 		environments.reset();	
@@ -67,7 +68,7 @@ public class ConditionalTest10 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		String absolutePath = file.getAbsolutePath();
 		
-		StringBuffer sb = preprocessorSegments.process(absolutePath, true);		
+		StringBuffer sb = preprocessorSegments.process(absolutePath, ppMain.getDependenciesDag(), true);		
 		String codeText = sb.toString();
 		
 		/*System.out.println("************ FINAL PROCESSED CODE: ");
@@ -90,7 +91,7 @@ public class ConditionalTest10 extends TestInitializer {
 	}	
 	
 	@Test
-	public void checkFullTranslation(){
+	public void checkFullTranslation() throws Exception{
 		// This code should not compile
 		String targetDesc = settings.getProperty("target");
 		ErrorHandler errorHandler = ErrorHandler.getInstance();

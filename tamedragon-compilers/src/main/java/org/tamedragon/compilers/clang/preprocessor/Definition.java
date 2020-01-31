@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.regex.PatternSyntaxException;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 import org.tamedragon.compilers.clang.ErrorHandler;
 import org.tamedragon.compilers.clang.SourceLocation;
 
@@ -103,7 +105,8 @@ public class Definition extends Absyn implements PreprocessorDirective {
 		this.id = id;
 	}
 
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		ErrorHandler errorHandler = ErrorHandler.getInstance();
 		SourceLocation location = new SourceLocation(getLineNum(), getPos());
 

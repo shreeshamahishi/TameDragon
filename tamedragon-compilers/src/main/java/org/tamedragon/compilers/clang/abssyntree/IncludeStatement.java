@@ -61,7 +61,7 @@ public class IncludeStatement extends Statement {
 		this.fileNameLib = fileNameLib;
 	}
 
-	public List<ClangTransUnit> process(Properties properties){
+	public List<ClangTransUnit> process(Properties properties) throws Exception{
 		
 		// GET THE INCLUDE PATH FOR SYSTEM LIBRARIES AND THE PROJECT PATH
 		String includePath = CompilerSettings.getInstance().getIncludePath();

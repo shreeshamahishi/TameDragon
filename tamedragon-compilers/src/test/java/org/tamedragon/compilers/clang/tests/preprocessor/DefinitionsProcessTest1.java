@@ -18,6 +18,7 @@ public class DefinitionsProcessTest1 extends TestInitializer {
 
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;	
+	private PreprocessorMain ppMain;
 	
 	@Before
 	public void setUp(){		
@@ -26,7 +27,7 @@ public class DefinitionsProcessTest1 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		sourceFilePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -34,12 +35,12 @@ public class DefinitionsProcessTest1 extends TestInitializer {
 	}
 	
 	@Test
-	public void test1() {     
+	public void test1() throws Exception {     
 		
 		Environments environments = Environments.getInstance();
 		environments.reset();	
 		
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);		
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);		
 		String codeText = sb.toString();
 		assertTrue(!codeText.contains("#define"));                      // should not have any more directives
 		assertTrue(codeText.contains("for(x = 0; x < 3*20; x++)"));   // replacement has occurred

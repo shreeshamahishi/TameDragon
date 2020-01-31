@@ -63,13 +63,13 @@ public class IncludeProcessTest4 extends TestInitializer {
 	}
 
 	@Test
-	public void testInclude4() {     
+	public void testInclude4() throws Exception {     
 		
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		PreprocessorSegments preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
 		assertNotNull(preprocessorSegments);
-		String codeText = preprocessorSegments.process(sourceFilePath, true).toString();
+		String codeText = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true).toString();
 
 		int numLinesInCode = getNumLinesInFile(sourceFilePath);
 		int numLinesInProcessedCode = getNumLinesInString(codeText);

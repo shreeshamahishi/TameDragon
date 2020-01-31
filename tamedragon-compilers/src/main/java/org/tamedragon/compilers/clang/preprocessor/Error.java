@@ -1,5 +1,8 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class Error extends Absyn implements PreprocessorDirective {
 	private TokenSequence tokenSequence;
 	
@@ -25,7 +28,8 @@ public class Error extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.ERROR;
 	}
 	
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		return new StringBuffer(tokenSequence.toString());
 	}
 }

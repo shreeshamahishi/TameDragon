@@ -8,10 +8,14 @@ import java.util.HashMap;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
+import org.jgrapht.Graph;
+import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.tamedragon.compilers.clang.CompilerSettings;
+import org.tamedragon.compilers.clang.exceptions.DAGCreationException;
 import org.tamedragon.compilers.clang.preprocessor.CPreprocessorLLLexer;
 import org.tamedragon.compilers.clang.preprocessor.CPreprocessorLLParser;
 import org.tamedragon.compilers.clang.preprocessor.DefinitionsMap;
@@ -19,8 +23,6 @@ import org.tamedragon.compilers.clang.preprocessor.PreprocessorSegments;
 
 public class PreprocessorMain {
 	
-	private String inputFilePath;
-
 	private final static HashMap<String, String> TRIGRAPH_SEQUENCES = new HashMap<String, String>();
 	private final static String TRIGRAPH_SEQUENCE_KEYS[] = 
 		new String[]{"\\?\\?=", "\\?\\?/", "\\?\\?'",
@@ -40,11 +42,18 @@ public class PreprocessorMain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PreprocessorMain.class);
 	private static final String CANNOT_READ_SRC = "Error reading into source input stream";	
+
+	private String inputFilePath;
 	
-	public InputStream process(boolean clearPreviousDefinitions){
+	private Graph<String, DefaultEdge> dependenciesDag = new DirectedAcyclicGraph<>(DefaultEdge.class);
+
+	public InputStream process(boolean clearPreviousDefinitions) throws Exception{
 		
-		if(clearPreviousDefinitions)
-			DefinitionsMap.getInstance().clearDefinitions();   // Lets clear previous definitions		
+		if(clearPreviousDefinitions) { 
+			// Lets clear previous definitions and create a new dependencies DAG
+			DefinitionsMap.getInstance().clearDefinitions(); 
+			 dependenciesDag = new DirectedAcyclicGraph<>(DefaultEdge.class);
+		}
 		
 		InputStream sourceInputStream = null;		
 		sourceInputStream = replaceTrigraphSequencesAndSpliceLines(inputFilePath);		
@@ -52,7 +61,7 @@ public class PreprocessorMain {
 
 		StringBuffer sb = new StringBuffer();
 		if(ppSegments != null){
-			sb = ppSegments.process(inputFilePath, false);
+			sb = ppSegments.process(inputFilePath, dependenciesDag, false);
 		}
 
 		try{
@@ -168,4 +177,12 @@ public class PreprocessorMain {
 		this.inputFilePath = inputFilePath;
 	}
 
+	public Graph<String, DefaultEdge> getDependenciesDag() {
+		return dependenciesDag;
+	}
+
+	public void setDependenciesDag(Graph<String, DefaultEdge> dependenciesDag) {
+		this.dependenciesDag = dependenciesDag;
+	}
+	
 }

@@ -31,6 +31,7 @@ public class UnDefTest extends TestInitializer {
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;
 	private Properties properties;
+	private PreprocessorMain ppMain;
 
 	@Before
 	public void setUp(){		
@@ -47,7 +48,7 @@ public class UnDefTest extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		String absolutePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(absolutePath);
+		ppMain = new PreprocessorMain(absolutePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(absolutePath);		
 
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -55,7 +56,7 @@ public class UnDefTest extends TestInitializer {
 	}
 
 	@Test
-	public void test1() {     
+	public void test1() throws Exception {     
 
 		Environments environments = Environments.getInstance();
 		environments.reset();
@@ -74,7 +75,7 @@ public class UnDefTest extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		String absolutePath = file.getAbsolutePath();
 		
-		StringBuffer sb = preprocessorSegments.process(absolutePath, true);
+		StringBuffer sb = preprocessorSegments.process(absolutePath, ppMain.getDependenciesDag(), true);
 		String codeText = sb.toString();
 
 		int numLinesInCode = getNumLinesInFile(absolutePath);

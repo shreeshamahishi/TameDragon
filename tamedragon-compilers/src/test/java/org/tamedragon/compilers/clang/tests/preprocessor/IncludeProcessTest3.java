@@ -39,6 +39,7 @@ public class IncludeProcessTest3 extends TestInitializer {
 	Environments environments;
 
 	private String projectPath = "CSrc/Preprocessor/";
+	private PreprocessorMain ppMain;
 		
 	@Before
 	public void setUp(){		
@@ -64,7 +65,7 @@ public class IncludeProcessTest3 extends TestInitializer {
 		//HashMap<String, HashMap<String, List<InputStream>>> includesPreProcessed = IncludesPreProcessed.getInstance();
 		//includesPreProcessed.clear();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);		
 
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -73,7 +74,7 @@ public class IncludeProcessTest3 extends TestInitializer {
 	}
 
 	@Test
-	public void test1() {     
+	public void test1() throws Exception {     
 
 		Environments environments = Environments.getInstance();
 		environments.reset();	
@@ -92,7 +93,7 @@ public class IncludeProcessTest3 extends TestInitializer {
 		assertNotNull(units);
 		assertTrue(units.size() == 4);
 
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);
 		String codeText = sb.toString();
 
 		int numLinesInCode = getNumLinesInFile(sourceFilePath);

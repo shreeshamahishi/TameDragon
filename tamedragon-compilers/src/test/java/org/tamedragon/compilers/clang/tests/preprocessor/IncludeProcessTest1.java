@@ -70,7 +70,7 @@ public class IncludeProcessTest1 extends TestInitializer {
 	}
 
 	@Test
-	public void test1() {   
+	public void test1() throws Exception {   
 
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
@@ -82,14 +82,13 @@ public class IncludeProcessTest1 extends TestInitializer {
 		assertNotNull(units);
 		assertTrue(units.size() == 7);
 
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);
 
 		System.out.println("Translated program = " + sb.toString());		
 	} 	
 
 	@Test
-	public void test2() {   		
-
+	public void test2() throws Exception {   		
 		// Run the preprocessor on the sourceFile			
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
 		ppMain.process(true); 
@@ -133,7 +132,7 @@ public class IncludeProcessTest1 extends TestInitializer {
 	} 
 
 	@Test
-	public void test3() throws IOException {   		
+	public void test3() throws Exception {   		
 
 		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);			
 		InputStream sourceFileInputStream = ppMain.process(true); 

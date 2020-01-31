@@ -3,14 +3,17 @@ package org.tamedragon.compilers.clang.preprocessor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class PreprocessorSegments {
-	
+
 	private List<PreprocessorUnit> units;
-	
+
 	public PreprocessorSegments(){
 		units = new ArrayList<PreprocessorUnit>();
 	}
-	
+
 	public void addUnit(PreprocessorUnit pu){
 		units.add(pu);		
 	}
@@ -22,18 +25,21 @@ public class PreprocessorSegments {
 	public void setUnits(List<PreprocessorUnit> units) {
 		this.units = units;
 	}
-	
-	public StringBuffer process(String sourceFilePath, boolean clearPreviousDefinitions){
-		
-		if(clearPreviousDefinitions)
-			DefinitionsMap.getInstance().clearDefinitions();   // Lets clear previous definitions	
-	
+
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag, boolean clearPreviousDefinitions)
+			throws Exception{
+
+		if(clearPreviousDefinitions) {
+			// Lets clear previous definitions
+			DefinitionsMap.getInstance().clearDefinitions();  	
+		}
+
 		StringBuffer sb = new StringBuffer();
-		for(PreprocessorUnit pu: units){
-			
-			pu.setSourceFilePath(sourceFilePath);
-			sb.append(pu.process());
+		for(PreprocessorUnit pu: units){			
+			sb.append(pu.process(sourceFilePath, dependenciesDag));
 		}
 		return sb;
 	}
+
+	
 }

@@ -3,19 +3,13 @@ package org.tamedragon.compilers.clang.preprocessor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class ProgramCode extends Absyn implements PreprocessorUnit{
 
 	private List<String> tokens;
-	private String sourceFilePath;
-
-	public String getSourceFilePath() {
-		return sourceFilePath;
-	}
-
-	public void setSourceFilePath(String sourceFilePath) {
-		this.sourceFilePath = sourceFilePath;
-	}
-
+	
 	public ProgramCode(){
 		tokens = new ArrayList<String>();
 	}
@@ -37,7 +31,8 @@ public class ProgramCode extends Absyn implements PreprocessorUnit{
 		return PreprocessorUnit.PROGRAM_CODE;
 	}
 
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		StringBuffer sb = Definition.process(tokens);
 		 return sb;
 	}

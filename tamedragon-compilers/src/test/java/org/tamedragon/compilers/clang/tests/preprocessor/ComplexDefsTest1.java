@@ -18,6 +18,7 @@ public class ComplexDefsTest1 extends TestInitializer {
 
 	private String sourceFilePath;
 	private PreprocessorSegments preprocessorSegments;	
+	private PreprocessorMain ppMain;
 	
 	@Before
 	public void setUp(){	
@@ -30,7 +31,7 @@ public class ComplexDefsTest1 extends TestInitializer {
 		File file = new File(classLoader.getResource(sourceFilePath).getFile());
 		sourceFilePath = file.getAbsolutePath();
 		
-		PreprocessorMain ppMain = new PreprocessorMain(sourceFilePath);
+		ppMain = new PreprocessorMain(sourceFilePath);
 		InputStream is = ppMain.replaceTrigraphSequencesAndSpliceLines(sourceFilePath);
 		
 		preprocessorSegments = ppMain.getPreprocessorTranslationByLLParsing(is);
@@ -38,8 +39,8 @@ public class ComplexDefsTest1 extends TestInitializer {
 	}
 	
 	@Test
-	public void test1() {      		
-		StringBuffer sb = preprocessorSegments.process(sourceFilePath, true);		
+	public void test1() throws Exception {      		
+		StringBuffer sb = preprocessorSegments.process(sourceFilePath, ppMain.getDependenciesDag(), true);		
 		String codeText = sb.toString();
 		assertTrue(!codeText.contains("#define"));                      // should not have any more directives
 		

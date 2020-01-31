@@ -1,5 +1,8 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class NullDirective extends Absyn implements PreprocessorDirective {
 
 	private String sourceFilePath;
@@ -16,7 +19,8 @@ public class NullDirective extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.NULL_DIRECTIVE;
 	}
 	
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		return null;
 	}
 }

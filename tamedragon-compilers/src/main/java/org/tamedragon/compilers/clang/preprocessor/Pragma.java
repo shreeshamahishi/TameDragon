@@ -1,5 +1,8 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class Pragma extends Absyn implements PreprocessorDirective {
 
 	private TokenSequence tokenSequence;
@@ -26,7 +29,8 @@ public class Pragma extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.PRAGMA;
 	}
 	
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		return null;
 	}
 	

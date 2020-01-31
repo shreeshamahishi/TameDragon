@@ -3,6 +3,9 @@ package org.tamedragon.compilers.clang.preprocessor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public class Conditional extends Absyn implements PreprocessorDirective {
 
 	public static final int IFDEF = 0;
@@ -15,16 +18,6 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 	private ElsePart elsePart;
 	private int endConditionalLineNum;   // This is the line number of the #endif
 	
-	private String sourceFilePath;
-	
-	public String getSourceFilePath() {
-		return sourceFilePath;
-	}
-
-	public void setSourceFilePath(String sourceFilePath) {
-		this.sourceFilePath = sourceFilePath;
-	}
-
 	public Conditional(){
 		elifParts = new ArrayList<ElifPart>();
 	}
@@ -94,11 +87,12 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.CONDITIONAL;
 	}
 
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception{
 		
 		boolean ifConditionsIsTrue = ifLine.isTrue();
 		if(ifConditionsIsTrue) {
-			return processIfDirectiveIsTrue();
+			return processIfDirectiveIsTrue(sourceFilePath, dependenciesDag);
 		}
 
 		// The #if condition is not true; check elifs if applicable	
@@ -109,26 +103,27 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 				// We have an elif that evaluates to true; lets process that and 
 				// discard the rest
 				ElifPart elifPartThatEvaluatesToTrue = elifParts.get(i);
-				return processElifDirectiveThatEvaluatesToTrue(i, elifPartThatEvaluatesToTrue);
+				return processElifDirectiveThatEvaluatesToTrue(i, elifPartThatEvaluatesToTrue, sourceFilePath, dependenciesDag);
 			}
 			else{
 				// We have elif parts, but none of them evaluated to true; lets process the else part
 				// if it exists
-				return processElseDirective();
+				return processElseDirective(sourceFilePath, dependenciesDag);
 			}
 		}
 
 		// Neither the #if nor the #elifs (if any) evaluated to true, so lets process the #else if it exists
-		return processElseDirective(); 
+		return processElseDirective(sourceFilePath, dependenciesDag); 
 
 	}
 
 	/**
 	 * Process the # if directive since it evaluated to true
 	 * @return
+	 * @throws Exception 
 	 */
 
-	public StringBuffer processIfDirectiveIsTrue(){
+	public StringBuffer processIfDirectiveIsTrue(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception{
 		// The "#if" condition is true, lets include those lines in the "true" path
 		StringBuffer sb = new StringBuffer();
 		sb.append("\n");    // For the #if line
@@ -139,7 +134,7 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 				System.out.println("WAIT HERE");
 				
 			}
-			StringBuffer sbOfPu = pu.process();
+			StringBuffer sbOfPu = pu.process(sourceFilePath, dependenciesDag);
 			sb.append(sbOfPu);
 		}		
 
@@ -197,8 +192,10 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 	 * and from the next elif part to the end of the conditional
 	 * @param elifPartThatEvaluatesToTrue
 	 * @return
+	 * @throws Exception 
 	 */
-	public StringBuffer processElifDirectiveThatEvaluatesToTrue(int index, ElifPart elifPartThatEvaluatesToTrue){
+	public StringBuffer processElifDirectiveThatEvaluatesToTrue(int index, ElifPart elifPartThatEvaluatesToTrue,
+			String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception{
 
 		StringBuffer sb = new StringBuffer();
 
@@ -211,7 +208,7 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 		// Include the preprocessor units (after processing them) 
 		List<PreprocessorUnit> preprocessorUnits = elifPartThatEvaluatesToTrue.getPreprocessorUnits();
 		for(PreprocessorUnit pu: preprocessorUnits){
-			StringBuffer sbOfPu = pu.process();
+			StringBuffer sbOfPu = pu.process(sourceFilePath, dependenciesDag);
 			sb.append(sbOfPu);
 		}
 
@@ -243,8 +240,9 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 	 * Process the else directive since none of the preceding conditions were evaluated to true;
 	 * however if there is no else part, the entire conditional is replaced.
 	 * @return
+	 * @throws Exception 
 	 */
-	public StringBuffer processElseDirective(){
+	public StringBuffer processElseDirective(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception{
 		StringBuffer sb = new StringBuffer();
 
 		if(elsePart != null){
@@ -258,7 +256,7 @@ public class Conditional extends Absyn implements PreprocessorDirective {
 			// Include the preprocessor units (after processing them) 
 			List<PreprocessorUnit> preprocessorUnits = elsePart.getPreprocessorUnits();
 			for(PreprocessorUnit pu: preprocessorUnits){
-				StringBuffer sbOfPu = pu.process();
+				StringBuffer sbOfPu = pu.process(sourceFilePath, dependenciesDag);
 				sb.append(sbOfPu);
 			}
 

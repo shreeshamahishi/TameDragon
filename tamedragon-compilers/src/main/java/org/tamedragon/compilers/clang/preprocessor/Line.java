@@ -1,5 +1,7 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
 public class Line extends Absyn implements PreprocessorDirective {
 	
@@ -43,7 +45,8 @@ public class Line extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.LINE;
 	}
 	
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag){
 		return null;
 	}
 }

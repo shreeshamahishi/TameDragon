@@ -1,5 +1,7 @@
 package org.tamedragon.compilers.clang.preprocessor;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
 public interface PreprocessorUnit {
 	public static final int INCLUDE_DIRECTIVE = 0;
@@ -13,6 +15,5 @@ public interface PreprocessorUnit {
 	public static final int WARNING = 8;
 	
 	public int getPreprocessorUnitType();
-	public StringBuffer process();
-	public void setSourceFilePath(String path);
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception;
 }

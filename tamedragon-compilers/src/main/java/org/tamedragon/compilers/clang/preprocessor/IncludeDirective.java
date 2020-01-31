@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 import org.tamedragon.compilers.clang.CompilerSettings;
+import org.tamedragon.compilers.clang.exceptions.DAGCreationException;
 
 public class IncludeDirective extends Absyn implements PreprocessorDirective {
 
@@ -22,16 +25,6 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 	private String fileName;
 	private FileNameLib fileNameLib;
 	
-	private String sourceFilePath;
-	
-	public String getSourceFilePath() {
-		return sourceFilePath;
-	}
-
-	public void setSourceFilePath(String sourceFilePath) {
-		this.sourceFilePath = sourceFilePath;
-	}
-
 	public IncludeDirective(int lineNum, String fileName, int includeType){
 		setLineNum(lineNum);
 		this.includeType = includeType;
@@ -56,6 +49,9 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 	}
 
 	public String getFileName() {
+		if(includeType == LIB){
+			return fileNameLib.getLibraryFileName();
+		}
 		return fileName;
 	}
 
@@ -71,7 +67,8 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		return PreprocessorUnit.INCLUDE_DIRECTIVE;
 	}
 
-	public StringBuffer process(){
+	@Override
+	public StringBuffer process(String sourceFilePath, Graph<String, DefaultEdge> dependenciesDag) throws Exception{
 		StringBuffer sb = new StringBuffer();
 		CompilerSettings compilerSettings = CompilerSettings.getInstance();
 		String newLine = compilerSettings.getInstanceNewLine();
@@ -110,12 +107,13 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 			includeFilePath = projectRootPath + projectPath + fileName;
 		}
 		
+		checkForCircularDependencies(sourceFilePath, includeFilePath, dependenciesDag);
+		
 		sb.append(modifiedIncludeLine);
-		
-		
 		
 		// Process the included header file too
 		PreprocessorMain ppMain = new PreprocessorMain(includeFilePath);
+		ppMain.setDependenciesDag(dependenciesDag);
 		InputStream is = ppMain.process(false);
 		
 		HashMap<String, HashMap<String, List<InputStream>>> includesVsPreProcessed =  IncludesPreProcessed.getInstance();
@@ -138,6 +136,19 @@ public class IncludeDirective extends Absyn implements PreprocessorDirective {
 		compilerSettings.setIncludePath(includePath);
 		
 		return sb;
+	}
+	
+	protected void checkForCircularDependencies(String sourceFilePath, String includeFilePath,
+			Graph<String, DefaultEdge> dependenciesDag) throws DAGCreationException {
+		dependenciesDag.addVertex(sourceFilePath);
+		dependenciesDag.addVertex(includeFilePath);
+		DefaultEdge edge = new DefaultEdge();
+		try {
+			dependenciesDag.addEdge(sourceFilePath, includeFilePath, edge);
+		} 
+		catch (IllegalArgumentException e) { // Has induced a cycle in the graph?
+			throw new DAGCreationException(sourceFilePath, includeFilePath);
+		}
 	}
 	
 	public String toString(){
