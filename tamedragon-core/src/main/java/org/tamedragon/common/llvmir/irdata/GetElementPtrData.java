@@ -6,6 +6,7 @@ package org.tamedragon.common.llvmir.irdata;
 
 public class GetElementPtrData extends ValueData{
 
+	private String pointeeTypeStr;
 	private String ptrType;
 	private String isInBound;
 	private String elementName;
@@ -41,5 +42,13 @@ public class GetElementPtrData extends ValueData{
 
 	public String getIsInBound() {
 		return isInBound;
+	}
+
+	public void setPointeeTypeStr(String pointeeTypeStr) {
+		this.pointeeTypeStr = pointeeTypeStr;
+	}
+	
+	public String getPointeeTypeStr() {
+		return pointeeTypeStr;
 	}
 }

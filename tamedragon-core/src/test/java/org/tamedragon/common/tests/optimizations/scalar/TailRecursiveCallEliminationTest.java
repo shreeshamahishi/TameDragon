@@ -19,32 +19,32 @@ public class TailRecursiveCallEliminationTest {
 
 	@Test
 	public void test1() throws Exception {
-		String llvmSrcFileName =  "TailRecursiveCallSrc.bc";
-		String llvmOutFile = "TailRecursiveCallOut.bc";
+		String llvmSrcFileName =  "TailRecursiveCallSrc.ll";
+		String llvmOutFile = "TailRecursiveCallOut.ll";
 
 		runTailRecursiveCallElmination(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test2() throws Exception {
-		String llvmSrcFileName =  "TailRecursiveCallElimination2Src.bc";
-		String llvmOutFile = "TailRecursiveCallElimination2Out.bc";
+		String llvmSrcFileName =  "TailRecursiveCallElimination2Src.ll";
+		String llvmOutFile = "TailRecursiveCallElimination2Out.ll";
 
 		runTailRecursiveCallElmination(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test3() throws Exception {
-		String llvmSrcFileName =  "TailRecursiveCallElimination3Src.bc";
-		String llvmOutFile = "TailRecursiveCallElimination3Out.bc";
+		String llvmSrcFileName =  "TailRecursiveCallElimination3Src.ll";
+		String llvmOutFile = "TailRecursiveCallElimination3Out.ll";
 
 		runTailRecursiveCallElmination(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test4() throws Exception {
-		String llvmSrcFileName =  "TailRecursiveCallElimination4Src.bc";
-		String llvmOutFile = "TailRecursiveCallElimination4Out.bc";
+		String llvmSrcFileName =  "TailRecursiveCallElimination4Src.ll";
+		String llvmOutFile = "TailRecursiveCallElimination4Out.ll";
 
 		runTailRecursiveCallElmination(llvmSrcFileName, llvmOutFile);
 	}

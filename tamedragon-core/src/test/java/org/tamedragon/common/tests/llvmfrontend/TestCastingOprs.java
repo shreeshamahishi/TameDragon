@@ -20,9 +20,9 @@ public class TestCastingOprs  {
 		File fileArr[] = file.listFiles();
 		for(File f : fileArr){
 			String llvmFileName = f.getName();
-			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.bc")){
+			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.ll")){
 
-				if(llvmFileName.equals("floatToDoubleLLVMIR.bc")){
+				if(llvmFileName.equals("floatToDoubleLLVMIR.ll")){
 					continue;
 				}
 
@@ -36,7 +36,7 @@ public class TestCastingOprs  {
 	@Ignore
 	@Test
 	public void testFloatToDouble(){
-		String llvmFileName = "floatToDoubleLLVMIR.bc";
+		String llvmFileName = "floatToDoubleLLVMIR.ll";
 		LLVMIRUtils llvirUtils = new LLVMIRUtils();
 		List<String> instrs = llvirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));

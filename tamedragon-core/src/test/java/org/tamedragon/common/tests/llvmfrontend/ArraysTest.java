@@ -29,12 +29,12 @@ public class ArraysTest  {
 		File fileArr[] = file.listFiles();
 		for(File f : fileArr){
 			String llvmFileName = f.getName();
-			if(llvmFileName.equals("VariableLengthArrayLLVMIR.bc") 
-					|| llvmFileName.equals("PassingDoubleDimensionalArrayLLVMIR.bc")
-					|| llvmFileName.equals("ArrayOfStringsLLVMIR.bc")
-					|| llvmFileName.equals("ArrayOfStructsLLVMIR.bc"))
+			if(llvmFileName.equals("VariableLengthArrayLLVMIR.ll") 
+					|| llvmFileName.equals("PassingDoubleDimensionalArrayLLVMIR.ll")
+					|| llvmFileName.equals("ArrayOfStringsLLVMIR.ll")
+					|| llvmFileName.equals("ArrayOfStructsLLVMIR.ll"))
 				continue;
-			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.bc")){		
+			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.ll")){		
 				System.out.println("Checking out Arrays "  + llvmFileName);
 				List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 				assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -45,7 +45,7 @@ public class ArraysTest  {
 	@Ignore
 	@Test
 	public void testVariableLengthArray(){
-		String llvmFileName = "VariableLengthArrayLLVMIR.bc";
+		String llvmFileName = "VariableLengthArrayLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}
@@ -53,7 +53,7 @@ public class ArraysTest  {
 	//@Ignore
 	@Test
 	public void testPassDoubleDimArray(){
-		String llvmFileName = "PassingDoubleDimensionalArrayLLVMIR.bc";
+		String llvmFileName = "PassingDoubleDimensionalArrayLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}
@@ -61,7 +61,7 @@ public class ArraysTest  {
 	@Ignore
 	@Test
 	public void testArrayOfStrings(){
-		String llvmFileName = "ArrayOfStringsLLVMIR.bc";
+		String llvmFileName = "ArrayOfStringsLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}
@@ -69,7 +69,7 @@ public class ArraysTest  {
 	@Ignore
 	@Test
 	public void testArrayOfStructs(){
-		String llvmFileName = "ArrayOfStructsLLVMIR.bc";
+		String llvmFileName = "ArrayOfStructsLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}

@@ -556,7 +556,7 @@ public class LLVMUtility {
 		properties.setProperty("noimplicitfloat","8388608");
 		properties.setProperty("readnone","512");
 		properties.setProperty("wordsize","32");
-		properties.setProperty("includePath","E:/CompilerVision/trunk/Compilers/resources/include");
+		properties.setProperty("includePath","include");
 		properties.setProperty("naked","16777216");
 		properties.setProperty("noalias","64");
 		properties.setProperty("returns_twice","536870912");

@@ -26,7 +26,7 @@ import org.tamedragon.assemblyabstractions.constructs.IRTreeStatementList;
 import org.tamedragon.assemblyabstractions.constructs.IRTreeTempOrVar;
 import org.tamedragon.common.EnvironmentConstants;
 import org.tamedragon.common.TargetMachine;
-import org.tamedragon.common.llvmir.instructions.LLVMIRGenerator;
+//import org.tamedragon.common.llvmir.instructions.LLVMIRGenerator;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
@@ -45,7 +45,7 @@ import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 public class LLVMIRGenerationTests {
 
 	private CompilationContext compilationContext;
-	private LLVMIRGenerator llvmirGenerator;
+	//private LLVMIRGenerator llvmirGenerator;
 	
 	
 		/*

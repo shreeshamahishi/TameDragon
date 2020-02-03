@@ -18,16 +18,16 @@ public class ADCETests  {
 	
 	@Test
 	public void runADCE1() throws Exception {
-		String cSrcfilename =  "ADCESrc1.bc";
-		String llvmOutFileName = "ADCEOut1.bc";
+		String cSrcfilename =  "ADCESrc1.ll";
+		String llvmOutFileName = "ADCEOut1.ll";
 
 		runAdce(cSrcfilename, llvmOutFileName);
 	}
 
 	@Test
 	public void runADCE2() throws Exception {
-		String cSrcfilename =  "ADCESrc2.bc";
-		String llvmOutFileName = "ADCEOut2.bc";
+		String cSrcfilename =  "ADCESrc2.ll";
+		String llvmOutFileName = "ADCEOut2.ll";
 
 		runAdce(cSrcfilename, llvmOutFileName);
 	}
@@ -38,8 +38,6 @@ public class ADCETests  {
 
 		Module module = llvmirUtils.getModule();
 		List<Function> functions = module.getFunctions();
-
-		// There can be only one function to test SCCP in the module.
 
 		Function function = functions.get(0);
 

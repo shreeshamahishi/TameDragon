@@ -27,7 +27,7 @@ public class FSAnalysisTests {
 //
 //	@Test
 //	public void runCombinations1(){
-//		String srcFileName =  "CombinationsSrc1.bc";
+//		String srcFileName =  "CombinationsSrc1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -62,7 +62,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void runComplexStructCombinedGEPSrc1() throws Exception {
-//		String srcFileName =  "ComplexStructCombinedGEPSrc1.bc";
+//		String srcFileName =  "ComplexStructCombinedGEPSrc1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -109,7 +109,7 @@ public class FSAnalysisTests {
 //
 //	@Test
 //	public void runComplexStruct2() throws Exception {
-//		String srcFileName =  "ComplexStruct1Mem2Reg.bc";
+//		String srcFileName =  "ComplexStruct1Mem2Reg.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -128,7 +128,7 @@ public class FSAnalysisTests {
 //
 //	@Test
 //	public void runComplexStructVariableGEPSrc1() throws Exception {
-//		String srcFileName =  "ComplexStructVariableGEPSrc1.bc";
+//		String srcFileName =  "ComplexStructVariableGEPSrc1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -155,7 +155,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void runCastOperation() throws Exception {
-//		String srcFileName =  "CastOperationSrc.bc";
+//		String srcFileName =  "CastOperationSrc.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -179,7 +179,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void runSelectOperation() throws Exception {
-//		String srcFileName =  "SelectOperationSrc.bc";
+//		String srcFileName =  "SelectOperationSrc.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -201,7 +201,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void runAliasWithLoadStores1() throws Exception {
-//		String srcFileName =  "AliasWithLoadStoresSrc1.bc";
+//		String srcFileName =  "AliasWithLoadStoresSrc1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -243,7 +243,7 @@ public class FSAnalysisTests {
 //	@Ignore
 //	@Test
 //	public void runAliasWithLoadStores2() throws Exception {
-//		String srcFileName =  "AliasWithLoadStoresRaw2.bc";
+//		String srcFileName =  "AliasWithLoadStoresRaw2.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -283,7 +283,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void multipleIncrementsOfAPointerInLoopRaw() throws Exception {
-//		String srcFileName =  "MulitpleIncrementsOfAPointerInLoopRaw.bc";
+//		String srcFileName =  "MulitpleIncrementsOfAPointerInLoopRaw.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -392,7 +392,7 @@ public class FSAnalysisTests {
 //
 //	@Test
 //	public void runPointerIncrementInLoopWithConditionInsideLoopRaw1(){
-//		String srcFileName =  "PointerIncrWithConditionInsideLoopRaw1.bc";
+//		String srcFileName =  "PointerIncrWithConditionInsideLoopRaw1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -406,7 +406,7 @@ public class FSAnalysisTests {
 //	
 //	@Test
 //	public void runNestedLoopWithConditionInInnerLoopRaw1(){
-//		String srcFileName =  "NestedLoopWithConditionInInnerLoopRaw1.bc";
+//		String srcFileName =  "NestedLoopWithConditionInInnerLoopRaw1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -421,7 +421,7 @@ public class FSAnalysisTests {
 //	@Ignore
 //	@Test
 //	public void runAliasInArrayIterationRaw1() throws Exception {
-//		String srcFileName =  "ArrayIterationRaw1.bc";
+//		String srcFileName =  "ArrayIterationRaw1.ll";
 //
 //		Function function = getFunction(srcFileName, "foo");
 //
@@ -463,7 +463,7 @@ public class FSAnalysisTests {
 //	
 ////	@Test
 ////	public void runAliasInArrayIteration1() throws Exception {
-////		String srcFileName =  "ArrayIterationSrc1.bc";
+////		String srcFileName =  "ArrayIterationSrc1.ll";
 ////
 ////		Function function = getFunction(srcFileName, "foo");
 ////
@@ -485,7 +485,7 @@ public class FSAnalysisTests {
 ////	
 ////	@Test
 ////	public void runAliasInArrayIterationRaw2() throws Exception {
-////		String srcFileName =  "ArrayIterationRaw2.bc";
+////		String srcFileName =  "ArrayIterationRaw2.ll";
 ////
 ////		Function function = getFunction(srcFileName, "foo");
 ////
@@ -527,7 +527,7 @@ public class FSAnalysisTests {
 ////	
 ////	@Test
 ////	public void runAliasInArrayIteration2() throws Exception {
-////		String srcFileName =  "ArrayIterationSrc2.bc";
+////		String srcFileName =  "ArrayIterationSrc2.ll";
 ////
 ////		Function function = getFunction(srcFileName, "foo");
 ////

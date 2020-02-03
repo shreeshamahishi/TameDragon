@@ -17,112 +17,112 @@ public class LICMTests  {
 
 	@Test
 	public void runSimpleLicm() throws Exception {
-		String llvmsrcFile =  "SimpleLoopInvariantSrc.bc";
-		String llvmOutFileName = "SimpleLoopInvariantOut.bc";
+		String llvmsrcFile =  "SimpleLoopInvariantSrc.ll";
+		String llvmOutFileName = "SimpleLoopInvariantOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runHoistInsWithConstAndInvariantOperands() throws Exception {
-		String llvmsrcFile =  "ConstAndInvariantOperandsSrc.bc";
-		String llvmOutFileName = "ConstAndInvariantOperandsOut.bc";
+		String llvmsrcFile =  "ConstAndInvariantOperandsSrc.ll";
+		String llvmOutFileName = "ConstAndInvariantOperandsOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void runHoistInsWithInvariantOperandsSomeNotDominating1() throws Exception {
-		String llvmsrcFile =  "InvariantInstrsNotDominatingSrc1.bc";
-		String llvmOutFileName = "InvariantInstrsNotDominatingOut1.bc";
+		String llvmsrcFile =  "InvariantInstrsNotDominatingSrc1.ll";
+		String llvmOutFileName = "InvariantInstrsNotDominatingOut1.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void runHoistInsWithInvariantOperandsSomeNotDominating2() throws Exception {
-		String llvmsrcFile =  "InvariantInstrsNotDominatingSrc2.bc";
-		String llvmOutFileName = "InvariantInstrsNotDominatingOut2.bc";
+		String llvmsrcFile =  "InvariantInstrsNotDominatingSrc2.ll";
+		String llvmOutFileName = "InvariantInstrsNotDominatingOut2.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void simpleInvarientBinaryOpr() throws Exception {
-		String llvmsrcFile =  "simpleInvarientBinaryOprSrc.bc";
-		String llvmOutFileName = "simpleInvarientBinaryOprOut.bc";
+		String llvmsrcFile =  "simpleInvarientBinaryOprSrc.ll";
+		String llvmOutFileName = "simpleInvarientBinaryOprOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void HoistingTest1() throws Exception {
-		String llvmsrcFile =  "HoistingTest1Src.bc";
-		String llvmOutFileName = "HoistingTest1Out.bc";
+		String llvmsrcFile =  "HoistingTest1Src.ll";
+		String llvmOutFileName = "HoistingTest1Out.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void HoistingTest2() throws Exception {
-		String llvmsrcFile =  "HoistingTest2Src.bc";
-		String llvmOutFileName = "HoistingTest2Out.bc";
+		String llvmsrcFile =  "HoistingTest2Src.ll";
+		String llvmOutFileName = "HoistingTest2Out.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void HoistingTest3() throws Exception {
-		String llvmsrcFile =  "HoistingTest3Src.bc";
-		String llvmOutFileName = "HoistingTest3Out.bc";
+		String llvmsrcFile =  "HoistingTest3Src.ll";
+		String llvmOutFileName = "HoistingTest3Out.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void HoistingTest4() throws Exception {
-		String llvmsrcFile =  "HoistingTest4Src.bc";
-		String llvmOutFileName = "HoistingTest4Out.bc";
+		String llvmsrcFile =  "HoistingTest4Src.ll";
+		String llvmOutFileName = "HoistingTest4Out.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "foobar");
 	}
 
 	@Test
 	public void nestedloopInvariantInInnerLoop() throws Exception {
-		String llvmsrcFile =  "NestedloopInvariantInInnerLoopSrc.bc";
-		String llvmOutFileName = "NestedloopInvariantInInnerLoopOut.bc";
+		String llvmsrcFile =  "NestedloopInvariantInInnerLoopSrc.ll";
+		String llvmOutFileName = "NestedloopInvariantInInnerLoopOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName,"nestLoop");
 	}
 
 	@Test
 	public void nestedloopInvariantInBothLoop() throws Exception {
-		String llvmsrcFile =  "NestedloopInvariantInBoothLoopSrc.bc";
-		String llvmOutFileName = "NestedloopInvariantInBoothLoopOut.bc";
+		String llvmsrcFile =  "NestedloopInvariantInBoothLoopSrc.ll";
+		String llvmOutFileName = "NestedloopInvariantInBoothLoopOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName,"nestLoop");
 	}
 
 	@Test
 	public void nestedloopInvariantInOuterLoop() throws Exception {
-		String llvmsrcFile =  "NestedloopInvariantInOuterLoopSrc.bc";
-		String llvmOutFileName = "NestedloopInvariantInOuterLoopOut.bc";
+		String llvmsrcFile =  "NestedloopInvariantInOuterLoopSrc.ll";
+		String llvmOutFileName = "NestedloopInvariantInOuterLoopOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName,"nestLoopInvOuter");
 	}
 
 	@Test
 	public void nested3loop() throws Exception {
-		String llvmsrcFile =  "nested3loopSrc.bc";
-		String llvmOutFileName = "nested3loopOut.bc";
+		String llvmsrcFile =  "nested3loopSrc.ll";
+		String llvmOutFileName = "nested3loopOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "nestes3loop");
 	}
 
 	@Test
 	public void twoPreheaders() throws Exception {
-		String llvmsrcFile =  "twoPreheaderSrc.bc";
-		String llvmOutFileName = "twoPreheaderOut.bc";
+		String llvmsrcFile =  "twoPreheaderSrc.ll";
+		String llvmOutFileName = "twoPreheaderOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "twopreheader");
 	}
@@ -130,15 +130,15 @@ public class LICMTests  {
 	//	@Test
 	//	public void gotoLabel() throws Exception {
 	//		String cSrcfilename =  "gotoLabel.c";
-	//		String llvmOutFileName = "gotoLabel.bc";
+	//		String llvmOutFileName = "gotoLabel.ll";
 	//
 	//		runLicm(cSrcfilename, llvmOutFileName);
 	//	}
 
 	@Test
 	public void switchTest() throws Exception {
-		String llvmsrcFile =  "switchTestSrc.bc";
-		String llvmOutFileName = "switchTestOut.bc";
+		String llvmsrcFile =  "switchTestSrc.ll";
+		String llvmOutFileName = "switchTestOut.ll";
 
 		runLicm(llvmsrcFile, llvmOutFileName, "switchTest");
 	}

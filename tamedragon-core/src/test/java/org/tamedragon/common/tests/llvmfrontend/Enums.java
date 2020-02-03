@@ -14,7 +14,7 @@ public class Enums  {
 
 	@Test
 	public void enumTest1(){
-		String llvmFileName = "enumTest1LLVMIR.bc";
+		String llvmFileName = "enumTest1LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -23,7 +23,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest2(){
-		String llvmFileName = "enumTest2LLVMIR.bc";
+		String llvmFileName = "enumTest2LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -32,7 +32,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest3(){
-		String llvmFileName = "enumTest3LLVMIR.bc";
+		String llvmFileName = "enumTest3LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -41,7 +41,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest4(){
-		String llvmFileName = "enumTest4LLVMIR.bc";
+		String llvmFileName = "enumTest4LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -50,7 +50,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest5(){
-		String llvmFileName = "enumTest5LLVMIR.bc";
+		String llvmFileName = "enumTest5LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -59,7 +59,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest6(){
-		String llvmFileName = "enumTest6LLVMIR.bc";
+		String llvmFileName = "enumTest6LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -68,7 +68,7 @@ public class Enums  {
 	@Ignore
 	@Test
 	public void enumTest7(){
-		String llvmFileName = "enumTest7LLVMIR.bc";
+		String llvmFileName = "enumTest7LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));

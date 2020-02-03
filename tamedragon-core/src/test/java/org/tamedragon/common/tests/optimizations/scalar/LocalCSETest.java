@@ -20,64 +20,64 @@ public class LocalCSETest  {
 
 	@Test
 	public void test1() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest1Src.bc";
-		String llvmOutFile = "LocalCSETest1Out.bc";
+		String llvmSrcFileName =  "LocalCSETest1Src.ll";
+		String llvmOutFile = "LocalCSETest1Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test2() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest2Src.bc";
-		String llvmOutFile = "LocalCSETest2Out.bc";
+		String llvmSrcFileName =  "LocalCSETest2Src.ll";
+		String llvmOutFile = "LocalCSETest2Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test3() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest3Src.bc";
-		String llvmOutFile = "LocalCSETest3Out.bc";
+		String llvmSrcFileName =  "LocalCSETest3Src.ll";
+		String llvmOutFile = "LocalCSETest3Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test4() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest4Src.bc";
-		String llvmOutFile = "LocalCSETest4Out.bc";
+		String llvmSrcFileName =  "LocalCSETest4Src.ll";
+		String llvmOutFile = "LocalCSETest4Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test5() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest5Src.bc";
-		String llvmOutFile = "LocalCSETest5Out.bc";
+		String llvmSrcFileName =  "LocalCSETest5Src.ll";
+		String llvmOutFile = "LocalCSETest5Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test6() throws Exception {
-		String llvmSrcFileName =  "VariableLengthArraySrc.bc";
-		String llvmOutFile = "VariableLengthArrayOut.bc";
+		String llvmSrcFileName =  "VariableLengthArraySrc.ll";
+		String llvmOutFile = "VariableLengthArrayOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test7() throws Exception {
-		String llvmSrcFileName =  "DereferencingAStructureMemberSrc.bc";
-		String llvmOutFile = "DereferencingAStructureMemberOut.bc";
+		String llvmSrcFileName =  "DereferencingAStructureMemberSrc.ll";
+		String llvmOutFile = "DereferencingAStructureMemberOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test8() throws Exception {
-		String llvmSrcFileName =  "addressOfArraySrc.bc";
-		String llvmOutFile = "addressOfArrayOut.bc";
+		String llvmSrcFileName =  "addressOfArraySrc.ll";
+		String llvmOutFile = "addressOfArrayOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
@@ -85,40 +85,40 @@ public class LocalCSETest  {
 	@Ignore
 	@Test
 	public void test10() throws Exception {
-		String llvmSrcFileName =  "FunctionPointerSrc.bc";
-		String llvmOutFile = "FunctionPointerOut.bc";
+		String llvmSrcFileName =  "FunctionPointerSrc.ll";
+		String llvmOutFile = "FunctionPointerOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test11() throws Exception {
-		String llvmSrcFileName =  "GlobalSrc.bc";
-		String llvmOutFile = "GlobalOut.bc";
+		String llvmSrcFileName =  "GlobalSrc.ll";
+		String llvmOutFile = "GlobalOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test12() throws Exception {
-		String llvmSrcFileName =  "AnotherExampleOnScopeSrc.bc";
-		String llvmOutFile = "AnotherExampleOnScopeOut.bc";
+		String llvmSrcFileName =  "AnotherExampleOnScopeSrc.ll";
+		String llvmOutFile = "AnotherExampleOnScopeOut.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test13() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest6Src.bc";
-		String llvmOutFile = "LocalCSETest6Out.bc";
+		String llvmSrcFileName =  "LocalCSETest6Src.ll";
+		String llvmOutFile = "LocalCSETest6Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test14() throws Exception {
-		String llvmSrcFileName =  "LocalCSETest7Src.bc";
-		String llvmOutFile = "LocalCSETest7Out.bc";
+		String llvmSrcFileName =  "LocalCSETest7Src.ll";
+		String llvmOutFile = "LocalCSETest7Out.ll";
 
 		runLocalCSE(llvmSrcFileName, llvmOutFile);
 	}

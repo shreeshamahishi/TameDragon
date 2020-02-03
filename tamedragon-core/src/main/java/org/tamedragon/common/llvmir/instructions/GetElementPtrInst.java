@@ -34,11 +34,13 @@ public class GetElementPtrInst extends Instruction {
 	private List<Pair<Value, Type>> indexVsType;
 	private Boolean isInBounds = false;
 	private Boolean isUnnamedAddr = false;
+	private String pointeeType;
 
 	public GetElementPtrInst(Type type, List<Value> operandList, 
-			List<Pair<Value, Type>> indexVsType, String name, BasicBlock parent) {
+			List<Pair<Value, Type>> indexVsType, String name, String pointeeType, BasicBlock parent) {
 		super(InstructionID.GET_ELEMENT_PTR, type, operandList, parent);
 		this.indexVsType = indexVsType;
+		this.pointeeType = pointeeType;
 		setName(name);
 	}
 
@@ -49,9 +51,7 @@ public class GetElementPtrInst extends Instruction {
 		return Ty;
 	}
 
-	void init(Value ptr, List<ConstantInt> idxList, String name) {
-
-	}
+	void init(Value ptr, List<ConstantInt> idxList, String name) { }
 
 	/**
 	 * Returns the type of the element that would be loaded
@@ -188,7 +188,7 @@ public class GetElementPtrInst extends Instruction {
 		return indexVsType;
 	}
 
-	public static GetElementPtrInst create(String name, Value pointerOperand, List<Pair<Value, Type>> indexVsType, BasicBlock parent)
+	public static GetElementPtrInst create(String name, Value pointerOperand, List<Pair<Value, Type>> indexVsType, String pointeeType, BasicBlock parent)
 			throws InstructionCreationException {
 		if (pointerOperand == null)
 			throw new InstructionCreationException(
@@ -233,8 +233,7 @@ public class GetElementPtrInst extends Instruction {
 			}
 		}
 
-		GetElementPtrInst getElementPtrInst = new GetElementPtrInst(pointerType,
-				operandList, indexVsType, name, parent);
+		GetElementPtrInst getElementPtrInst = new GetElementPtrInst(pointerType, operandList, indexVsType, name, pointeeType, parent);
 
 		return getElementPtrInst;
 	}
@@ -244,11 +243,13 @@ public class GetElementPtrInst extends Instruction {
 		String description = "";
 		String name = LLVMIREmitter.getInstance().getValidName(this);
 		if(name != null && name.length() != 0)
-			description = name + " = getelementptr";
+			description = name + " = getelementptr ";
 		else
-			description = getType().toString() + " getelementptr";
+			description = getType().toString() + " getelementptr ";
 		if (isInBounds())
-			description += " inbounds";
+			description += "inbounds ";
+		
+		description += pointeeType + ",";
 
 		PointerType type = (PointerType)getPointerOperand().getType();
 
@@ -349,6 +350,10 @@ public class GetElementPtrInst extends Instruction {
 	public Constant foldIfPossible() {
 		// TODO Implement later
 		return null;
+	}
+
+	public String getPointeeType() {
+		return pointeeType;
 	}
 
 }

@@ -20,80 +20,80 @@ public class GlobalCSETest {
 
 	@Test
 	public void test1() throws Exception {
-		String llvmSrcFile =  "GlobalCSETest1Src.bc";
-		String llvmGlobalCSEOutFileName = "GlobalCSETest1Out.bc";
+		String llvmSrcFile =  "GlobalCSETest1Src.ll";
+		String llvmGlobalCSEOutFileName = "GlobalCSETest1Out.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test2() throws Exception {
-		String llvmSrcFile =  "IfElseIfTestSrc.bc";
-		String llvmGlobalCSEOutFileName = "IfElseIfTestOut.bc";
+		String llvmSrcFile =  "IfElseIfTestSrc.ll";
+		String llvmGlobalCSEOutFileName = "IfElseIfTestOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test3() throws Exception {
-		String llvmSrcFile =  "IfElseIfWithinForLoopSrc.bc";
-		String llvmGlobalCSEOutFileName = "IfElseIfWithinForLoopOut.bc";
+		String llvmSrcFile =  "IfElseIfWithinForLoopSrc.ll";
+		String llvmGlobalCSEOutFileName = "IfElseIfWithinForLoopOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test4() throws Exception {
-		String llvmSrcFile =  "IfElseIfWithinLoopWithBreakContinueReturnSrc.bc";
-		String llvmGlobalCSEOutFileName = "IfElseIfWithinLoopWithBreakContinueReturnOut.bc";
+		String llvmSrcFile =  "IfElseIfWithinLoopWithBreakContinueReturnSrc.ll";
+		String llvmGlobalCSEOutFileName = "IfElseIfWithinLoopWithBreakContinueReturnOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test5() throws Exception {
-		String llvmSrcFile =  "ForWithIfElse2Src.bc";
-		String llvmGlobalCSEOutFileName = "ForWithIfElse2Out.bc";
+		String llvmSrcFile =  "ForWithIfElse2Src.ll";
+		String llvmGlobalCSEOutFileName = "ForWithIfElse2Out.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test6() throws Exception {
-		String llvmSrcFile =  "BinarySearchSrc.bc";
-		String llvmGlobalCSEOutFileName = "BinarySearchOut.bc";
+		String llvmSrcFile =  "BinarySearchSrc.ll";
+		String llvmGlobalCSEOutFileName = "BinarySearchOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test7() throws Exception {
-		String llvmSrcFile =  "helloSrc.bc";
-		String llvmGlobalCSEOutFileName = "helloOut.bc";
+		String llvmSrcFile =  "helloSrc.ll";
+		String llvmGlobalCSEOutFileName = "helloOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test8() throws Exception {
-		String llvmSrcFile =  "BubbleSortSrc.bc";
-		String llvmGlobalCSEOutFileName = "BubbleSortOut.bc";
+		String llvmSrcFile =  "BubbleSortSrc.ll";
+		String llvmGlobalCSEOutFileName = "BubbleSortOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test9() throws Exception {
-		String llvmSrcFile =  "insertSrc.bc";
-		String llvmGlobalCSEOutFileName = "insertOut.bc";
+		String llvmSrcFile =  "insertSrc.ll";
+		String llvmGlobalCSEOutFileName = "insertOut.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}
 	
 	@Test
 	public void test10() throws Exception {
-		String llvmSrcFile =  "SimpleAA1Src.bc";
-		String llvmGlobalCSEOutFileName = "SimpleAA1Out.bc";
+		String llvmSrcFile =  "SimpleAA1Src.ll";
+		String llvmGlobalCSEOutFileName = "SimpleAA1Out.ll";
 
 		runGlobalCSE(llvmSrcFile, llvmGlobalCSEOutFileName);
 	}

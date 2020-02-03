@@ -139,7 +139,9 @@ public class LLVMSemantic {
 	private static final String UNABLE_TO_UPDATE_PHI_NODE = "Fatal error: Not able to update phi node";
 	private static final String UNABLE_TO_CREATE_TYPE = "Fatal error: Not able to create type: ";
 	private static final String UNKNOWN_LINKAGE_TYPE = "Unknown linkage type: ";
+	private static final String POINTEE_TYPE_DOES_NOT_MATCH_POINTER_CONTAINED_TYPE = "error: explicit pointee type doesn't match operand's pointee type";
 
+	private static final String UNKNOWN_ERROR = "Unknown error: ";
 	private static final String COMPILER_SETTINGS_PATH = "CompilerSettings.properties";
 	
 	public LLVMSemantic(String fileName, List<ValueData> irData){
@@ -1124,10 +1126,28 @@ public class LLVMSemantic {
 			errorHandler.addError(fileName, location, name, null, LLVMErrorHandler.E_NO_DECLARATION);
 			return;
 		}
+		
+		// Confirm that the pointer type refers to the pointee type
+		String pointeeTypeStr = load.getPointeeTypeStr();
+		String pointerTypeStr = load.getTypeStr();
+		
+		Type pointerType = getLLVMType(pointerTypeStr, compilationContext, false); 
+		
+		Type pointeeType = getLLVMType(pointeeTypeStr, compilationContext, false); 
+		
+		try {
+			Type containterType = Type.getPointerType(compilationContext, pointeeType, 0);
+			if(containterType != pointerType) {
+				errorHandler.addError(fileName, location, result, null, POINTEE_TYPE_DOES_NOT_MATCH_POINTER_CONTAINED_TYPE);
+				return;
+			}
+		} catch (TypeCreationException ex) {
+			errorHandler.addError(fileName, location, result, null, ex.getMessage());
+		}
 
 		try{
 			String lresult = handleName(result);
-			loadInst = LoadInst.create(properties, value,lresult, false, null, null, currentBasicBlock);
+			loadInst = LoadInst.create(properties, value,lresult, false, null, null, load.getPointeeTypeStr(), currentBasicBlock);
 			currentBasicBlock.addInstruction(loadInst);
 			addToMap(new SourceLocation(load.getLineNum()), result, loadInst);
 			updateIncompletePhiNode(loadInst,result);
@@ -1259,7 +1279,7 @@ public class LLVMSemantic {
 
 		try {
 			String	lname = handleName(result);
-			instr = GetElementPtrInst.create(lname , pointerOperand, valueAndTypePairs, currentBasicBlock);
+			instr = GetElementPtrInst.create(lname , pointerOperand, valueAndTypePairs, data.getPointeeTypeStr(), currentBasicBlock);
 
 			instr.setIsInBounds(isInBounds);
 			if(result != null){
@@ -1409,8 +1429,8 @@ public class LLVMSemantic {
 			updateIncompletePhiNode(binaryOperator,result);
 		} 
 		catch (Exception e) {
-			String str = e.getMessage();
-			errorHandler.addError(fileName, location, result, null, e.getMessage());
+			String mainErrorMsg = UNKNOWN_ERROR + e.getMessage();
+			errorHandler.addError(fileName, location, result, null, mainErrorMsg);
 		}
 	}
 

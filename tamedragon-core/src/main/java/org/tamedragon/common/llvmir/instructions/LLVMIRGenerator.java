@@ -1296,8 +1296,10 @@ public class LLVMIRGenerator {
 			}
 			loadInsTargetName = null;
 			value = getGlobalVariableIfItExists(value);
+			PointerType pointerType = (PointerType)value.getType();
+			Type pointeeType = pointerType.getContainedType();
 			loadInst = LoadInst.create(properties, value, loadInsTargetName, 
-					isVolatile, atomicOrdering, syncScope, currentBasicBlock);
+					isVolatile, atomicOrdering, syncScope, pointeeType.toString(), currentBasicBlock);
 
 			valueVsLoadInst.put(value, loadInst);
 			if(irTreeExp != null)
@@ -2030,7 +2032,9 @@ public class LLVMIRGenerator {
 
 		try {
 			value = getGlobalVariableIfItExists(value);
-			GetElementPtrInst elementPtrInst = GetElementPtrInst.create(name, value, indxVsType, currentBasicBlock);
+			PointerType pointerType = (PointerType)value.getType();
+			Type pointeeType = pointerType.getContainedType();
+			GetElementPtrInst elementPtrInst = GetElementPtrInst.create(name, value, indxVsType, pointeeType.toString(), currentBasicBlock);
 			elementPtrInst.setIsInBounds(true);
 			exprVsValue.put(irTreeAgrExpr, elementPtrInst);
 			// Because sometimes this instruction might be calculating address of a global pointer, 

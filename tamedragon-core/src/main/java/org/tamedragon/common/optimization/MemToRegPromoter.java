@@ -37,6 +37,7 @@ import org.tamedragon.common.llvmir.types.Type;
 import org.tamedragon.common.llvmir.types.UndefValue;
 import org.tamedragon.common.llvmir.types.Value;
 import org.tamedragon.common.llvmir.utils.LLVMIREmitter;
+import org.tamedragon.common.utils.LLVMIRUtils;
 
 /**
  * This class implements the Mem2Reg optimization pass that promotes values in memory
@@ -221,12 +222,9 @@ public class MemToRegPromoter {
 
 		AllocInfo info = new AllocInfo();
 
-		Vector<AllocaInst> nonTrivialAllocasThatCanBePromoted = new 
-		Vector<AllocaInst>();
-		HashMap<AllocaInst, Vector<BasicBlock>> nonTrivalAllocasAndDefBlocks
-		= new HashMap<AllocaInst, Vector<BasicBlock>>();
-		HashMap<AllocaInst, Vector<BasicBlock>> nonTrivalAllocasAndUseBlocks
-		= new HashMap<AllocaInst, Vector<BasicBlock>>();
+		Vector<AllocaInst> nonTrivialAllocasThatCanBePromoted = new  Vector<AllocaInst>();
+		HashMap<AllocaInst, Vector<BasicBlock>> nonTrivalAllocasAndDefBlocks = new HashMap<AllocaInst, Vector<BasicBlock>>();
+		HashMap<AllocaInst, Vector<BasicBlock>> nonTrivalAllocasAndUseBlocks = new HashMap<AllocaInst, Vector<BasicBlock>>();
 
 		for (AllocaInst allocaInst : allocasThatCanBePromoted) {
 
@@ -255,6 +253,9 @@ public class MemToRegPromoter {
 				if (info.usingBlocksAreEmpty()) {
 
 					// Remove the (now dead) store and alloca.
+					if(info.getOnlyStore().toString().contains("%40 = getelementptr inbounds %struct.student, %struct.student* %st, i32 0, i32 1")) {
+						System.out.println("WAIT HERE");
+					}
 					info.getOnlyStore().eraseFromParent();
 					allocaInst.eraseFromParent();
 
@@ -312,6 +313,9 @@ public class MemToRegPromoter {
 			nonTrivalAllocasAndDefBlocks.put(allocaInst, defBlocks);
 			nonTrivalAllocasAndUseBlocks.put(allocaInst, useBlocks);
 		}
+		
+		printIntermediate("After promoting allocas ", function);
+
 
 		if (nonTrivialAllocasThatCanBePromoted.size() == 0)
 			return; // All of the allocas must have been trivial!
@@ -325,10 +329,20 @@ public class MemToRegPromoter {
 		= determineInsertionPoints(nonTrivialAllocasThatCanBePromoted, dominanceFrontiers,
 				nonTrivalAllocasAndDefBlocks, nonTrivalAllocasAndUseBlocks,
 				function);
-
+		
+		
 		insertPhiFunctions(nonTrivialAllocasThatCanBePromoted, allocasAndInsertionPoints, function);
-
 		renameVariables(nonTrivialAllocasThatCanBePromoted, function);
+	}
+
+	private void printIntermediate(String msg, Function function) {
+		System.out.println(msg);
+		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
+		LLVMIREmitter emitter = llvmirUtils.getEmitter();
+		emitter.reset();
+		List<String> instrsAfterOpt = emitter.emitInstructions(function.getParent());
+		llvmirUtils.printAsm(instrsAfterOpt);
+		
 	}
 
 	private void insertPhiFunctions(
@@ -835,8 +849,14 @@ public class MemToRegPromoter {
 		}
 
 		// Remove the instructions that are marked to be deleted
-		for(Instruction instr : instrsToBeRemoved)
+		for(Instruction instr : instrsToBeRemoved) {
+			if(instr.getInstructionID() == InstructionID.STORE_INST) {
+				System.out.println("Removing store instruction: ");
+				System.out.println(instr);
+			}
 			instr.eraseFromParent();
+		}
+			
 	}
 
 	private String getNewPhiNodeName(HashMap<Value, Integer> phiNodeBaseVsCount, 

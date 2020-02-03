@@ -17,176 +17,176 @@ public class Mem2RegTests  {
 
 	@Test
 	public void runSimpleStraightLineProg() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc1.bc";
-		String llvmOutFileName = "Mem2RegOut1.bc";
+		String cSrcfilename =  "Mem2RegSrc1.ll";
+		String llvmOutFileName = "Mem2RegOut1.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runSimpleIfProg() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc2.bc";
-		String llvmOutFileName = "Mem2RegOut2.bc";
+		String cSrcfilename =  "Mem2RegSrc2.ll";
+		String llvmOutFileName = "Mem2RegOut2.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runSimpleIfElseProg() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc3.bc";
-		String llvmOutFileName = "Mem2RegOut3.bc";
+		String cSrcfilename =  "Mem2RegSrc3.ll";
+		String llvmOutFileName = "Mem2RegOut3.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runSimpleNestedIfElse1Prog() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc4.bc";
-		String llvmOutFileName = "Mem2RegOut4.bc";
+		String cSrcfilename =  "Mem2RegSrc4.ll";
+		String llvmOutFileName = "Mem2RegOut4.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runForLoopWithIfElse1Prog() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc5.bc";
-		String llvmOutFileName = "Mem2RegOut5.bc";
+		String cSrcfilename =  "Mem2RegSrc5.ll";
+		String llvmOutFileName = "Mem2RegOut5.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runForWhileWithIfElse1Prog() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc6.bc";
-		String llvmOutFileName = "Mem2RegOut6.bc";
+		String cSrcfilename =  "Mem2RegSrc6.ll";
+		String llvmOutFileName = "Mem2RegOut6.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runForSimpleIfElseWithUndefProg() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc7.bc";
-		String llvmOutFileName = "Mem2RegOut7.bc";
+		String cSrcfilename =  "Mem2RegSrc7.ll";
+		String llvmOutFileName = "Mem2RegOut7.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runIfElseWithNDefsInSameBBProg() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc8.bc";
-		String llvmOutFileName = "Mem2RegOut8.bc";
+		String cSrcfilename =  "Mem2RegSrc8.ll";
+		String llvmOutFileName = "Mem2RegOut8.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runIfElseWithMultiplePhiForArgs() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc9.bc";
-		String llvmOutFileName = "Mem2RegOut9.bc";
+		String cSrcfilename =  "Mem2RegSrc9.ll";
+		String llvmOutFileName = "Mem2RegOut9.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runIfElseWithPreExistingPhiNode() throws Exception {
-		String cSrcfilename =  "Mem2RegSrc10.bc";
-		String llvmOutFileName = "Mem2RegOut10.bc";
+		String cSrcfilename =  "Mem2RegSrc10.ll";
+		String llvmOutFileName = "Mem2RegOut10.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runWithSeveralPointers1() throws Exception {
-		String cSrcfilename = "Mem2RegSrc12.bc";
-		String llvmOutFileName = "Mem2RegOut12.bc";
+		String cSrcfilename = "Mem2RegSrc12.ll";
+		String llvmOutFileName = "Mem2RegOut12.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "bar");
 	}
 
 	@Test
 	public void runDoWhileWithinWhile() throws Exception {
-		String cSrcfilename = "doWhileWithinWhileSrc.bc";
-		String llvmOutFileName = "doWhileWithinWhileOut.bc";
+		String cSrcfilename = "doWhileWithinWhileSrc.ll";
+		String llvmOutFileName = "doWhileWithinWhileOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runIfElseIfLadder() throws Exception {
-		String cSrcfilename = "IfElseIfLadderSrc.bc";
-		String llvmOutFileName = "IfElseIfLadderOut.bc";
+		String cSrcfilename = "IfElseIfLadderSrc.ll";
+		String llvmOutFileName = "IfElseIfLadderOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runGlobalVar() throws Exception {
-		String cSrcfilename = "GlobalVarSrc.bc";
-		String llvmOutFileName = "GlobalVarOut.bc";
+		String cSrcfilename = "GlobalVarSrc.ll";
+		String llvmOutFileName = "GlobalVarOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName, "foo");
 	}
 
 	@Test
 	public void runDerefStructMember() throws Exception {
-		String cSrcfilename = "DerefStructMemberSrc.bc";
-		String llvmOutFileName = "DerefStructMemberOut.bc";
+		String cSrcfilename = "DerefStructMemberSrc.ll";
+		String llvmOutFileName = "DerefStructMemberOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
 
 	@Test
 	public void runBinarySearch() throws Exception {
-		String cSrcfilename = "BinarySearchSrc.bc";
-		String llvmOutFileName = "BinarySearchOut.bc";
+		String cSrcfilename = "BinarySearchSrc.ll";
+		String llvmOutFileName = "BinarySearchOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"main");
 	}
 
 	@Test
 	public void runArrayAssignmentInLoop() throws Exception {
-		String cSrcfilename = "ArrayAssignmentInLoopSrc.bc";
-		String llvmOutFileName = "ArrayAssignmentInLoopOut.bc";
+		String cSrcfilename = "ArrayAssignmentInLoopSrc.ll";
+		String llvmOutFileName = "ArrayAssignmentInLoopOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
 
 	@Test
 	public void runArrayPointerInStructure() throws Exception {
-		String cSrcfilename = "ArrayPointerInStructureSrc.bc";
-		String llvmOutFileName = "ArrayPointerInStructureOut.bc";
+		String cSrcfilename = "ArrayPointerInStructureSrc.ll";
+		String llvmOutFileName = "ArrayPointerInStructureOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
 
 	@Test
 	public void runCastInstrInStruct() throws Exception {
-		String cSrcfilename = "CastInstrInStructureSrc.bc";
-		String llvmOutFileName = "CastInstrInStructureOut.bc";
+		String cSrcfilename = "CastInstrInStructureSrc.ll";
+		String llvmOutFileName = "CastInstrInStructureOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"fun");
 	}
 
 	@Test
 	public void runAddingTwoNumbers() throws Exception {
-		String cSrcfilename = "AddingTwoNumbersSrc.bc";
-		String llvmOutFileName = "AddingTwoNumbersOut.bc";
+		String cSrcfilename = "AddingTwoNumbersSrc.ll";
+		String llvmOutFileName = "AddingTwoNumbersOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"main");
 	}
 
 	@Test
 	public void Test() throws Exception {
-		String cSrcfilename = "TestIn.bc";
-		String llvmOutFileName = "TestOut.bc";
+		String cSrcfilename = "TestIn.ll";
+		String llvmOutFileName = "TestOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
 	
 	@Test
 	public void ComplexStruct1Test() throws Exception {
-		String cSrcfilename = "ComplexStruct1Src.bc";
-		String llvmOutFileName = "ComplexStruct1Out.bc";
+		String cSrcfilename = "ComplexStruct1Src.ll";
+		String llvmOutFileName = "ComplexStruct1Out.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
@@ -196,7 +196,7 @@ public class Mem2RegTests  {
 	@Test
 	public void runFunctionPointer() throws Exception {
 		String cSrcfilename = "FunctionPointer.c";
-		String llvmOutFileName = "FunctionPointerOut.bc";
+		String llvmOutFileName = "FunctionPointerOut.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName);
 	}
@@ -205,7 +205,7 @@ public class Mem2RegTests  {
 	@Test
 	public void runNonCriticalMemAccess() throws Exception {
 		String cSrcfilename = "Mem2Reg11.c";
-		String llvmOutFileName = "Mem2RegOut11.bc";
+		String llvmOutFileName = "Mem2RegOut11.ll";
 
 		runMem2Reg(cSrcfilename, llvmOutFileName);
 	}*/

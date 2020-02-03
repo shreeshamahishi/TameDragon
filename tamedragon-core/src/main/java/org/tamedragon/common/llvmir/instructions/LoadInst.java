@@ -27,6 +27,7 @@ public class LoadInst extends UnaryInstruction {
 	
 	private boolean isVolatile;
 	private long align;
+	private String pointeeType;
 	private String pointerName;
 	private AtomicOrdering order;
 	private SynchronizationScope synchScope;
@@ -35,7 +36,7 @@ public class LoadInst extends UnaryInstruction {
 
 	public LoadInst(Properties properties, Type type, List<Value> operandList, String name,
 			boolean isVolatile, AtomicOrdering order,
-			SynchronizationScope synchScope, long align, String pointerName, BasicBlock parent) {
+			SynchronizationScope synchScope, long align, String pointerName, String pointeeType, BasicBlock parent) {
 		super(InstructionID.LOAD_INST, type, operandList, parent);
 
 		setName(name);
@@ -45,6 +46,7 @@ public class LoadInst extends UnaryInstruction {
 		this.align = align;
 		this.synchScope = synchScope;
 		this.pointerName = pointerName;
+		this.pointeeType = pointeeType;
 		this.properties = properties;
 	}
 
@@ -58,6 +60,10 @@ public class LoadInst extends UnaryInstruction {
 
 	public long getAlign() {
 		return align;
+	}
+	
+	public String getPointeeType() {
+		return pointeeType;
 	}
 
 	public void setAlign(long align) throws InstructionUpdateException {
@@ -148,7 +154,7 @@ public class LoadInst extends UnaryInstruction {
 
 	public static LoadInst create(Properties properties, Value value, String name,
 			boolean isVolatile, AtomicOrdering order,
-			SynchronizationScope synchScope, BasicBlock parent)
+			SynchronizationScope synchScope, String pointeeType, BasicBlock parent)
 			throws InstructionCreationException {
 		
 //		if(name == null){
@@ -211,7 +217,7 @@ public class LoadInst extends UnaryInstruction {
 		List<Value> oprList = new ArrayList<Value>();
 		oprList.add(value);
 		LoadInst loadInst = new LoadInst(properties, containedType, oprList , name,
-				isVolatile, order, synchScope, align, null, parent);
+				isVolatile, order, synchScope, align, null, pointeeType, parent);
 
 		return loadInst;
 	}
@@ -220,13 +226,16 @@ public class LoadInst extends UnaryInstruction {
 	public String emit() {
 		String name = LLVMIREmitter.getInstance().getValidName(this);
 		pointerName = LLVMIREmitter.getInstance().getValidName(getOperand(0));
-		String description = name + " = load";
+		String description = name + " = load ";
 		if (this.isAtomic())
-			description += " atomic";
+			description += "atomic ";
 		if (this.isVolatile)
-			description += " volatile";
-		description += " " + getOperand(0).getType().toString() + " "
-				+ pointerName;
+			description += "volatile ";
+		
+		 description += pointeeType + ", " ;
+		
+		description +=  getOperand(0).getType().toString() + " " + pointerName;
+		
 		if (this.isAtomic()) {
 			if (synchScope == SynchronizationScope.SingleThread)
 				description += " " + synchScope.getRepresentation();

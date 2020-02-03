@@ -12,6 +12,7 @@ import org.tamedragon.common.utils.ComparisionUtils;
 public class RandomTestCases {
 	String rootPath = "CToLLVMIRTranslate/RandomTestCases";
 
+	@Ignore
 	@Test
 	public void test1(){
 
@@ -20,21 +21,22 @@ public class RandomTestCases {
 		File fileArr[] = file.listFiles();
 		for(File f : fileArr){
 			String llvmFileName = f.getName();
-			// TODO array initialization is pending DijskstraAlgorithmLLVMIR.bc
-			if(llvmFileName.equals("FloydWarshallAlgForShortestPathLLVMIR.bc"))
+			// TODO array initialization is pending DijskstraAlgorithmLLVMIR.ll
+			if(llvmFileName.equals("FloydWarshallAlgForShortestPathLLVMIR.ll"))
 				continue;
 
 			// TODO Correct these too
-			if(llvmFileName.equals("DESLLVMIR.bc" ) || llvmFileName.equals("PrintingCharactersLLVMIR.bc") 
-					|| llvmFileName.equals("RSALLVMIR.bc")||llvmFileName.equals("ArrayOfStructuresLLVMIR.bc"))
+			if(llvmFileName.equals("DESLLVMIR.ll" ) || llvmFileName.equals("PrintingCharactersLLVMIR.ll") 
+					|| llvmFileName.equals("RSALLVMIR.ll")||llvmFileName.equals("ArrayOfStructuresLLVMIR.ll"))
 				continue;
 
 			// TODO Correct these too (maybe simple errors)
-			if(llvmFileName.equals("LinkedListLLVMIR.bc") || llvmFileName.equals("UnionTest3LLVMIR.bc")){				
+			if(llvmFileName.equals("LinkedListLLVMIR.ll") || llvmFileName.equals("UnionTest3LLVMIR.ll")){				
 				continue;
 			}
 
-			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.bc")){				
+			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.ll")){	
+				System.out.println("*************** FILE CONSIDERED = " + llvmFileName);
 				LLVMIRUtils llvirUtils = new LLVMIRUtils();
 				List<String> instrs = llvirUtils.getInstructionsList(rootPath, llvmFileName);
 				assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -45,7 +47,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testFloydWarshallAlg(){
-		String llvmFileName = "FloydWarshallAlgForShortestPathLLVMIR.bc";
+		String llvmFileName = "FloydWarshallAlgForShortestPathLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -54,7 +56,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testDES(){
-		String llvmFileName = "DESLLVMIR.bc";
+		String llvmFileName = "DESLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -63,7 +65,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testPrintChars(){
-		String llvmFileName = "PrintingCharactersLLVMIR.bc";
+		String llvmFileName = "PrintingCharactersLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -72,7 +74,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testRSA(){
-		String llvmFileName = "RSALLVMIR.bc";
+		String llvmFileName = "RSALLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -81,7 +83,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testArraysOfStructs(){
-		String llvmFileName = "ArrayOfStructuresLLVMIR.bc";
+		String llvmFileName = "ArrayOfStructuresLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -90,7 +92,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testLinkedListLLVMIR(){
-		String llvmFileName = "LinkedListLLVMIR.bc";
+		String llvmFileName = "LinkedListLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -99,7 +101,7 @@ public class RandomTestCases {
 	@Ignore
 	@Test
 	public void testUnion3(){
-		String llvmFileName = "UnionTest3LLVMIR.bc";
+		String llvmFileName = "UnionTest3LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));

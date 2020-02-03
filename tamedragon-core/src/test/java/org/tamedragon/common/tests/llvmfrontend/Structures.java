@@ -22,12 +22,12 @@ public class Structures  {
 		for(File f : fileArr){
 			String llvmFileName = f.getName();
 			
-			if("StructureAssignmentLLVMIR.bc".equals(llvmFileName)
-			   || "InnerStructAssignmentLLVMIR.bc".equals(llvmFileName))	{
+			if("StructureAssignmentLLVMIR.ll".equals(llvmFileName)
+			   || "InnerStructAssignmentLLVMIR.ll".equals(llvmFileName))	{
 				continue;
 			}
 			
-			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.bc")){				
+			if(llvmFileName.matches("[[a-z][A-Z][0-9]]+\\.ll")){				
 				LLVMIRUtils llvirUtils = new LLVMIRUtils();
 				List<String> instrs = llvirUtils.getInstructionsList(rootPath, llvmFileName);
 				assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -37,7 +37,7 @@ public class Structures  {
 	
 	@Test
 	public void testComplexStruct(){
-		String llvmFileName = "ComplexStructLLVMIR.bc";
+		String llvmFileName = "ComplexStructLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -45,7 +45,7 @@ public class Structures  {
 	
 	@Test
 	public void testGlobalStructure(){
-		String llvmFileName = "GlobalStructureEgLLVMIR.bc";
+		String llvmFileName = "GlobalStructureEgLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -53,7 +53,7 @@ public class Structures  {
 	
 	@Test
 	public void testAssigningAStructElement(){
-		String llvmFileName = "AssigningAStructElementLLVMIR.bc";
+		String llvmFileName = "AssigningAStructElementLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -61,7 +61,7 @@ public class Structures  {
 	
 	@Test
 	public void testDereferencingAStructMember(){
-		String llvmFileName = "DereferencingAStructureMemberLLVMIR.bc";
+		String llvmFileName = "DereferencingAStructureMemberLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -69,7 +69,7 @@ public class Structures  {
 	
 	@Test
 	public void testDereferencingAStructureMemberUsingArrow(){
-		String llvmFileName = "DereferencingAStructureMemberUsingArrowLLVMIR.bc";
+		String llvmFileName = "DereferencingAStructureMemberUsingArrowLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -78,7 +78,7 @@ public class Structures  {
 	@Ignore
 	@Test
 	public void testInnerStructAssignment(){
-		String llvmFileName = "InnerStructAssignmentLLVMIR.bc";
+		String llvmFileName = "InnerStructAssignmentLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -86,7 +86,7 @@ public class Structures  {
 	
 	@Test
 	public void testLocalStructure1(){
-		String llvmFileName = "LocalStructureEgLLVMIR.bc";
+		String llvmFileName = "LocalStructureEgLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -94,7 +94,7 @@ public class Structures  {
 	
 	@Test
 	public void testLocalStructureTest2(){
-		String llvmFileName = "LocalStructureTest2LLVMIR.bc";
+		String llvmFileName = "LocalStructureTest2LLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -103,7 +103,7 @@ public class Structures  {
 	@Ignore
 	@Test
 	public void testStructureAssignment(){
-		String llvmFileName = "StructureAssignmentLLVMIR.bc";
+		String llvmFileName = "StructureAssignmentLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -111,7 +111,7 @@ public class Structures  {
 	
 	@Test
 	public void testStructureContainingArrayOfStructures(){
-		String llvmFileName = "StructureContainingArrayOfStructuresLLVMIR.bc";
+		String llvmFileName = "StructureContainingArrayOfStructuresLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
@@ -119,7 +119,7 @@ public class Structures  {
 	
 	@Test
 	public void testStructureWithinStructure(){
-		String llvmFileName = "StructureWithinStructureLLVMIR.bc";
+		String llvmFileName = "StructureWithinStructureLLVMIR.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));

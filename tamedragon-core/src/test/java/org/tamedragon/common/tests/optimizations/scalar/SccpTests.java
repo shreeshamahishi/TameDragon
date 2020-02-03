@@ -18,24 +18,24 @@ public class SccpTests  {
 	
 	@Test
 	public void runSCCP1() throws Exception {
-		String cSrcfilename =  "SccpSrc1.bc";
-		String llvmOutFileName = "SccpOut1.bc";
+		String cSrcfilename =  "SccpSrc1.ll";
+		String llvmOutFileName = "SccpOut1.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}
 	
 	@Test
 	public void runSCCP2() throws Exception {
-		String cSrcfilename =  "SccpSrc2.bc";
-		String llvmOutFileName = "SccpOut2.bc";
+		String cSrcfilename =  "SccpSrc2.ll";
+		String llvmOutFileName = "SccpOut2.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}
 	
 	@Test
 	public void runSCCP3() throws Exception {
-		String cSrcfilename =  "SccpSrc3.bc";
-		String llvmOutFileName = "SccpOut3.bc";
+		String cSrcfilename =  "SccpSrc3.ll";
+		String llvmOutFileName = "SccpOut3.ll";
 
 		runSccp(cSrcfilename, llvmOutFileName);
 	}

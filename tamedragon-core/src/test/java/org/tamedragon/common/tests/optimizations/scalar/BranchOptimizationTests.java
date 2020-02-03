@@ -20,8 +20,8 @@ public class BranchOptimizationTests   {
 	//Test1
 	@Test
 	public void runSimpleBranchOptimization() throws Exception {
-		String llvmsrcFile =  "UC2UC.bc";
-		String llvmOutFileName = "UC2UCOut.bc";
+		String llvmsrcFile =  "UC2UC.ll";
+		String llvmOutFileName = "UC2UCOut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -30,8 +30,8 @@ public class BranchOptimizationTests   {
 	@Ignore
 	@Test
 	public void runIfElseViaEmptyBasicBlock() throws Exception {
-		String llvmsrcFile =  "Ifelse.bc";
-		String llvmOutFileName = "IfelseOut.bc";
+		String llvmsrcFile =  "Ifelse.ll";
+		String llvmOutFileName = "IfelseOut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -39,8 +39,8 @@ public class BranchOptimizationTests   {
 	//Test3
 	@Test
 	public void runIfElseIfTestLLVMIR() throws Exception {
-		String llvmsrcFile =  "IfElseIfTestLLVMIR.bc";
-		String llvmOutFileName = "IfElseIfTestLLVMIROut.bc";
+		String llvmsrcFile =  "IfElseIfTestLLVMIR.ll";
+		String llvmOutFileName = "IfElseIfTestLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -48,16 +48,16 @@ public class BranchOptimizationTests   {
 	//Test4
 	@Test
 	public void IfElseIfWithinForLoopLLVMIR() throws Exception {
-		String llvmsrcFile =  "IfElseIfWithinForLoopLLVMIR.bc";
-		String llvmOutFileName = "IfElseIfWithinForLoopLLVMIROut.bc";
+		String llvmsrcFile =  "IfElseIfWithinForLoopLLVMIR.ll";
+		String llvmOutFileName = "IfElseIfWithinForLoopLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
 	//Test5
 	@Test
 	public void IfElseIfWithinLoopWithBreakContinueReturnLLVMIR() throws Exception {
-		String llvmsrcFile =  "IfElseIfWithinLoopWithBreakContinueReturnLLVMIR.bc";
-		String llvmOutFileName = "IfElseIfWithinLoopWithBreakContinueReturnLLVMIROut.bc";
+		String llvmsrcFile =  "IfElseIfWithinLoopWithBreakContinueReturnLLVMIR.ll";
+		String llvmOutFileName = "IfElseIfWithinLoopWithBreakContinueReturnLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -65,8 +65,8 @@ public class BranchOptimizationTests   {
 	//Test6
 	@Test
 	public void onlyIfLLVMIR() throws Exception {
-		String llvmsrcFile =  "onlyIfLLVMIR.bc";
-		String llvmOutFileName = "onlyIfLLVMIROut.bc";
+		String llvmsrcFile =  "onlyIfLLVMIR.ll";
+		String llvmOutFileName = "onlyIfLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -74,8 +74,8 @@ public class BranchOptimizationTests   {
 	//Test7 Related to the Switch Statement
 	@Test
 	public void FallthroughLLVMIR() throws Exception {
-		String llvmsrcFile =  "FallthroughLLVMIR.bc";
-		String llvmOutFileName = "FallthroughLLVMIROut.bc";
+		String llvmsrcFile =  "FallthroughLLVMIR.ll";
+		String llvmOutFileName = "FallthroughLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -84,16 +84,16 @@ public class BranchOptimizationTests   {
 	@Ignore
 	@Test
 	public void SwitchOnCharLLVMIR() throws Exception {
-		String llvmsrcFile =  "SwitchOnCharLLVMIR.bc";
-		String llvmOutFileName = "SwitchOnCharLLVMIROut.bc";
+		String llvmsrcFile =  "SwitchOnCharLLVMIR.ll";
+		String llvmOutFileName = "SwitchOnCharLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
 	//Test 9 simple Switch on Short Value
 	@Test
 	public void SwitchOnShortValueLLVMIR() throws Exception {
-		String llvmsrcFile =  "SwitchOnShortValueLLVMIR.bc";
-		String llvmOutFileName = "SwitchOnShortValueLLVMIROut.bc";
+		String llvmsrcFile =  "SwitchOnShortValueLLVMIR.ll";
+		String llvmOutFileName = "SwitchOnShortValueLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -101,8 +101,8 @@ public class BranchOptimizationTests   {
 	//Test 9 simple Switch on Short Value
 	@Test
 	public void doWhileWithinWhileLLVMIR() throws Exception {
-		String llvmsrcFile =  "doWhileWithinWhileLLVMIR.bc";
-		String llvmOutFileName = "doWhileWithinWhileLLVMIROut.bc";
+		String llvmsrcFile =  "doWhileWithinWhileLLVMIR.ll";
+		String llvmOutFileName = "doWhileWithinWhileLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -110,8 +110,8 @@ public class BranchOptimizationTests   {
 	//Test 10
 	@Test
 	public void MultipleNestedLoopsLLVMIR() throws Exception {
-		String llvmsrcFile =  "MultipleNestedLoopsLLVMIR.bc";
-		String llvmOutFileName = "MultipleNestedLoopsLLVMIROut.bc";
+		String llvmsrcFile =  "MultipleNestedLoopsLLVMIR.ll";
+		String llvmOutFileName = "MultipleNestedLoopsLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -119,8 +119,8 @@ public class BranchOptimizationTests   {
 	@Ignore
 	@Test
 	public void ForLoopWithContinueBreakAndReturnLLVMIR() throws Exception {
-		String llvmsrcFile =  "ForLoopWithContinueBreakAndReturnLLVMIR.bc";
-		String llvmOutFileName = "ForLoopWithContinueBreakAndReturnLLVMIROut.bc";
+		String llvmsrcFile =  "ForLoopWithContinueBreakAndReturnLLVMIR.ll";
+		String llvmOutFileName = "ForLoopWithContinueBreakAndReturnLLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}
@@ -128,8 +128,8 @@ public class BranchOptimizationTests   {
 	//Test 12
 	@Test
 	public void sample1LLVMIR() throws Exception {
-		String llvmsrcFile =  "sample1LLVMIR.bc";
-		String llvmOutFileName = "sample1LLVMIROut.bc";
+		String llvmsrcFile =  "sample1LLVMIR.ll";
+		String llvmOutFileName = "sample1LLVMIROut.ll";
 
 		runBranchOptimization(llvmsrcFile, llvmOutFileName, "foo");
 	}

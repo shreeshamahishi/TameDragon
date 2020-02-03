@@ -21,8 +21,8 @@ public class IndVarLoopReduce  {
 	@Ignore
 	@Test
 	public void runLoopNewVarsInsideLoop() throws Exception {
-		String cSrcfilename =  "LoopNewVarsInsideLoopSrc.bc";
-		String llvmOutFileName = "LoopNewVarsInsideLoopOut.bc";
+		String cSrcfilename =  "LoopNewVarsInsideLoopSrc.ll";
+		String llvmOutFileName = "LoopNewVarsInsideLoopOut.ll";
 
 		runIndVarLoopReduce(cSrcfilename, llvmOutFileName);
 	}

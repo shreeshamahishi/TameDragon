@@ -14,7 +14,7 @@ public class SemanticErrorsTest  {
 
 	@Test
 	public void runUndefinedValue() throws Exception {
-		String srcFileName =  "UndefinedValue.bc";
+		String srcFileName =  "UndefinedValue.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		llvmirUtils.getInstructionsList(ROOT_PATH, srcFileName);
 		
@@ -29,7 +29,7 @@ public class SemanticErrorsTest  {
 	
 	@Test
 	public void runMismatchedVarOrder() throws Exception {
-		String srcFileName =  "MismatchedVarOrder.bc";
+		String srcFileName =  "MismatchedVarOrder.ll";
 		LLVMIRUtils llvmirUtils = new LLVMIRUtils();
 		llvmirUtils.getInstructionsList(ROOT_PATH, srcFileName);
 		

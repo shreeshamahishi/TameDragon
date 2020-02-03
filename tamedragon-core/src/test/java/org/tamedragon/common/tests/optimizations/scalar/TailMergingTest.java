@@ -19,24 +19,24 @@ public class TailMergingTest {
 
 	@Test
 	public void test1() throws Exception {
-		String llvmSrcFileName =  "TailMerging1Src.bc";
-		String llvmOutFile = "TailMerging1Out.bc";
+		String llvmSrcFileName =  "TailMerging1Src.ll";
+		String llvmOutFile = "TailMerging1Out.ll";
 
 		runTailMerging(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test2() throws Exception {
-		String llvmSrcFileName =  "TailMerging2Src.bc";
-		String llvmOutFile = "TailMerging2Out.bc";
+		String llvmSrcFileName =  "TailMerging2Src.ll";
+		String llvmOutFile = "TailMerging2Out.ll";
 
 		runTailMerging(llvmSrcFileName, llvmOutFile);
 	}
 	
 	@Test
 	public void test3() throws Exception {
-		String llvmSrcFileName =  "TailMerging3Src.bc";
-		String llvmOutFile = "TailMerging3Out.bc";
+		String llvmSrcFileName =  "TailMerging3Src.ll";
+		String llvmOutFile = "TailMerging3Out.ll";
 
 		runTailMerging(llvmSrcFileName, llvmOutFile);
 	}

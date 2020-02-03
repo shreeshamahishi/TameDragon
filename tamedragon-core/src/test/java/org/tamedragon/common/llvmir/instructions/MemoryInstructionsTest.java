@@ -25,6 +25,7 @@ import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.ConstantFP;
 import org.tamedragon.common.llvmir.types.ConstantInt;
+import org.tamedragon.common.llvmir.types.IntegerType;
 import org.tamedragon.common.llvmir.types.PointerType;
 import org.tamedragon.common.llvmir.types.StructType;
 import org.tamedragon.common.llvmir.types.Type;
@@ -393,9 +394,9 @@ public class MemoryInstructionsTest {
 	public void testLoadCreation() {
 		// creating "normal" **non** atomic Load instructions
 		Value value = null;
+		IntegerType i32PointeeType = Type.getInt32Type(compilationContext, true);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -408,16 +409,16 @@ public class MemoryInstructionsTest {
 		LoadInst loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals("%val = load i32* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load i32, i32* %ptr, align 4"));
 
 		// Create **atomic** Load Instruction with **atomic ordering** as
 		// "Monotonic" Load instructions
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type .getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -429,10 +430,10 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) { }
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals("%val = load atomic i32* %ptr singlethread monotonic, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load atomic i32, i32* %ptr singlethread monotonic, align 4"));
 
 		// Create **atomic and single threaded** Load Instruction with
 		// **atomic ordering** as "Acquire" Load instructions
@@ -440,12 +441,12 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load atomic i32* %ptr singlethread acquire, align 4"));
+				"%val = load atomic i32, i32* %ptr singlethread acquire, align 4"));
 
 		// creating **atomic and single threaded** Load Instruction with
 		// **atomic ordering** as "Release" Load instructions
@@ -453,12 +454,12 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load atomic i32* %ptr singlethread seq_cst, align 4"));
+				"%val = load atomic i32, i32* %ptr singlethread seq_cst, align 4"));
 
 		// creating **atomic and single threaded** Load Instruction with
 		// **atomic ordering** as "Unordered" Load instructions
@@ -466,12 +467,12 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load atomic i32* %ptr singlethread unordered, align 4"));
+				"%val = load atomic i32, i32* %ptr singlethread unordered, align 4"));
 
 		// creating **atomic ,volatile and single threaded** Load instructions
 		isVolatile = true;
@@ -479,24 +480,24 @@ public class MemoryInstructionsTest {
 		order = AtomicOrdering.Monotonic;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load atomic volatile i32* %ptr singlethread monotonic, align 4"));
+				"%val = load atomic volatile i32, i32* %ptr singlethread monotonic, align 4"));
 
 		// creating **atomic ,volatile and cross threaded** Load instructions
 		synchScope = SynchronizationScope.CrossThread;
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load atomic volatile i32* %ptr monotonic, align 4"));
+				"%val = load atomic volatile i32, i32* %ptr monotonic, align 4"));
 
 		// creating "normal volatile" Load instructions
 		isVolatile = true;
@@ -505,12 +506,12 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
 		assertTrue(loadInst.toString().equals(
-				"%val = load volatile i32* %ptr, align 4"));
+				"%val = load volatile i32, i32* %ptr, align 4"));
 
 		// creating "normal" Load instructions, where pointee is of i8 type
 		try {
@@ -522,17 +523,18 @@ public class MemoryInstructionsTest {
 		value.setName("ptr");
 		isVolatile = false;
 		loadInst = null;
+		IntegerType i8PointeeType = Type.getInt8Type(compilationContext, true);
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i8PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) { }
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals("%val = load i8* %ptr, align 1"));
+		assertTrue(loadInst.toString().equals("%val = load i8, i8* %ptr, align 1"));
 
 		// creating "normal" Load instructions, where pointee is of i16 type
+		IntegerType i16PointeeType = Type.getInt16Type(compilationContext, true);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt16Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i16PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -541,16 +543,16 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, i16PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals("%val = load i16* %ptr, align 2"));
+		assertTrue(loadInst.toString().equals("%val = load i16, i16* %ptr, align 2"));
 
-		// creating "normal" Load instructions, where pointee is of float type
+		// creating "normal" load instructions, where pointee is of float type
+		Type fltPointeeType = Type.getFloatType(compilationContext);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getFloatType(compilationContext), 0));
+			value = new Value(Type.getPointerType(compilationContext, fltPointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -559,15 +561,15 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, fltPointeeType.toString(), null);
 		} catch (InstructionCreationException ice) { }
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals("%val = load float* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load float, float* %ptr, align 4"));
 
-		// creating "normal" Load instructions, where pointee is of double type
+		// creating "normal" load instructions, where pointee is of double type
+		Type doublePointeeType = Type.getDoubleType(compilationContext);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getDoubleType(compilationContext), 0));
+			value = new Value(Type.getPointerType(compilationContext, doublePointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -576,18 +578,17 @@ public class MemoryInstructionsTest {
 		loadInst = null;
 		try {
 			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+					synchScope, doublePointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals(
-				"%val = load double* %ptr, align 8"));
+		assertTrue(loadInst.toString().equals("%val = load double, double* %ptr, align 8"));
 
-		// creating "normal" Load instructions, where pointee is of pointer type
+		// creating "normal" load instructions, where pointee is of pointer type
+		Type pointerTypePointee = null;
 		try {
-			Type ptrType = Type.getPointerType(compilationContext, Type.getDoubleType(compilationContext), 0);
-			value = new Value(Type.getPointerType(compilationContext, ptrType,
-					0));
+			pointerTypePointee = Type.getPointerType(compilationContext, Type.getDoubleType(compilationContext), 0);
+			value = new Value(Type.getPointerType(compilationContext, pointerTypePointee, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -595,17 +596,16 @@ public class MemoryInstructionsTest {
 		isVolatile = false;
 		loadInst = null;
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, pointerTypePointee.toString(), null);
 		} catch (InstructionCreationException ice) { }
 		assertNotNull(loadInst);
-		assertTrue(loadInst.toString().equals( "%val = load double** %ptr, align 8"));
+		assertTrue(loadInst.toString().equals( "%val = load double*, double** %ptr, align 8"));
 	}
 
 	// Confirm that all "invalid" load instructions throws proper exceptions.
 	@Test
 	public void testInvalidLoadCreation() {
-		// creating Load Instruction with value as null
+		// Create load instruction with null value
 		String name = "%val";
 		AtomicOrdering order = null;
 		SynchronizationScope synchScope = null;
@@ -615,40 +615,52 @@ public class MemoryInstructionsTest {
 		LoadInst loadInst = null;
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, null, null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
-		assertTrue(errMsg
-				.equals(InstructionCreationException.VALUE_CANNOT_BE_NULL));
+		assertTrue(errMsg.equals(InstructionCreationException.VALUE_CANNOT_BE_NULL));
 
-		// creating Load Instruction with pointee as a non-first class type
+		// load instruction with pointee as a non-first class type
 		value = null;
+		Type invalidPointeeType = null;
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getFunctionType(compilationContext, Type
-							.getVoidType(compilationContext), false, null), 0));
+			invalidPointeeType = Type.getFunctionType(compilationContext, Type.getVoidType(compilationContext), false, null);
+			value = new Value(Type.getPointerType(compilationContext, invalidPointeeType, 0));
 		} catch (TypeCreationException e) {
-			e.getMessage(); assertTrue(false);
+			assertTrue(false);
 		}
 		value.setName("%ptr");
 		errMsg = "";
 		loadInst = null;
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, invalidPointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
-		assertTrue(errMsg
-				.equals(InstructionCreationException.LOAD_INSTR_SHOULD_HAVE_POINTER_TO_FIRSTCLASS_TYPE_ONLY));
+		assertTrue(errMsg.equals(InstructionCreationException.LOAD_INSTR_SHOULD_HAVE_POINTER_TO_FIRSTCLASS_TYPE_ONLY));
 
-		// creating Load Instruction with pointee as a integer type whose bit
-		// width is less than 8
+		// load Instruction with pointee as a integer type whose bit width is less than 8
+		invalidPointeeType = Type.getInt1Type(compilationContext, false);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt1Type(compilationContext, false), 0));
+			value = new Value(Type.getPointerType(compilationContext, invalidPointeeType, 0));
+		} catch (TypeCreationException e) {
+			assertTrue(false);
+		}
+		value.setName("%ptr");
+		errMsg = "";
+
+		try {
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, invalidPointeeType.toString(), null);
+		} catch (InstructionCreationException ice) {
+			errMsg = ice.getMessage();
+		}
+
+		// TODO What do we test here?
+		IntegerType i64PointeeType = Type.getInt64Type(compilationContext, true);
+		try {
+			value = new Value(Type.getPointerType(compilationContext, i64PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -656,30 +668,15 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order,synchScope, i64PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
 
+		// With AcquireRelease
+		IntegerType i32PointeeType = Type.getInt32Type(compilationContext, true);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt64Type(compilationContext, true), 0));
-		} catch (TypeCreationException e) {
-			e.getMessage(); assertTrue(false);
-		}
-		value.setName("%ptr");
-		errMsg = "";
-
-		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,synchScope, null);
-		} catch (InstructionCreationException ice) {
-			errMsg = ice.getMessage();
-		}
-
-		// AcquiredRelease
-		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -688,8 +685,7 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope,i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
@@ -697,8 +693,7 @@ public class MemoryInstructionsTest {
 
 		// creating **atomic** Load Instruction with atomic ordering as Release
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -707,17 +702,16 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
 		assertTrue(errMsg.equals(InstructionCreationException.INVALID_ATOMIC_ORDER_FOR_ATOMIC_LOAD_OR_STORE_INSTR));
 
-		// creating **atomic** Load Instruction with pointee type not an Integer type
+		// With atomic load instruction with pointee type not an Integer type
+		Type doublePointeeType = Type.getDoubleType(compilationContext);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getDoubleType(compilationContext), 0));
+			value = new Value(Type.getPointerType(compilationContext, doublePointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -727,17 +721,15 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, doublePointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
 		assertTrue(errMsg.equals(InstructionCreationException.FOR_ATOMIC_LOAD_OR_STORE_INSTR_POINTEE_SHOULD_BE_OF_INTEGER_TYPE));
 
-		// creating **non-atomic** Load Instruction synchronized
+		// With non-atomic load instruction synchronized
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -747,8 +739,7 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope,i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
@@ -762,8 +753,7 @@ public class MemoryInstructionsTest {
 		errMsg = "";
 
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, doublePointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 			errMsg = ice.getMessage();
 		}
@@ -773,11 +763,11 @@ public class MemoryInstructionsTest {
 	// Confirm that all "valid" load instructions updates works properly.
 	@Test
 	public void testValidLoadUpdation() {
-		// updating volatile to true.
+		// Update volatile to true.
+		IntegerType i32PointeeType = Type.getInt32Type(compilationContext, true);
 		Value value = null;
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -789,31 +779,29 @@ public class MemoryInstructionsTest {
 
 		LoadInst loadInst = null;
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,	synchScope, null);
-		} catch (InstructionCreationException ice) {
-		}
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order,	synchScope, i32PointeeType.toString(), null);
+		} catch (InstructionCreationException ice) { }
 		assertNotNull(loadInst);
 		loadInst.setVolatile(true);
-		assertTrue(loadInst.toString().equals("%val = load volatile i32* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load volatile i32, i32* %ptr, align 4"));
 
 		// updating volatile to false.
 		loadInst.setVolatile(false);
-		assertTrue(loadInst.toString().equals("%val = load i32* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load i32, i32* %ptr, align 4"));
 
-		// updating alignment
+		// Update alignment
 		try {
 			loadInst.setAlign(8);
 		} catch (InstructionUpdateException e) {
 			e.getMessage(); assertTrue(false);
 		}
-		assertTrue(loadInst.toString().equals("%val = load i32* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load i32, i32* %ptr, align 4"));
 
-		// updating the atomic ordering
+		// Update atomic ordering
 		order = AtomicOrdering.Monotonic;
 		synchScope = SynchronizationScope.CrossThread;
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		try {
@@ -821,7 +809,7 @@ public class MemoryInstructionsTest {
 		} catch (InstructionUpdateException e) {
 			e.getMessage(); assertTrue(false);
 		}
-		assertTrue(loadInst.toString().equals("%val = load atomic i32* %ptr seq_cst, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load atomic i32, i32* %ptr seq_cst, align 4"));
 
 		// updating the synchronization scope for atomic load instructions
 		synchScope = SynchronizationScope.SingleThread;
@@ -830,7 +818,7 @@ public class MemoryInstructionsTest {
 		} catch (InstructionUpdateException e) {
 			e.getMessage(); assertTrue(false);
 		}
-		assertTrue(loadInst.toString().equals("%val = load atomic i32* %ptr singlethread seq_cst, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load atomic i32, i32* %ptr singlethread seq_cst, align 4"));
 
 		// updating the synchronization scope for non-atomic load instructions
 		order = null;
@@ -841,18 +829,17 @@ public class MemoryInstructionsTest {
 		} catch (InstructionUpdateException e) {
 			e.getMessage(); assertTrue(false);
 		}
-		assertTrue(loadInst.toString().equals("%val = load i32* %ptr, align 4"));
+		assertTrue(loadInst.toString().equals("%val = load i32, i32* %ptr, align 4"));
 	}
 
-	// Confirm that all "invalid" load instructions updates throws proper
-	// exceptions.
+	// Confirm that all "invalid" load instructions updates throws expected exceptions.
 	@Test
-	public void testLoadUpdationInvalid() {
-		// updating alignment, not a power of two
+	public void testInvalidLoadUpates() {
+		// Update alignment, not a power of two
 		Value value = null;
+		IntegerType i32PointeeType = Type.getInt32Type(compilationContext, true);
 		try {
-			value = new Value(Type.getPointerType(compilationContext, Type
-					.getInt32Type(compilationContext, true), 0));
+			value = new Value(Type.getPointerType(compilationContext, i32PointeeType, 0));
 		} catch (TypeCreationException e) {
 			e.getMessage(); assertTrue(false);
 		}
@@ -865,7 +852,7 @@ public class MemoryInstructionsTest {
 		LoadInst loadInst = null;
 		String errMsg = "";
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,	synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order,	synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		assertNotNull(loadInst);
@@ -882,8 +869,7 @@ public class MemoryInstructionsTest {
 		order = AtomicOrdering.Acquire;
 		synchScope = SynchronizationScope.CrossThread;
 		try {
-			loadInst = LoadInst.create(properties, value, name, isVolatile, order,
-					synchScope, null);
+			loadInst = LoadInst.create(properties, value, name, isVolatile, order, synchScope, i32PointeeType.toString(), null);
 		} catch (InstructionCreationException ice) {
 		}
 		errMsg = "";
@@ -893,11 +879,9 @@ public class MemoryInstructionsTest {
 		} catch (InstructionUpdateException e) {
 			errMsg = e.getMessage();
 		}
-		assertTrue(errMsg
-				.equals(InstructionUpdateException.INVALID_ATOMIC_ORDER_FOR_LOAD_OR_STORE_INSTR));
+		assertTrue(errMsg.equals(InstructionUpdateException.INVALID_ATOMIC_ORDER_FOR_LOAD_OR_STORE_INSTR));
 
-		// updating the synchronization scope for non-atomic load instructions
-		// to SingleThreaded
+		// Update the synchronization scope for non-atomic load instructions to SingleThreaded
 		order = null;
 		synchScope = SynchronizationScope.SingleThread;
 		errMsg = "";
@@ -907,8 +891,7 @@ public class MemoryInstructionsTest {
 		} catch (InstructionUpdateException e) {
 			errMsg = e.getMessage();
 		}
-		assertTrue(errMsg
-				.equals(InstructionUpdateException.ONLY_ATOMIC_LOAD_OR_STORE_INSTR_CAN_BE_SINGLE_THREADED));
+		assertTrue(errMsg.equals(InstructionUpdateException.ONLY_ATOMIC_LOAD_OR_STORE_INSTR_CAN_BE_SINGLE_THREADED));
 	}
 
 	// *************************************************************************************************************
@@ -1438,7 +1421,7 @@ public class MemoryInstructionsTest {
 	// correctly.
 	@Test
 	public void testGetElementPtrCreation() {
-		//creating "normal" getElementPtr instruction, which tries to calculate the address of a member of a structure
+		// Create "normal" getElementPtr instructions, which tries to calculate the address of a member of a structure
 		StructType structType = new StructType(compilationContext, true, "pqr", false, 
 				Type.getInt32Type(compilationContext, true), Type
 				.getFloatType(compilationContext));
@@ -1471,13 +1454,13 @@ public class MemoryInstructionsTest {
 		String name = "res";
 		GetElementPtrInst getElementPtrInst = null;
 		try {
-			getElementPtrInst = GetElementPtrInst.create(name, value, indexVsType, null);
+			getElementPtrInst = GetElementPtrInst.create(name, value, indexVsType, structType.toString(), null);
 		} catch (InstructionCreationException e) { }
 
 		assertNotNull(getElementPtrInst);
-		assertTrue(getElementPtrInst.toString().equals("%res = getelementptr %pqr* %s, i32 0, i32 1"));
+		assertTrue(getElementPtrInst.toString().equals("%res = getelementptr %pqr, %pqr* %s, i32 0, i32 1"));
 
-		//creating "normal" getElementPtr instruction, which tries to calculate the address of a member of a Array
+		// Create "normal" getElementPtr instruction, which tries to calculate the address of an element of an array
 		ArrayType arrayType = new ArrayType(compilationContext, Type.getInt32Type(compilationContext, true), 4);
 		indexVsType = new ArrayList<Pair<Value, Type>>();
 		try {
@@ -1507,11 +1490,11 @@ public class MemoryInstructionsTest {
 
 		getElementPtrInst = null;
 		try {
-			getElementPtrInst = GetElementPtrInst.create(name, value, indexVsType, null);
+			getElementPtrInst = GetElementPtrInst.create(name, value, indexVsType, arrayType.toString(), null);
 		} catch (InstructionCreationException e) {
 			e.printStackTrace();
 		}
 		assertNotNull(getElementPtrInst);
-		assertTrue(getElementPtrInst.toString().equals("%res = getelementptr [4 x i32]* %s, i32 0, i32 1"));
+		assertTrue(getElementPtrInst.toString().equals("%res = getelementptr [4 x i32], [4 x i32]* %s, i32 0, i32 1"));
 	}
 }

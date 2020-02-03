@@ -17,40 +17,40 @@ public class GVNTests {
 	//test 1 for simple local  congruent value
 	@Test
 	public void runGVN1() throws Exception {
-		String cSrcfilename =  "GVN1Src.bc";
-		String llvmOutFileName = "GVN1.bc";
+		String cSrcfilename =  "GVN1Src.ll";
+		String llvmOutFileName = "GVN1.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
 	//test 2 for commutative Binary Operator like + *;
 	@Test
 	public void runGVNForcommutativeTest() throws Exception {
-		String cSrcfilename =  "GVNForCommutativeTestSrc.bc";
-		String llvmOutFileName = "GVNForCommutativeTest.bc";
+		String cSrcfilename =  "GVNForCommutativeTestSrc.ll";
+		String llvmOutFileName = "GVNForCommutativeTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
 	//test 3 For Compare Instruction ICMP
 	@Test
 	public void cmpInstGVNTest() throws Exception {
-		String cSrcfilename =  "IcmpDataSrc.bc";
-		String llvmOutFileName = "IcmpData.bc";
+		String cSrcfilename =  "IcmpDataSrc.ll";
+		String llvmOutFileName = "IcmpData.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
 	//test 4 for Casting Instruction
 	@Test
 	public void castInstGVNTest() throws Exception {
-		String cSrcfilename =  "CastInstrTestSrc.bc";
-		String llvmOutFileName = "CastInstrTest.bc";
+		String cSrcfilename =  "CastInstrTestSrc.ll";
+		String llvmOutFileName = "CastInstrTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
 	//test 5 for FCMP Instruction
 	@Test
 	public void fcmpInstrGVNTest() throws Exception {
-		String cSrcfilename =  "FCMPInstrTestSrc.bc";
-		String llvmOutFileName = "FCMPInstrTest.bc";
+		String cSrcfilename =  "FCMPInstrTestSrc.ll";
+		String llvmOutFileName = "FCMPInstrTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -58,8 +58,8 @@ public class GVNTests {
 	//test 6 for Simple GVN in For loop.
 	@Test
 	public void simpleGVNinForLoop() throws Exception {
-		String cSrcfilename =  "SimpleGVNinForLoopSrc.bc";
-		String llvmOutFileName = "SimpleGVNinForLoop.bc";
+		String cSrcfilename =  "SimpleGVNinForLoopSrc.ll";
+		String llvmOutFileName = "SimpleGVNinForLoop.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -67,8 +67,8 @@ public class GVNTests {
 	//test 7 for Simple GVN for global Variable Updating in between.
 	@Test
 	public void gvnForGlobalVariable() throws Exception {
-		String cSrcfilename =  "GVNForGlobalVariableSrc.bc";
-		String llvmOutFileName = "GVNForGlobalVariable.bc";
+		String cSrcfilename =  "GVNForGlobalVariableSrc.ll";
+		String llvmOutFileName = "GVNForGlobalVariable.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -77,8 +77,8 @@ public class GVNTests {
 	//test 8 for Simple GVN for global Variable not Updating in between.
 	@Test
 	public void gvnForGlobalVariable1() throws Exception {
-		String cSrcfilename =  "GVNForGlobalVariable1Src.bc";
-		String llvmOutFileName = "GVNForGlobalVariable1.bc";
+		String cSrcfilename =  "GVNForGlobalVariable1Src.ll";
+		String llvmOutFileName = "GVNForGlobalVariable1.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -86,8 +86,8 @@ public class GVNTests {
 	//test 9 for Simple GVN for Array.
 	@Test
 	public void gvnTestForArrays() throws Exception {
-		String cSrcfilename =  "ArraysTestsSrc.bc";
-		String llvmOutFileName = "ArraysTests.bc";
+		String cSrcfilename =  "ArraysTestsSrc.ll";
+		String llvmOutFileName = "ArraysTests.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "fun");
 	}
@@ -95,8 +95,8 @@ public class GVNTests {
 	//test 10 for structure.
 	@Test
 	public void castInstrInStructure() throws Exception {
-		String cSrcfilename =  "CastInstrInStructureSrc.bc";
-		String llvmOutFileName = "CastInstrInStructure.bc";
+		String cSrcfilename =  "CastInstrInStructureSrc.ll";
+		String llvmOutFileName = "CastInstrInStructure.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "fun");
 	}
@@ -105,8 +105,8 @@ public class GVNTests {
 	//test 11 Addition of two number. Fail
 	@Test
 	public void addingTwoNumbersTest() throws Exception {
-		String cSrcfilename =  "AddingTwoNumbersSrc.bc";
-		String llvmOutFileName = "AddingTwoNumbers.bc";
+		String cSrcfilename =  "AddingTwoNumbersSrc.ll";
+		String llvmOutFileName = "AddingTwoNumbers.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "main");
 	}
@@ -115,8 +115,8 @@ public class GVNTests {
 	//Fail
 	@Test
 	public void binarySearchTest() throws Exception {
-		String cSrcfilename =  "BinarySearchSrc.bc";
-		String llvmOutFileName = "BinarySearch.bc";
+		String cSrcfilename =  "BinarySearchSrc.ll";
+		String llvmOutFileName = "BinarySearch.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "main");
 	}
@@ -124,16 +124,16 @@ public class GVNTests {
 	//test 13 for Simple GVN in For loop.
 	@Test
 	public void acessingStructureElement() throws Exception {
-		String cSrcfilename =  "AcessingStructureElementSrc.bc";
-		String llvmOutFileName = "AcessingStructureElement.bc";
+		String cSrcfilename =  "AcessingStructureElementSrc.ll";
+		String llvmOutFileName = "AcessingStructureElement.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "fun");
 	}
 	// Test 14 for Accessing Array Element
 	@Test
 	public void acessingArrayElement() throws Exception {
-		String cSrcfilename =  "AcessingArrayElementSrc.bc";
-		String llvmOutFileName = "AcessingArrayElement.bc";
+		String cSrcfilename =  "AcessingArrayElementSrc.ll";
+		String llvmOutFileName = "AcessingArrayElement.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -142,8 +142,8 @@ public class GVNTests {
 	// Test 15 for Accessing  Element through Pointer
 	@Test
 	public void pointerTest() throws Exception {
-		String cSrcfilename =  "pointerTestSrc.bc";
-		String llvmOutFileName = "pointerTest.bc";
+		String cSrcfilename =  "pointerTestSrc.ll";
+		String llvmOutFileName = "pointerTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}
@@ -151,16 +151,16 @@ public class GVNTests {
 	// Test 16 Adding Zero to the variable (dead code Elimination)
 	@Test
 	public void addingZeroTest() throws Exception {
-		String cSrcfilename =  "addingZeroTestSrc.bc";
-		String llvmOutFileName = "addingZeroTest.bc";
+		String cSrcfilename =  "addingZeroTestSrc.ll";
+		String llvmOutFileName = "addingZeroTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "addingZero");
 	}
 	// Test 17 Adding Zero to the variable (dead code Elimination)
 	@Test
 	public void subZeroTest() throws Exception {
-		String cSrcfilename =  "SubZeroTestSrc.bc";
-		String llvmOutFileName = "SubZeroTest.bc";
+		String cSrcfilename =  "SubZeroTestSrc.ll";
+		String llvmOutFileName = "SubZeroTest.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "subsZero");
 	}
@@ -168,8 +168,8 @@ public class GVNTests {
 	// Test 18
 	@Test
 	public void insideIfElseTest() throws Exception {
-		String cSrcfilename =  "ifElseTest.bc";
-		String llvmOutFileName = "IfElseOut.bc";
+		String cSrcfilename =  "ifElseTest.ll";
+		String llvmOutFileName = "IfElseOut.ll";
 
 		runGVN(cSrcfilename, llvmOutFileName, "foo");
 	}

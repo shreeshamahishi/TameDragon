@@ -6,8 +6,17 @@ package org.tamedragon.common.llvmir.irdata;
 
 public class LoadInstrData extends ValueData {
 	
+	private String pointeeTypeStr;
 	private String pointerName;
 
+	public String getPointeeTypeStr() {
+		return pointeeTypeStr;
+	}
+
+	public void setPointeeTypeStr(String pointeeTypeStr) {
+		this.pointeeTypeStr = pointeeTypeStr;
+	}
+	
 	public void setPointerName(String pointerName) {
 		this.pointerName = pointerName;
 	}
@@ -15,4 +24,5 @@ public class LoadInstrData extends ValueData {
 	public String getPointerName() {
 		return pointerName;
 	}
+
 }

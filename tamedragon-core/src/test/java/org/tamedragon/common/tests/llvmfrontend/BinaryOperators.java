@@ -21,14 +21,14 @@ public class BinaryOperators  {
 	
 	@Test
 	public void testSimpleBinOperation(){
-		String llvmFileName = "SimpleBinOpLLVMIR.bc";
+		String llvmFileName = "SimpleBinOpLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}
 	
 	@Test
 	public void testSimpleBinOperationWithGlobalVar(){
-		String llvmFileName = "SimpleBinOpWithGlobalVarLLVMIR.bc";
+		String llvmFileName = "SimpleBinOpWithGlobalVarLLVMIR.ll";
 		List<String> instrs = llvmirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
 	}

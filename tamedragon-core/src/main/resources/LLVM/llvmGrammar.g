@@ -8,16 +8,16 @@ options { language=Java;
          
                  
 @header{
-package com.compilervision.common.llvmir.utils;
-import com.compilervision.common.llvmir.irdata.*;
+package org.tamedragon.common.llvmir.utils;
+import org.tamedragon.common.llvmir.irdata.*;
 
-import com.compilervision.common.llvmir.instructions.*;
-import com.compilervision.common.llvmir.types.*;
-import com.compilervision.common.llvmir.types.exceptions.*;
-import com.compilervision.common.llvmir.math.*;
+import org.tamedragon.common.llvmir.instructions.*;
+import org.tamedragon.common.llvmir.types.*;
+import org.tamedragon.common.llvmir.types.exceptions.*;
+import org.tamedragon.common.llvmir.math.*;
 
-import com.compilervision.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
-import com.compilervision.common.llvmir.semanticanalysis.*;
+import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
+import org.tamedragon.common.llvmir.semanticanalysis.*;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -29,9 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 }
 
-@lexer::header{ package com.compilervision.common.llvmir.utils; 
-                import com.compilervision.common.llvmir.types.*;
-                import com.compilervision.common.llvmir.semanticanalysis.*;
+@lexer::header{ package org.tamedragon.common.llvmir.utils; 
+                import org.tamedragon.common.llvmir.types.*;
+                import org.tamedragon.common.llvmir.semanticanalysis.*;
                }
  
 @members {
@@ -126,8 +126,9 @@ import java.util.LinkedList;
 	    list.add(store);
 	}
 
-	private void setLoadInstr(String id, String pointerName, String typeStr, int lineNum, int position) {	
-		LoadInstrData load =new LoadInstrData();
+	private void setLoadInstr(String pointeeTypeStr, String id, String pointerName, String typeStr, int lineNum, int position) {	
+		LoadInstrData load = new LoadInstrData();
+		load.setPointeeTypeStr(pointeeTypeStr);
 		load.setPointerName(pointerName);
 		load.setResult(id);
 		load.setTypeStr(typeStr);
@@ -352,7 +353,7 @@ FUNCTION_ATTRIBUTE : 'nounwind' | 'uwtable'| 'noreturn' | 'readonly' | 'ssp'| 'o
 CALLING_CONV : 'ccc' | 'fastcc' | 'coldcc' | 'cc 10' | 'cc 11';
 CONDITION : 'eq' | 'ne' | 'ugt' | 'uge' | 'ult' | 'ule' | 'sgt' | 'sge' | 'slt' |'sle' |'olt' |'ogt'| 'oeq'| 'one'| 'oge' ;
 NULL_CHAR : '\\00';
-BIN_OPR_STR : ' add ' | 'fadd' | 'sub' | 'fsub' |'mul' | 'fmul' |'udiv'|'sdiv'|'fdiv'| 'urem'|'srem'|'frem' | ' xor ' | 'shl' | 'shr' | 'lshr'|'rshr'|'ashr' |'and' | 'or';
+BIN_OPR_STR : 'add' | 'fadd' | 'sub' | 'fsub' |'mul' | 'fmul' |'udiv'|'sdiv'|'fdiv'| 'urem'|'srem'|'frem' | ' xor ' | 'shl' | 'shr' | 'lshr'|'rshr'|'ashr' |'and' | 'or';
 ATOMIC_ORDERING : 'unordered'|'monotonic'|'acquire'|'release'|'acq_rel'|'seq_cst';
 string : ID NULL_CHAR;
 PRIMITIVE_DATA_TYPE : ( 'i1' | 'i8' | 'i16' | 'i32' | 'i64' | 'float' | 'double' | 'void'  
@@ -518,9 +519,9 @@ alloca : res=result e=EQUAL ' alloca ' d=data_type  (COMMA (data_type arrayLengt
 	   		setAllocaInstr($res.text,$d.text,$arrayLength.text, $alignV.text, $e.line, 0);					           					
 	   };
 	   	
-load : res=result e0=EQUAL 'load' data_type e=result (COMMA ALIGN NUMBER)?
+load : res=result e0=EQUAL ' load ' pointee=data_type COMMA e=data_type (COMMA ALIGN NUMBER)?
 	 {							
-	 	setLoadInstr($res.text,$e.text,$data_type.text, $e0.line, 0);
+	 	setLoadInstr($pointee.text, $res.text,$e.text,$data_type.text, $e0.line, 0);
 	 };
 				
 store : a='store' atomic=ATOMIC_ORDERING? isVolatile='volatile'? a3=data_type a1=result COMMA

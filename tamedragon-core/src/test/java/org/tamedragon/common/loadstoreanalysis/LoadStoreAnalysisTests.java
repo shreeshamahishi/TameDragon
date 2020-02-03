@@ -33,7 +33,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void simpleLoadStore() throws Exception {
-		String srcFileName =  "SimpleLoadStore.bc";
+		String srcFileName =  "SimpleLoadStore.ll";
 		Function function = getFunction(srcFileName, "foo");
 		assertNotNull(function);
 
@@ -55,7 +55,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void simpleStoreOverwrite() throws Exception {
-		String srcFileName =  "SimpleStoreOverwrite.bc";
+		String srcFileName =  "SimpleStoreOverwrite.ll";
 		Function function = getFunction(srcFileName, "foo");
 		assertNotNull(function);
 
@@ -77,7 +77,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void ifCondition() throws Exception {
-		String cSrcfilename =  "IfCondition.bc";
+		String cSrcfilename =  "IfCondition.ll";
 
 		Function function = getFunction(cSrcfilename, "foo");
 
@@ -101,7 +101,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void ifElseConditionWithInitInBothBranches() throws Exception {
-		String cSrcfilename =  "IfElseConditionWithInitInBothBranches.bc";
+		String cSrcfilename =  "IfElseConditionWithInitInBothBranches.ll";
 
 		Function function = getFunction(cSrcfilename, "foo");
 
@@ -125,7 +125,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void ifElseConditionWithInitInOneBranch() throws Exception {
-		String cSrcfilename =  "IfElseConditionWithInitInOneBranch.bc";
+		String cSrcfilename =  "IfElseConditionWithInitInOneBranch.ll";
 
 		Function function = getFunction(cSrcfilename, "foo");
 
@@ -156,7 +156,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void simpleLoopIncrement() throws Exception {
-		String cSrcfilename =  "SimpleLoopIncrement.bc";
+		String cSrcfilename =  "SimpleLoopIncrement.ll";
 
 		Function function = getFunction(cSrcfilename, "foo");
 
@@ -184,7 +184,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void ifInsideLoop() throws Exception {
-		String cSrcfilename =  "IfInsideLoop.bc";
+		String cSrcfilename =  "IfInsideLoop.ll";
 
 		Function function = getFunction(cSrcfilename, "bar");
 
@@ -231,7 +231,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void ifElseInsideLoop() throws Exception {
-		String cSrcfilename =  "IfElseInsideLoop.bc";
+		String cSrcfilename =  "IfElseInsideLoop.ll";
 
 		Function function = getFunction(cSrcfilename, "bar");
 
@@ -281,7 +281,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void loopInsideIf() throws Exception {
-		String cSrcfilename =  "LoopInsideIf.bc";
+		String cSrcfilename =  "LoopInsideIf.ll";
 
 		Function function = getFunction(cSrcfilename, "bar");
 
@@ -318,7 +318,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void loopsInsideIfElse() throws Exception {
-		String cSrcfilename =  "LoopsInsideIfElse.bc";
+		String cSrcfilename =  "LoopsInsideIfElse.ll";
 
 		Function function = getFunction(cSrcfilename, "func");
 
@@ -374,7 +374,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void nestedLoops() throws Exception {
-		String cSrcfilename =  "NestedLoops.bc";
+		String cSrcfilename =  "NestedLoops.ll";
 
 		Function function = getFunction(cSrcfilename, "foo");
 
@@ -416,7 +416,7 @@ public class LoadStoreAnalysisTests {
 	@Ignore
 	@Test
 	public void complex() throws Exception {
-		String cSrcfilename =  "Complex.bc";
+		String cSrcfilename =  "Complex.ll";
 
 		Function function = getFunction(cSrcfilename, "func");
 

@@ -14,7 +14,7 @@ public class SimpleLLVMParseTest {
 	
 	@Test
 	public void test1(){
-		String llvmFileName = "test.bc";
+		String llvmFileName = "test.ll";
 		LLVMIRUtils llvirUtils = new LLVMIRUtils();
 		List<String> instrs = llvirUtils.getInstructionsList(rootPath, llvmFileName);
 		assertTrue(ComparisionUtils.compare(instrs, rootPath, llvmFileName));
