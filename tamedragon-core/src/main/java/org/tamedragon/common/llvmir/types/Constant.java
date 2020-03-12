@@ -6,7 +6,9 @@ import java.util.List;
 import org.tamedragon.common.llvmir.instructions.CmpInst;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
+import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APSInt;
 import org.tamedragon.common.llvmir.utils.ConstantFolding;
 
 /**
@@ -55,7 +57,7 @@ public class Constant extends User {
 		// TODO include others
 		return false;
 	}
-	
+
 	public boolean isPositiveUnity(){
 		if (this instanceof ConstantInt){
 			ConstantInt ci = (ConstantInt)this;
@@ -88,7 +90,7 @@ public class Constant extends User {
 		return false;
 	}
 
-	
+
 	public boolean isTrue(){
 		if (!(this instanceof ConstantInt)){
 			return false;
@@ -119,8 +121,7 @@ public class Constant extends User {
 		return true;
 	}
 
-	public static Constant getCompare(CmpInst.Predicate predicate, 
-			Constant C1, Constant C2)  {
+	public static Constant getCompare(CmpInst.Predicate predicate,  Constant C1, Constant C2)  {
 		// assert(C1->getType() == C2->getType() && "Op types should be identical!");
 
 		switch (predicate) {
@@ -150,7 +151,7 @@ public class Constant extends User {
 		}
 	} 
 
-	private static Constant getICmp(Predicate predicate, Constant c1,
+	public static Constant getICmp(Predicate predicate, Constant c1,
 			Constant c2) {
 
 		ConstantInt constInt1 = (ConstantInt) c1;
@@ -319,7 +320,7 @@ public class Constant extends User {
 		return null;
 
 	}
-	
+
 
 	public static Constant getElementPtr(Constant constPtr, Constant gEPIdx) {
 		List<Constant> indices = new ArrayList<Constant>();
@@ -327,13 +328,22 @@ public class Constant extends User {
 		return getElementPtr(constPtr, indices);
 	}
 	
+	
+	public static Constant getCast(InstructionID castInsOp, Constant trunc, Type dstTy) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public static Constant getCast(Constant constantValue, Type type) {
 		// TODO Auto-generated method stub
 		return null;
-
 	}
 
+	public static Constant getTrunc(ConstantInt cI, Type srcTy) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public static Constant getConstant(BinaryOperatorID operatorID,
 			Constant constantValue, Constant constantValue2) throws Exception {
 
@@ -388,12 +398,12 @@ public class Constant extends User {
 	}
 
 	public static Constant getZero(Value refValue)
-					throws InstantiationException{
+			throws InstantiationException{
 
 		if(refValue instanceof ConstantInt){
 			ConstantInt constInt = (ConstantInt)refValue;
 			APInt apInt = new APInt(constInt.getApInt().getNumBits(), "0", 
-					constInt.getApInt().isSigned());
+					((APSInt)constInt.getApInt()).isSigned());
 			return new ConstantInt((IntegerType)constInt.getType(), apInt);
 		}
 		else if(refValue instanceof ConstantFP){
@@ -421,10 +431,39 @@ public class Constant extends User {
 		}
 	}
 
-	public static Constant getNullValue(Type type) {
-		// TODO Auto-generated method stub
-		return null;
+	/*Constructor to create a '0' constant of arbitrary type.
+	 */
+	public static Constant getNullValue(Type type) throws InstantiationException {
 
+		switch (type.getTypeId()) {
+		case INTEGER_ID:
+			return ConstantInt.create(type, 0, false);
+		case HALF_FLOAT_ID:
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.IEEEhalf));
+		case FLOAT_ID:
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.IEEEsingle));
+		case DOUBLE_ID:
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.IEEEdouble));
+		case X86_FP80_ID:
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.x87DoubleExtended));
+		case FP128_ID:
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.IEEEquad));
+		case PPC_FP128_ID:
+			// TODO Fix this
+			//return ConstantFP.create(type.getCompilationContext(), new APFloat(APFloat.PPCDoubleDouble, APInt.getNullValue(128)));
+			return ConstantFP.create(type.getCompilationContext(), APFloat.getZero(APFloat.IEEEquad));
+		case POINTER_ID:
+			return new ConstantPointerNull((PointerType)type);
+		case STRUCT_ID:
+		case ARRAY_ID:
+		case VECTOR_ID:
+			return ConstantAggregateZero.get(type);
+			// TODO Implement Token type
+			//case Type::TokenTyID:
+			//	return ConstantTokenNone::get(Ty->getContext());
+		default:
+			throw new IllegalArgumentException("Cannot create a null constant of that type!");
+		}
 	}
 
 	public boolean equals(Constant otherConst){
@@ -433,7 +472,7 @@ public class Constant extends User {
 			return constInt.equals((ConstantInt) otherConst);
 		}
 		else if((this instanceof UndefValue) && (otherConst instanceof UndefValue)){
-				return true;
+			return true;
 		}
 		else if(this instanceof Function && (otherConst instanceof Function)){
 			Function function = (Function)this;
@@ -459,14 +498,42 @@ public class Constant extends User {
 		else 
 			return false;
 	}
-	
-	public static Constant getNegativeUnityConstant(Value refValue)
-	throws InstantiationException{
+
+	/*If all elements of the vector constant have the same value, return that
+	  value. Otherwise, return null. Ignore undefined elements by setting
+	  the allowUndefs flag to true.
+	 */
+	public Constant getSplatValue(boolean allowUndefs) throws InstantiationException {
+		if(!getType().isVectorType()) {
+			throw new IllegalArgumentException("Only valid for vectors!");
+		}
+
+		if(getValueTypeID() == ValueTypeID.CONST_AGGREGATE_ZERO) {
+			return getNullValue(getType().getVectorElementType());
+		}
+
+		try {
+			// TODO Implement  ConstantDataVector
+			// ConstantDataVector CV = (ConstantDataVector)(this);
+			// return CV->getSplatValue();
+			return null;
+		}
+		catch(ClassCastException cce) {}
+
+		try {
+			ConstantVector CV = (ConstantVector)(this);
+			return CV.getSplatValue(false);
+		}
+		catch(ClassCastException cce) {}
+
+		return null;
+	}
+
+	public static Constant getNegativeUnityConstant(Value refValue) throws InstantiationException{
 
 		if(refValue instanceof ConstantInt){
 			ConstantInt constInt = (ConstantInt)refValue;
-			APInt apInt = new APInt(constInt.getApInt().getNumBits(), "-1", 
-					constInt.getApInt().isSigned());
+			APInt apInt = new APInt(constInt.getApInt().getNumBits(), "-1", false);
 			return new ConstantInt((IntegerType)constInt.getType(), apInt);
 		}
 		else if(refValue instanceof ConstantFP){
@@ -481,8 +548,7 @@ public class Constant extends User {
 	/*
 	 * Multiply the constant that is passed with -1
 	 */
-	public static Constant getConstWithOppositeSign(Constant constValue)
-	throws Exception {
+	public static Constant getConstWithOppositeSign(Constant constValue) throws Exception {
 		Constant negUnityConst = getNegativeUnityConstant(constValue);
 
 		return Constant.getConstant(constValue.getType().isIntegerType()?

@@ -18,6 +18,7 @@ import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.math.APInt;
 import org.tamedragon.common.llvmir.types.Argument;
+import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.ConstantInt;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.GlobalAlias;
@@ -108,13 +109,16 @@ class DecomposedGEPValue{
 public class BasicAliasAnalysis extends AliasAnalysis{
 
 	private static final Logger LOG = LoggerFactory.getLogger(BasicAliasAnalysis.class);
-	
+
 	// Error messages
-	public static final String NO_SUPPORT_FOR_INTERPROCEDURAL_QUERIES 
-					= "BasicAliasAnalysis does not support interprocedural queries.";
-	
+	public static final String NO_SUPPORT_FOR_INTERPROCEDURAL_QUERIES  = "BasicAliasAnalysis does not support interprocedural queries.";
+	private short MAX_NUMP_PHI_BBs_VALUE_REACHABILITY_CHECK = 20;
+
 	// Visited - Track instructions visited by pointsToConstantMemory.
 	private Set<Value>  Visited;
+
+	private Set<BasicBlock>  visitedPhiBBs;
+
 
 	public BasicAliasAnalysis(AliasAnalysis prev) {
 		super(prev);
@@ -340,29 +344,49 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		return new DecomposedGEPValue(V, BaseOffs);
 	}
 
-	private Value GetUnderlyingObject(Value V, final TargetData targetData, int MaxLookup)
-	throws Exception {
-		if (V.getType().isPointerType())
-			return V;
+	private Value getUnderlyingObject(Value value, final TargetData targetData, int maxLookUp)
+			throws Exception {
+		if (!value.getType().isPointerType()) {
+			return value;
+		}
 
-		for (int Count = 0; MaxLookup == 0 || Count < MaxLookup; Count++) {
-			ValueTypeID valueTypeID = V.getValueTypeID();
+		for (int count = 0; maxLookUp == 0 || count < maxLookUp; count++) {
+			ValueTypeID valueTypeID = value.getValueTypeID();
 			if (valueTypeID == ValueTypeID.GLOBAL_ALIAS) {
-				GlobalAlias globalAlias = (GlobalAlias) V;
-				if (globalAlias.mayBeOverridden())
-					return V;
-				V = globalAlias.getAliasee();
+				GlobalAlias globalAlias = (GlobalAlias) value;
+				// TODO Implement this
+				//if (globalAlias.isInterposable()) {
+				if (globalAlias.mayBeOverridden()) {
+					return value;
+				}
+				value = globalAlias.getAliasee();
 			}
 			else{
-				Instruction instr = (Instruction)V;
+				Instruction instr = (Instruction)value;
 				InstructionID instrID = instr.getInstructionID();
 				if(instrID == InstructionID.GET_ELEMENT_PTR){
 					GetElementPtrInst gep = (GetElementPtrInst) instr;
-					V = gep.getPointerOperand();
+					value = gep.getPointerOperand();
 				}
-				else if(instrID == InstructionID.BIT_CAST_INST){
-					V = instr.getOperand(0);
+				else if(instrID == InstructionID.BIT_CAST_INST
+						// TODO : Implement instruction
+						//|| instrID == Instruction.AddressSpaceCast){
+						) {
+					value = instr.getOperand(0);
 				}
+				else if(instrID == InstructionID.ALLOCA_INST){
+					// An alloca can't be further simplified.
+				      return value;
+				}
+				else if(instrID == InstructionID.CALL_INST || instrID == InstructionID.INVOKE_INST) {
+					// TODO Implement a common base class for call and invoke instructions and then 
+					// implement getArgumentAliasingToReturnedPointer()
+					//CallInst callInst = (CallInst) instr;
+					//value = getArgumentAliasingToReturnedPointer();
+					CallInst callInstr = (CallInst) instr;
+					value = callInstr.getArgOperand(0);
+				}
+				
 				else {
 					// See if InstructionSimplify knows any relevant tricks.
 					// TODO: Acquire a DominatorTree and use it.
@@ -370,20 +394,20 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 					//Value Simplified = SimplifyInstruction(I, TD, 0);
 					Value Simplified = null;
 					if (Simplified != null) {
-						V = Simplified;
+						value = Simplified;
 						continue;
 					}
 
-					return V;
+					return value;
 				}
 
-				if(!V.getType().isPointerType()){
+				if(!value.getType().isPointerType()){
 					throw new Exception("Unexpected operand type!");
 				}
 			}
 		}
 
-		return V;
+		return value;
 	}
 
 	private AliasResult aliasGEP(final GetElementPtrInst GEP1, long V1Size,
@@ -659,36 +683,43 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 				LocB.getStartOfLocationPtr(), LocB.getSize(), null);
 	}
 
-	private AliasResult aliasCheck(Value V1, long V1Size,
-			Object object, Value V2, long V2Size, Object object2) {
+	private AliasResult aliasCheck(Value v1, long V1Size,
+			Object object, Value v2, long V2Size, Object object2) {
 		// If either of the memory references is empty, it doesn't matter what the
 		// pointer values are.
 		if (V1Size == 0 || V2Size == 0)
 			return AliasResult.NO_ALIAS;
 
-		// Strip off any casts if they exist.
 		//TODO Implement this
-		// V1 = V1.stripPointerCasts();
-		// V2 = V2.stripPointerCasts();
+		// Strip off any casts if they exist.
+		//v1 = v1.stripPointerCastsAndInvariantGroups();
+		//v2 = v2.stripPointerCastsAndInvariantGroups();
+
+		if (v1.getValueTypeID() == ValueTypeID.UNDEF_VALUE || v2.getValueTypeID() == ValueTypeID.UNDEF_VALUE){
+			// Scalars cannot alias each other
+			return AliasResult.NO_ALIAS; 
+		}
 
 		// Are we checking for alias of the same value?
-		if (V1 == V2){
+		if(isValueEqualInPotentialCycles(v1, v2)) {
+			return AliasResult.MUST_ALIAS;
+		}
+		if (v1 == v2){
 			return AliasResult.MUST_ALIAS;
 		}
 
-		if (!V1.getType().isPointerType() || !V1.getType().isPointerType()){
+		if (!v1.getType().isPointerType() || !v1.getType().isPointerType()){
 			// Scalars cannot alias each other
 			return AliasResult.NO_ALIAS; 
 		}
 
 		// Figure out what objects these things are pointing to if we can.
-
-		Value O1 = null;
-		Value O2 = null;
+		Value o1 = null;
+		Value o2 = null;
 
 		try{
-			O1 = GetUnderlyingObject(V1, targetData, 6);
-			O2 = GetUnderlyingObject(V2, targetData, 6);
+			o1 = getUnderlyingObject(v1, targetData, 6);
+			o2 = getUnderlyingObject(v2, targetData, 6);
 		}
 		catch(Exception e){
 			System.exit(-1); 
@@ -697,45 +728,45 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		// Null values in the default address space don't point to any object, so they
 		// don't alias any other pointer.
 
-		ValueTypeID valueTypeIDO1 = O1.getValueTypeID();
-		ValueTypeID valueTypeIDO2 = O2.getValueTypeID();
+		ValueTypeID valueTypeIDO1 = o1.getValueTypeID();
+		ValueTypeID valueTypeIDO2 = o2.getValueTypeID();
 
 		if (valueTypeIDO1 == ValueTypeID.CONST_POINTER_NULL){
-			PointerType ptrType = (PointerType)O1.getType();
+			PointerType ptrType = (PointerType)o1.getType();
 			if (ptrType.getAddressSpace() == 0){
 				return AliasResult.NO_ALIAS;
 			}
 		}
 
 		if (valueTypeIDO2 == ValueTypeID.CONST_POINTER_NULL){
-			PointerType ptrType = (PointerType)O2.getType();
+			PointerType ptrType = (PointerType)o2.getType();
 			if (ptrType.getAddressSpace() == 0){
 				return AliasResult.NO_ALIAS;
 			}
 		}
 
-		if (O1 != O2) {
+		if (o1 != o2) {
 			// If V1/V2 point to two different objects we know that we have no alias.
-			if (isIdentifiedObject(O1) && isIdentifiedObject(O2)){
+			if (isIdentifiedObject(o1) && isIdentifiedObject(o2)){
 				return AliasResult.NO_ALIAS;
 			}
 
 			// Constant pointers can't alias with non-const isIdentifiedObject objects.
-			if ((O1.isAConstant() && isIdentifiedObject(O2) && !O2.isAConstant()) ||
-					(O2.isAConstant() && isIdentifiedObject(O1) && !O1.isAConstant()))
+			if ((o1.isAConstant() && isIdentifiedObject(o2) && !o2.isAConstant()) ||
+					(o2.isAConstant() && isIdentifiedObject(o1) && !o1.isAConstant()))
 				return AliasResult.NO_ALIAS;
 
 			// Arguments can't alias with local allocations or noalias calls
 			// in the same function.
 
-			if (((O1 instanceof Argument) && (isObjectAllocaInst(O2)|| isNoAliasCall(O2))) ||
-					(O2 instanceof Argument && (isObjectAllocaInst(O2)|| isNoAliasCall(O2)))){
+			if (((o1 instanceof Argument) && (isObjectAllocaInst(o2)|| isNoAliasCall(o2))) ||
+					(o2 instanceof Argument && (isObjectAllocaInst(o2)|| isNoAliasCall(o2)))){
 				return AliasResult.NO_ALIAS;
 			}
 
 			// Most objects can't alias null.
-			if ((O2.getValueTypeID() == ValueTypeID.CONST_POINTER_NULL) && isKnownNonNull(O1) ||
-					(O1.getValueTypeID() == ValueTypeID.CONST_POINTER_NULL) && isKnownNonNull(O2))
+			if ((o2.getValueTypeID() == ValueTypeID.CONST_POINTER_NULL) && isKnownNonNull(o1) ||
+					(o1.getValueTypeID() == ValueTypeID.CONST_POINTER_NULL) && isKnownNonNull(o2))
 				return AliasResult.NO_ALIAS;
 
 			// If one pointer is the result of a call/invoke or load and the other is a
@@ -747,17 +778,17 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			// temporary store the nocapture argument's value in a temporary memory
 			// location if that memory location doesn't escape. Or it may pass a
 			// nocapture value to other functions as long as they don't capture it.
-			if (isEscapeSource(O1) && isNonEscapingLocalObject(O2))
+			if (isEscapeSource(o1) && isNonEscapingLocalObject(o2))
 				return AliasResult.NO_ALIAS;
-			if (isEscapeSource(O2) && isNonEscapingLocalObject(O1))
+			if (isEscapeSource(o2) && isNonEscapingLocalObject(o1))
 				return AliasResult.NO_ALIAS;
 		}
 
 		// If the size of one access is larger than the entire object on the other
 		// side, then we know such behavior is undefined and can assume no alias.
 		if (targetData != null){
-			if ((V1Size != UnknownSize && isObjectSmallerThan(O2, V1Size, targetData)) ||
-					(V2Size != UnknownSize && isObjectSmallerThan(O1, V2Size, targetData)))
+			if ((V1Size != UnknownSize && isObjectSmallerThan(o2, V1Size, targetData)) ||
+					(V2Size != UnknownSize && isObjectSmallerThan(o1, V2Size, targetData)))
 				return AliasResult.NO_ALIAS;
 		}
 
@@ -778,16 +809,16 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		Value tempVal = null;
 		long tempSize = 0L;
 		Value tempUnderlyingObject = null;
-		if (!Instruction.isValueInstruction(V1, InstructionID.GET_ELEMENT_PTR) && 
-				Instruction.isValueInstruction(V2, InstructionID.GET_ELEMENT_PTR)) {
-			tempVal = V1; V1 = V2; V2 = tempVal;
+		if (!Instruction.isValueInstruction(v1, InstructionID.GET_ELEMENT_PTR) && 
+				Instruction.isValueInstruction(v2, InstructionID.GET_ELEMENT_PTR)) {
+			tempVal = v1; v1 = v2; v2 = tempVal;
 			tempSize = V1Size; V1Size = V2Size; V2Size = tempSize;
-			tempUnderlyingObject = O1; O1 = O2; O2 = tempUnderlyingObject;
+			tempUnderlyingObject = o1; o1 = o2; o2 = tempUnderlyingObject;
 		}
 
-		if (Instruction.isValueInstruction(V1, InstructionID.GET_ELEMENT_PTR)) {
-			GetElementPtrInst gepV1 = (GetElementPtrInst) V1;
-			AliasResult Result = aliasGEP(gepV1, V1Size, V2, V2Size, O1, O2);
+		if (Instruction.isValueInstruction(v1, InstructionID.GET_ELEMENT_PTR)) {
+			GetElementPtrInst gepV1 = (GetElementPtrInst) v1;
+			AliasResult Result = aliasGEP(gepV1, V1Size, v2, V2Size, o1, o2);
 			if (Result != AliasResult.MAY_ALIAS){
 				//TODO Implement cache
 				//return AliasCache[Locs] = Result;
@@ -795,16 +826,16 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			}
 		}
 
-		if (Instruction.isValueInstruction(V1, InstructionID.PHI_NODE_INST) 
-				&& !Instruction.isValueInstruction(V1, InstructionID.PHI_NODE_INST)) {
-			tempVal = V1; V1 = V2; V2 = tempVal;
+		if (Instruction.isValueInstruction(v1, InstructionID.PHI_NODE_INST) 
+				&& !Instruction.isValueInstruction(v1, InstructionID.PHI_NODE_INST)) {
+			tempVal = v1; v1 = v2; v2 = tempVal;
 			tempSize = V1Size; V1Size = V2Size; V2Size = tempSize;
 		}
 
-		if (Instruction.isValueInstruction(V1, InstructionID.PHI_NODE_INST)) {
+		if (Instruction.isValueInstruction(v1, InstructionID.PHI_NODE_INST)) {
 			try{
-				PhiNode phiNode = (PhiNode)V1;
-				AliasResult Result = aliasPHI(phiNode, V1Size, V2, V2Size);
+				PhiNode phiNode = (PhiNode)v1;
+				AliasResult Result = aliasPHI(phiNode, V1Size, v2, V2Size);
 				//TODO Implement cache
 				//return AliasCache[Locs] = Result;
 				return Result;
@@ -815,16 +846,16 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			}
 		}
 
-		if (Instruction.isValueInstruction(V2, InstructionID.SELECT_INST) && 
-				!Instruction.isValueInstruction(V1, InstructionID.SELECT_INST)) {
-			tempVal = V1; V1 = V2; V2 = tempVal;
+		if (Instruction.isValueInstruction(v2, InstructionID.SELECT_INST) && 
+				!Instruction.isValueInstruction(v1, InstructionID.SELECT_INST)) {
+			tempVal = v1; v1 = v2; v2 = tempVal;
 			tempSize = V1Size; V1Size = V2Size; V2Size = tempSize;
 		}
 
-		if (Instruction.isValueInstruction(V1, InstructionID.SELECT_INST)) {
-			SelectInst S1 = (SelectInst) V1;
+		if (Instruction.isValueInstruction(v1, InstructionID.SELECT_INST)) {
+			SelectInst S1 = (SelectInst) v1;
 			AliasResult Result = aliasSelect(S1, V1Size, 
-					V2, V2Size);
+					v2, V2Size);
 			if (Result != AliasResult.MAY_ALIAS){
 				//TODO Implement cache
 				//return AliasCache[Locs] = Result;
@@ -834,9 +865,9 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		// If both pointers are pointing into the same object and one of them
 		// accesses is accessing the entire object, then the accesses must
 		// overlap in some way.
-		if (targetData != null && O1 == O2){
-			if ((V1Size != UnknownSize && isObjectSize(O1, V1Size, targetData)) ||
-					(V2Size != UnknownSize && isObjectSize(O2, V2Size, targetData))){
+		if (targetData != null && o1 == o2){
+			if ((V1Size != UnknownSize && isObjectSize(o1, V1Size, targetData)) ||
+					(V2Size != UnknownSize && isObjectSize(o2, V2Size, targetData))){
 				// TODO Implement alias cache
 				//return AliasCache[Locs] = PartialAlias;
 				return AliasResult.PARTIAL_ALIAS;
@@ -845,13 +876,45 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 
 		// Try the next one in the chain if there is one
 		AliasResult Result =
-			 getPreviousAliasAnalysis().alias(new StorageLocation(V1, V1Size),
-					new StorageLocation(V2, V2Size));
+				getPreviousAliasAnalysis().alias(new StorageLocation(v1, V1Size),
+						new StorageLocation(v2, V2Size));
 
 		// TODO Implement alias cache
 		//return AliasCache[Locs] = Result;
 
 		return Result;
+	}
+
+	protected boolean isValueEqualInPotentialCycles(Value v1, Value v2) {
+		if(v1 != v2) {
+			return false;
+		}
+
+		if(v1.getValueTypeID() != ValueTypeID.INSTRUCTION) {
+			return true;
+		}
+
+		if (visitedPhiBBs.isEmpty()) {
+			return true;
+		}
+
+
+		if (visitedPhiBBs.size() > MAX_NUMP_PHI_BBs_VALUE_REACHABILITY_CHECK) {
+			return false;
+		}
+
+		// Make sure that the visited phis cannot reach the Value. This ensures that
+		// the Values cannot come from different iterations of a potential cycle the
+		// phi nodes could be involved in.
+		for (BasicBlock bb : visitedPhiBBs) {
+			// TODO Implement this.
+			/*if (isPotentiallyReachable(&P->front(), Inst, nullptr, DT, LI)) {
+				return false;
+			}*/
+		}
+
+		return true;
+
 	}
 
 	// aliasPHI - Provide a bunch of ad-hoc rules to disambiguate a PHI instruction
@@ -860,7 +923,7 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			// final MDNode *PNTBAAInfo,
 			final Value V2, long V2Size
 			// ,const MDNode *V2TBAAInfo
-	) throws Exception {
+			) throws Exception {
 		// If the values are PHIs in the same block, we can do a more precise
 		// as well as efficient check: just check for aliases between the values
 		// on corresponding edges.
@@ -869,17 +932,17 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			if (PN2.getParent() == phiNode.getParent()) {
 
 				AliasResult Alias =
-					aliasCheck(phiNode.getIncomingValue(0), PNSize, null,
-							PN2.getIncomingValueForBlock(phiNode.getIncomingBlock(0)),
-							V2Size, null);
+						aliasCheck(phiNode.getIncomingValue(0), PNSize, null,
+								PN2.getIncomingValueForBlock(phiNode.getIncomingBlock(0)),
+								V2Size, null);
 				if (Alias == AliasResult.MAY_ALIAS)
 					return Alias;
 
 				for (int i = 1, e = phiNode.getNumIncomingValues(); i != e; i++) {
 					AliasResult ThisAlias =
-						aliasCheck(phiNode.getIncomingValue(i), PNSize, null,
-								PN2.getIncomingValueForBlock(phiNode.getIncomingBlock(i)),
-								V2Size, null);
+							aliasCheck(phiNode.getIncomingValue(i), PNSize, null,
+									PN2.getIncomingValueForBlock(phiNode.getIncomingBlock(i)),
+									V2Size, null);
 
 					Alias = MergeAliasResults(ThisAlias, Alias);
 					if (Alias == AliasResult.MAY_ALIAS)
@@ -937,15 +1000,15 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 			SelectInst SI2 = (SelectInst) V2;
 			if (SI.getCondition() == SI2.getCondition()) {
 				AliasResult Alias =
-					aliasCheck(SI.getTrueValue(), SISize, null,
-							SI2.getTrueValue(), V2Size, null);
+						aliasCheck(SI.getTrueValue(), SISize, null,
+								SI2.getTrueValue(), V2Size, null);
 
 				if (Alias == AliasResult.MAY_ALIAS)
 					return AliasResult.MAY_ALIAS;
 
 				AliasResult ThisAlias =
-					aliasCheck(SI.getFalseValue(), SISize, null,
-							SI2.getFalseValue(), V2Size, null);
+						aliasCheck(SI.getFalseValue(), SISize, null,
+								SI2.getFalseValue(), V2Size, null);
 
 				return MergeAliasResults(ThisAlias, Alias);
 			}
@@ -954,12 +1017,12 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		// If both arms of the Select node NoAlias or MustAlias V2, then returns
 		// NoAlias / MustAlias. Otherwise, returns MayAlias.
 		AliasResult Alias =
-			aliasCheck(V2, V2Size, null, SI.getTrueValue(), SISize, null);
+				aliasCheck(V2, V2Size, null, SI.getTrueValue(), SISize, null);
 		if (Alias == AliasResult.MAY_ALIAS)
 			return AliasResult.MAY_ALIAS;
 
 		AliasResult ThisAlias =
-			aliasCheck(V2, V2Size, null, SI.getFalseValue(), SISize, null);
+				aliasCheck(V2, V2Size, null, SI.getFalseValue(), SISize, null);
 
 		return MergeAliasResults(ThisAlias, Alias);
 	}
@@ -992,7 +1055,7 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 		do {
 			Value V = null;
 			try{
-				V = GetUnderlyingObject(Worklist.get(0), targetData, 6);
+				V = getUnderlyingObject(Worklist.get(0), targetData, 6);
 			}
 			catch(Exception e){
 				// TODO Log here

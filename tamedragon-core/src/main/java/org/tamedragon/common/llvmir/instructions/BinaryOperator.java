@@ -13,6 +13,7 @@ import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationE
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.ConstantInt;
+import org.tamedragon.common.llvmir.types.OpCodeID;
 import org.tamedragon.common.llvmir.types.Type;
 import org.tamedragon.common.llvmir.types.Value;
 import org.tamedragon.common.llvmir.types.VectorType;
@@ -35,7 +36,7 @@ public class BinaryOperator extends Instruction{
 
 	private static final String CANNOT_FOLD_BIN_INSTRUCTION = "Cannot fold binary operation with operands: ";
 
-	public enum BinaryOperatorID {
+	public enum BinaryOperatorID implements OpCodeID{
 		ADD(0, "add") ,        //  0:  Add instruction for two integers or two vectors of integer values
 		FADD(1, "fadd"),        //  1:  Add instruction for two floating point or two vectors of floating point values 
 		SUB(2, "sub") ,        //  2:  Subtract instruction for two integers or two vectors of integer values
@@ -590,6 +591,7 @@ public class BinaryOperator extends Instruction{
 			return ConstantFolding.constantFoldBinaryInstruction(operatorID, constOperand1, constOperand2);
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			LOG.error(CANNOT_FOLD_BIN_INSTRUCTION + constOperand1.toString() + " and " + constOperand2.toString());
 			return null;
 		}

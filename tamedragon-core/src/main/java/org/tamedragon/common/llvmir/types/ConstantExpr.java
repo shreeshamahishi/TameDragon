@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tamedragon.common.llvmir.instructions.Instruction;
+import org.tamedragon.common.common.analysis.ConstantFolding;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
+import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
+import org.tamedragon.common.llvmir.instructions.GetElementPtrInst;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 
 /**
@@ -16,11 +19,21 @@ import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
  */
 public class ConstantExpr extends Constant {
 
-	private InstructionID opCode;
+	private static final String BINARY_OPERATOR_VALID = "The operands of the binary operator are valid";
+	private static final String BINARY_OPERATOR_OPERANDS_TYPE_MISMATCH_ERROR = "Operand types in binary constant expression should match";
+	private static final String BINARY_OPERATOR_INTEGER_OP_ON_NON_INT_OPERANDS = "Tried to create an integer operation on a non-integer type!";
+	private static final String BINARY_OPERATOR_FP_OP_ON_NON_FP_OPERANDS = "Tried to create a floating-point operation on a non-floating-point type!";
+	private static final String BINARY_OPERATOR_LOGICAL_OP_ON_NON_INT_OPERANDS = "Tried to create a logical operation on a non-integral type!";
+	private static final String BINARY_OPERATOR_SHIFT_OP_ON_NON_INT_OPERANDS = "Tried to create a shift operation on a non-integer type!";
 
-	public ConstantExpr(Type ty, List<Value> operands, InstructionID opCode){
+	
+	private InstructionID opCode;
+	private OpCodeID otherOpCodeId; 
+
+	public ConstantExpr(Type ty, List<Value> operands, InstructionID opCode, OpCodeID otherOpCodeId){
 		super(ty, operands);
 		this.opCode = opCode;
+		this.otherOpCodeId = otherOpCodeId;
 		setValueTypeID(ValueTypeID.CONST_EXPR);
 	}
 
@@ -162,11 +175,197 @@ public class ConstantExpr extends Constant {
 		return Constant.getConstant(BinaryOperatorID.XOR, c, c);
 	}
 
+	public static Constant getIntToPtr(Constant C, Type DstTy, boolean OnlyIfReduced) {
+		// TODO Implement this - this needs Constant folding
+		/*if(! C.getType().isIntOrIntVectorType()){ 
+				throw new IllegalArgumentException("IntToPtr source must be integer or integer vector");
+		}
+
+		if(! DstTy.isPtrOrPtrVectorType()){
+			throw new IllegalArgumentException("IntToPtr destination must be a pointer or pointer vector");
+		}
+
+		assert(isa<VectorType>(C->getType()) == isa<VectorType>(DstTy));
+		if (isa<VectorType>(C->getType()))
+			assert(C->getType()->getVectorNumElements()==DstTy->getVectorNumElements()&&
+					"Invalid cast between a different number of vector elements");
+		return getFoldedCast(Instruction::IntToPtr, C, DstTy, OnlyIfReduced);
+		 */
+
+		return null;
+	}
+
+	public static Constant getGetElementPtr(Type Ty, Constant C, List<Value> Idxs, boolean InBounds,
+			Integer InRangeIndex, Type OnlyIfReducedTy) {
+
+		// TODO Implement this - this needs Constant folding
+
+		/*if (Ty != null) {
+			Ty = (PointerType)(C.getType().getScalarType()).getElementType();
+		}
+		else {
+			assert(Ty == (PointerType)(C.getType().getScalarType()).getElementType());
+		}
+
+		Constant FC = ConstantFoldGetElementPtr(Ty, C, InBounds, InRangeIndex, Idxs); // Fold a few common cases.
+		if (FC != null) {
+			return FC;          
+		}
+
+		// Get the result type of the getelementptr!
+		Type DestTy = GetElementPtrInst.getIndexedType(Ty, Idxs);
+		assert(DestTy != null && "GEP indices invalid!");
+		int AS = C.getType().getPointerAddressSpace();
+		Type ReqTy = DestTy.getPointerTo(AS);
+
+		int NumVecElts = 0;
+		if (C.getType().isVectorTy()) {
+			NumVecElts = C->getType()->getVectorNumElements();
+		}
+		else
+			for (auto Idx : Idxs)
+				if (Idx->getType()->isVectorTy())
+					NumVecElts = Idx->getType()->getVectorNumElements();
+
+					if (NumVecElts)
+						ReqTy = VectorType::get(ReqTy, NumVecElts);
+
+					if (OnlyIfReducedTy == ReqTy)
+						return nullptr;
+
+					// Look up the constant in the table first to ensure uniqueness
+					std::vector<Constant*> ArgVec;
+					ArgVec.reserve(1 + Idxs.size());
+					ArgVec.push_back(C);
+					for (unsigned i = 0, e = Idxs.size(); i != e; ++i) {
+						assert((!Idxs[i]->getType()->isVectorTy() ||
+								Idxs[i]->getType()->getVectorNumElements() == NumVecElts) &&
+								"getelementptr index type missmatch");
+
+						Constant *Idx = cast<Constant>(Idxs[i]);
+						if (NumVecElts && !Idxs[i]->getType()->isVectorTy())
+							Idx = ConstantVector::getSplat(NumVecElts, Idx);
+						ArgVec.push_back(Idx);
+					}
+
+					unsigned SubClassOptionalData = InBounds ? GEPOperator::IsInBounds : 0;
+					if (InRangeIndex && *InRangeIndex < 63)
+						SubClassOptionalData |= (*InRangeIndex + 1) << 1;
+					const ConstantExprKeyType Key(Instruction::GetElementPtr, ArgVec, 0,
+							SubClassOptionalData, None, Ty);
+
+					LLVMContextImpl *pImpl = C->getContext().pImpl;
+					return pImpl->ExprConstants.getOrCreate(ReqTy, Key);
+		 */
+
+		return null;
+	}
+
+	/*Return a binary or shift operator constant expression folding if possible.
+	*/
+	//public static Constant get(BinaryOperatorID binOpCode, Constant C1, Constant C2, unsigned Flags = 0) {
+	public static Constant get(BinaryOperatorID binOpCode, Constant C1, Constant C2) throws InstantiationException {
+		// Check the operands for consistency first.
+		String valid = validateBinOpOperands(binOpCode, C1, C2);
+		if(!BINARY_OPERATOR_VALID.equals(valid)) {  // Not a valid operation
+			throw new IllegalArgumentException(valid);
+		}
+
+		Constant foldedConstant = ConstantFolding.constantFoldBinaryInstruction(binOpCode, C1, C2);
+		if(foldedConstant != null) {
+			return foldedConstant;
+		}
+			
+			
+
+		// TODO Implement the rest of the logic
+		/*if (OnlyIfReducedTy == C1->getType())
+			return nullptr;
+
+		Constant argVec[] = { C1, C2 };
+		ConstantExprKeyType Key(Opcode, ArgVec, 0, Flags);
+
+		LLVMContextImpl *pImpl = C1->getContext().pImpl;
+		return pImpl->ExprConstants.getOrCreate(C1->getType(), Key);
+		*/
+		
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		if(this.getOperand(0) instanceof Instruction)
 			return ((Instruction)getOperand(0)).emit();
 		return super.toString();
+	}
+
+	public OpCodeID getOtherOpCodeId() {
+		return otherOpCodeId;
+	}
+
+	private static String validateBinOpOperands(BinaryOperatorID binOpId, Constant C1, Constant C2) {
+		if(C1.getType() != C2.getType()) {
+			return BINARY_OPERATOR_OPERANDS_TYPE_MISMATCH_ERROR;
+		}
+
+		switch (binOpId) {
+		case ADD:
+		case SUB:
+		case MUL:
+		case UDIV:
+		case SDIV:
+		case UREM:
+		case SREM:
+			if(!(C1.getType().isIntOrIntVectorType())){
+				return BINARY_OPERATOR_INTEGER_OP_ON_NON_INT_OPERANDS;
+			}
+			break;
+		case FADD:
+		case FSUB:
+		case FMUL:
+		case FDIV:
+		case FREM:
+			if(!(C1.getType().isFPOrFPVectorType())){
+				return BINARY_OPERATOR_FP_OP_ON_NON_FP_OPERANDS;
+			}
+			break;
+		case AND:
+		case OR:
+		case XOR:
+			if(!(C1.getType().isIntOrIntVectorType())){
+				return BINARY_OPERATOR_LOGICAL_OP_ON_NON_INT_OPERANDS;
+			}
+		break;
+		case SHL:
+		case LSHR:
+		case ASHR:
+			if(!(C1.getType().isIntOrIntVectorType())){
+				return BINARY_OPERATOR_SHIFT_OP_ON_NON_INT_OPERANDS;
+			}
+		break;
+		default:
+			break;
+		}
+		
+		return BINARY_OPERATOR_VALID;
+	}
+
+	public static Constant getBinOpIdentity(BinaryOperatorID binOpCode, Type type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	  /* Return the ICMP or FCMP predicate value. Assert if this is
+	  not an ICMP or FCMP constant expression.
+	  */
+	  public Predicate getPredicate() {
+		  // TODO Implement this
+		  return null;
+	  }
+
+	public static Constant getLShr(Constant C1, Constant C2, boolean isExact) {
+		// TODO Implement this
+		return null;
 	}
 
 	/*
@@ -191,7 +390,6 @@ public class ConstantExpr extends Constant {
 	  static Constant *getXor(Constant *C1, Constant *C2);
 	  static Constant *getShl(Constant *C1, Constant *C2,
 	                          bool HasNUW = false, bool HasNSW = false);
-	  static Constant *getLShr(Constant *C1, Constant *C2, bool isExact = false);
 	  static Constant *getAShr(Constant *C1, Constant *C2, bool isExact = false);
 	  static Constant *getTrunc   (Constant *C, Type *Ty);
 	  static Constant *getSExt    (Constant *C, Type *Ty);
@@ -203,7 +401,6 @@ public class ConstantExpr extends Constant {
 	  static Constant *getFPToUI  (Constant *C, Type *Ty);
 	  static Constant *getFPToSI  (Constant *C, Type *Ty);
 	  static Constant *getPtrToInt(Constant *C, Type *Ty);
-	  static Constant *getIntToPtr(Constant *C, Type *Ty);
 	  static Constant *getBitCast (Constant *C, Type *Ty);
 
 	  static Constant *getNSWNeg(Constant *C) { return getNeg(C, false, true); }
@@ -313,12 +510,6 @@ public class ConstantExpr extends Constant {
 	  /// Select constant expr
 	  ///
 	  static Constant *getSelect(Constant *C, Constant *V1, Constant *V2);
-
-	  /// get - Return a binary or shift operator constant expression,
-	  /// folding if possible.
-	  ///
-	  static Constant *get(unsigned Opcode, Constant *C1, Constant *C2,
-	                       unsigned Flags = 0);
 
 	  /// @brief Return an ICmp or FCmp comparison operator constant expression.
 	  static Constant *getCompare(unsigned short pred, Constant *C1, Constant *C2);

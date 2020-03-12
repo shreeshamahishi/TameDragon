@@ -75,6 +75,7 @@ public class InstructionCreationException extends BaseCoreException{
 	public static final String VALUE_CANNOT_BE_NULL = "Value cannot be null";
 	public static final String VALUE_SHOULD_BE_OF_POINTER_TYPE = "Value should be of Pointer Type";
 	public static final String TYPE_CANNOT_BE_NULL_WHILE_INSTANTIATING_GEP_INSTR = "Type cannot be null while creating/instantiating a GetElementPointer Instruction.";
+	public static final String TYPE_CANNOT_BE_NULL_WHILE_INSTANTIATING_FNEG = "Type cannot be null while creating/instantiating a FNeg Instruction.";
 	public static final String INVALID_INDEX_FOR_GEP_INSTR = "Invalid index for GetElementPtr Instruction";
 	
 	//Allocation ,Load and GetElementPtr instruction creation exceptions

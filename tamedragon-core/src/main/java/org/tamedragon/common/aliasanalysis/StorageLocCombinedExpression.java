@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.tamedragon.common.Pair;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APSInt;
 import org.tamedragon.common.llvmir.types.ConstantInt;
 import org.tamedragon.common.llvmir.types.IntegerType;
 import org.tamedragon.common.llvmir.types.Value;
@@ -248,7 +249,7 @@ public class StorageLocCombinedExpression {
 
 			try{
 				ConstantInt constInt = new ConstantInt((IntegerType)factor.getType(), 
-						new APInt(factor.getApInt().getNumBits(), "" + count, factor.getApInt().isSigned()));
+						new APInt(factor.getApInt().getNumBits(), "" + count, false));
 
 				ConstantInt result = (ConstantInt)factor.multiply(constInt);
 				

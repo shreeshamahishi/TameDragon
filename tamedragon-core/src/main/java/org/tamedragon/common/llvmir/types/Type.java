@@ -420,6 +420,13 @@ public class Type {
 		return this;
 	}
 
+	public Type getVectorElementType() {
+		if(getTypeId() != TypeID.VECTOR_ID) {
+			throw new IllegalArgumentException("Can only invoke getVectorElementType() on Vector types!");
+		}
+		return ((VectorType) this).getContainedType();
+	}
+
 	public int getScalarSizeInBits() {
 		return getScalarType().getPrimitiveSizeInBits();
 	}

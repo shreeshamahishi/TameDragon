@@ -10,6 +10,9 @@ import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.Type;
 import org.tamedragon.common.llvmir.types.Value;
+import org.tamedragon.common.llvmir.types.VectorType;
+import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
+import org.tamedragon.common.llvmir.types.Type.TypeID;
 
 /**
  * This abstract class is used to encapsulate all the common features of a LLVM's Compare Instructions.
@@ -77,7 +80,7 @@ public abstract class CmpInst extends Instruction{
 
 		private int predicateValue;
 		private String opCode;
-		
+
 		private Predicate(int predicateValue, String opCode){
 			this.predicateValue = predicateValue;
 			this.opCode = opCode;
@@ -121,7 +124,7 @@ public abstract class CmpInst extends Instruction{
 	   @returns the inverse predicate for predicate provided in \p pred.
 	   @brief Return the inverse of a given predicate
 	 */
-	public Predicate getInversePredicate(Predicate pred) {
+	public static Predicate getInversePredicate(Predicate pred) {
 		switch (pred) {
 		case ICMP_EQ: return Predicate.ICMP_NE;
 		case ICMP_NE: return Predicate.ICMP_EQ;
@@ -175,7 +178,7 @@ public abstract class CmpInst extends Instruction{
 	 * @param predicate2
 	 * @return
 	 */
-	public Predicate getSwappedPredicate(Predicate pred) {
+	public static Predicate getSwappedPredicate(Predicate pred) {
 		switch (pred) {
 		case ICMP_EQ: case ICMP_NE:
 			return pred;
@@ -210,7 +213,7 @@ public abstract class CmpInst extends Instruction{
 	   @brief Swap the operands and adjust predicate accordingly to retain
 	   the same comparison.
 	 */
-	 public abstract void swapOperands();
+	public abstract void swapOperands();
 
 	/**
 	 * This is just a convenience that dispatches to the subclasses.
@@ -242,7 +245,7 @@ public abstract class CmpInst extends Instruction{
 	 * @param predicate2
 	 * @return
 	 */
-	public boolean isSigned(Predicate predicate){
+	public static boolean isSigned(Predicate predicate){
 		switch (predicate) {
 		case ICMP_SLT: case ICMP_SLE: case ICMP_SGT: 
 		case ICMP_SGE: return true;
@@ -259,7 +262,7 @@ public abstract class CmpInst extends Instruction{
 		return isUnsigned(getPredicate());
 	}
 
-	public boolean isUnsigned(Predicate predicate){
+	public static boolean isUnsigned(Predicate predicate){
 		switch (predicate) {
 		case ICMP_ULT: case ICMP_ULE: case ICMP_UGT: 
 		case ICMP_UGE: return true;
@@ -276,10 +279,18 @@ public abstract class CmpInst extends Instruction{
 		return isTrueWhenEqual(getPredicate());
 	}
 
-	public boolean isTrueWhenEqual(Predicate predicate) {
+	public static boolean isTrueWhenEqual(Predicate predicate) {
 		switch(predicate) {
 		case ICMP_EQ:   case ICMP_UGE: case ICMP_ULE: case ICMP_SGE: case ICMP_SLE:
 		case FCMP_TRUE: case FCMP_UEQ: case FCMP_UGE: case FCMP_ULE: return true;
+		default: return false;
+		}
+	}
+	
+	public static boolean isFalseWhenEqual(Predicate predicate) {
+		switch(predicate) {
+		case ICMP_NE:    case ICMP_UGT: case ICMP_ULT: case ICMP_SGT: case ICMP_SLT:
+		case FCMP_FALSE: case FCMP_ONE: case FCMP_OGT: case FCMP_OLT: return true;
 		default: return false;
 		}
 	}
@@ -293,21 +304,32 @@ public abstract class CmpInst extends Instruction{
 		return isFalseWhenEqual(getPredicate());
 	}
 
-	private boolean isFalseWhenEqual(Predicate predicate2) {
-		switch(predicate) {
-		case ICMP_NE:    case ICMP_UGT: case ICMP_ULT: case ICMP_SGT: case ICMP_SLT:
-		case FCMP_FALSE: case FCMP_ONE: case FCMP_OGT: case FCMP_OLT: return true;
+	public static boolean isOrdered(Predicate predicate) {
+		switch (predicate) {
 		default: return false;
+		case FCMP_OEQ: case FCMP_ONE: case FCMP_OGT:
+		case FCMP_OLT: case FCMP_OGE: case FCMP_OLE:
+		case FCMP_ORD: return true;
 		}
 	}
+
+	public static boolean isUnordered(Predicate predicate) {
+		switch (predicate) {
+		default: return false;
+		case FCMP_UEQ: case FCMP_UNE: case FCMP_UGT:
+		case FCMP_ULT: case FCMP_UGE: case FCMP_ULE:
+		case FCMP_UNO: return true;
+		}
+	}
+
 
 	@Override
 	public LatticeValue visitForSCCP(LatticeValue latticeValueBeforeModelling,
 			HashSet<BasicBlock> unreachableNodes,
-	        HashMap<Value, LatticeValue> tempVsLatticeValue,
-	        Vector<Value> ssaWorkList,
+			HashMap<Value, LatticeValue> tempVsLatticeValue,
+			Vector<Value> ssaWorkList,
 			Vector<BasicBlock> cfgWorkList){
-		
+
 
 		if(latticeValueBeforeModelling.getType() == LatticeValue.OVERDEFINED)
 			return latticeValueBeforeModelling;
@@ -334,12 +356,22 @@ public abstract class CmpInst extends Instruction{
 		LatticeValue newLatticeValue = new LatticeValue();
 		newLatticeValue.setType(LatticeValue.OVERDEFINED);
 		return newLatticeValue;
-		
+
 	}
-	
+
 	@Override
 	public boolean canBeHoistedOrSank() {
 		return true;
 	}
-	
+
+	public static Type makeCmpResultType(Type type) throws TypeCreationException {
+		if(type.getTypeId() == TypeID.VECTOR_ID) {
+			VectorType vt = (VectorType)type;
+			return VectorType.getVectorType(type.getCompilationContext(), Type.getInt1Type(type.getCompilationContext(), false), 
+					vt.getNumElements());
+		}
+
+		return Type.getInt1Type(type.getCompilationContext(), false);
+	}
+
 }

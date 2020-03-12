@@ -76,6 +76,8 @@ public class CompilationContext {
 		undefConstants = new HashMap<Type, UndefValue>();
 	}
 
+	private ConstantInt theFalseVal;
+	private ConstantInt theTrueVal;
 
 	// ************************************************************************************************
 	// *************** Functions to access primitive types. Singletons are ensured. *******************
@@ -480,5 +482,21 @@ public class CompilationContext {
 
 	public List<Module> getModules() {
 		return modules;
+	}
+
+	public ConstantInt getTheFalseVal() {
+		return theFalseVal;
+	}
+
+	public void setTheFalseVal(ConstantInt theFalseVal) {
+		this.theFalseVal = theFalseVal;
+	}
+
+	public ConstantInt getTheTrueVal() {
+		return theTrueVal;
+	}
+
+	public void setTheTrueVal(ConstantInt theTrueVal) {
+		this.theTrueVal = theTrueVal;
 	}
 }

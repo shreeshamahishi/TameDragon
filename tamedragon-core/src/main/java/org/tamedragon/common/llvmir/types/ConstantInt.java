@@ -1,10 +1,17 @@
 package org.tamedragon.common.llvmir.types;
 
+import org.apache.tools.ant.taskdefs.condition.IsSigned;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.types.Type.TypeID;
+import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 
 public class ConstantInt extends Constant {
 
 	private APInt apInt;
+
+	private ConstantInt theTrueVal;
+	private ConstantInt theFalseVal;
 
 	public ConstantInt(IntegerType intType, APInt val) throws InstantiationException{
 		super(intType, null);
@@ -15,11 +22,50 @@ public class ConstantInt extends Constant {
 	}
 
 	public static ConstantInt create(IntegerType intType, long V, 
-            boolean isSigned) throws InstantiationException {
-		  return new ConstantInt(intType, new APInt(intType.getNumBits(), V + "", isSigned));
+			boolean isSigned) throws InstantiationException {
+		return new ConstantInt(intType, new APInt(intType.getNumBits(), V + "", isSigned));
+	}
+
+	public static Constant create(Type type, long V, boolean isSigned) throws InstantiationException {
+		ConstantInt constInt = create((IntegerType)type.getScalarType(), V, isSigned);
+
+		// For vectors, broadcast the value.
+		if(type.getTypeId() == TypeID.VECTOR_ID){
+			VectorType vectorType = (VectorType) type;
+			return ConstantVector.getSplat(vectorType.getNumElements(), constInt);
 		}
 
+		return constInt;
+	}
 	
+	public static ConstantInt create(CompilationContext context, APInt apInt) {
+		//TODO If it already exists, return that
+		/*// get an existing value or the insertion position
+		  LLVMContextImpl *pImpl = Context.pImpl;
+		  std::unique_ptr<ConstantInt> &Slot = pImpl->IntConstants[V];
+		  if (!Slot) {
+		    // Get the corresponding integer type for the bit width of the value.
+		    IntegerType *ITy = IntegerType::get(Context, V.getBitWidth());
+		    Slot.reset(new ConstantInt(ITy, V));
+		  }
+		  assert(Slot->getType() == IntegerType::get(Context, V.getBitWidth()));
+		  return Slot.get();
+		  */
+		IntegerType intType;
+		try {
+			intType = IntegerType.getIntegerType(context, apInt.getNumBits(), ((APSInt)apInt).isSigned());
+		} catch (TypeCreationException e) {
+			e.printStackTrace();
+			return null;
+		}
+		try {
+			return new ConstantInt(intType, apInt);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+	}
+
 	public APInt getApInt() {
 		return apInt;
 	}
@@ -41,15 +87,19 @@ public class ConstantInt extends Constant {
 		return apInt.getVal().equals("0");
 	}
 
+	public boolean isOne() {
+		return apInt.getVal().equals("1");
+	}
+	
 	public boolean isPositiveUnity(){
 		return apInt.getVal().equals("1")
 				|| apInt.getVal().equals("+1");
 	}
-	
+
 	public boolean isNegativeUnity(){
 		return apInt.getVal().equals("-1");
 	}
-	
+
 	public boolean isAllOnesValue() {
 		// TODO Auto-generated method stub
 		return false;
@@ -64,105 +114,92 @@ public class ConstantInt extends Constant {
 	public Constant add(ConstantInt other) throws Exception {
 		int result = apInt.addOrSubtract(other.getApInt(), true);
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant subtract(ConstantInt other)  throws Exception {
 		int result = apInt.addOrSubtract(other.getApInt(), false);
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 
 	}
 
 	public  Constant multiply(ConstantInt other) throws Exception{
 		int result = apInt.multiply(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 
 	}
 
 	public Constant udiv(ConstantInt other) throws Exception {
 		int result = apInt.udiv(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 
 	}
 
 	public Constant sdiv(ConstantInt other) throws Exception {
 		int result = apInt.sdiv(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant urem(ConstantInt other) throws Exception {
 		int result = apInt.urem(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant srem(ConstantInt other) throws Exception {
 		int result = apInt.srem(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant and(ConstantInt other) throws Exception {
 		int result = apInt.and(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant or(ConstantInt other) throws Exception {
 		int result = apInt.or(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant xor(ConstantInt other) throws Exception {
 		int result = apInt.xor(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant shl(ConstantInt other) throws Exception {
 		int result = apInt.shl(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant lshr(ConstantInt other) throws Exception {
 		int result = apInt.lshr(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public Constant ashr(ConstantInt other) throws Exception {
 		int result = apInt.ashr(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(),
-						"" + result, apInt.isSigned()));
+				new APInt(apInt.getNumBits(), "" + result, false));
 	}
 
 	public boolean equals(ConstantInt otherConst){
 		APInt otherApInt = otherConst.getApInt();
 		if(apInt.compare(otherApInt) == 0)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean isNegative() {
 		APInt apInt = this.getApInt();
@@ -171,5 +208,54 @@ public class ConstantInt extends Constant {
 		if(ch == '-')
 			return true;
 		return false;
+	}
+
+	public static ConstantInt getTrue(CompilationContext context) throws InstantiationException {
+		ConstantInt trueVal = context.getTheFalseVal();
+		if (trueVal == null) {
+			trueVal = ConstantInt.create(Type.getInt1Type(context, false), 1, false);
+			context.setTheFalseVal(trueVal);
+		}
+		return trueVal;
+	}
+
+	public static ConstantInt getFalse(CompilationContext context) throws InstantiationException {
+		ConstantInt falseVal = context.getTheFalseVal();
+		if (falseVal == null) {
+			falseVal = ConstantInt.create(Type.getInt1Type(context, false), 0, false);
+			context.setTheFalseVal(falseVal);
+		}
+		return falseVal;
+	}
+
+	public static ConstantInt getTrue(Type type) throws InstantiationException {
+		// TODO Include the ability to pass in bit width
+		//if(!(type.isIntOrIntVectorType(1))) {
+		if(!(type.isIntOrIntVectorType())) {
+			throw new IllegalArgumentException("Type not i1 or vector of i1.");
+		}
+
+		ConstantInt TrueC = ConstantInt.getTrue(type.getCompilationContext());
+		if(type.getTypeId() == TypeID.VECTOR_ID) {
+			VectorType vectorType = (VectorType) type;
+			return (ConstantInt) ConstantVector.getSplat(vectorType.getNumElements(), TrueC);
+		}
+
+		return TrueC;
+	}
+
+	public static ConstantInt getFalse(Type type) throws InstantiationException {
+		// TODO Include the ability to pass in bit width
+		//if(!(type.isIntOrIntVectorType(1))) {
+		if(!(type.isIntOrIntVectorType())) {
+			throw new IllegalArgumentException("Type not i1 or vector of i1.");
+		}
+		ConstantInt falseC = ConstantInt.getFalse(type.getCompilationContext());
+		if(type.getTypeId() == TypeID.VECTOR_ID) {
+			VectorType vectorType = (VectorType) type;
+			return (ConstantInt) ConstantVector.getSplat(vectorType.getNumElements(), falseC);
+		}
+
+		return falseC;
 	}
 }

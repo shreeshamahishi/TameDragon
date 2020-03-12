@@ -193,7 +193,6 @@ public class MemToRegPromoter {
 
 		// Identify all allocations that can be promoted
 
-
 		while(true){
 			Vector<AllocaInst> allocasThatCanBePromoted = new Vector<AllocaInst>();
 			Iterator<Instruction> instrsInEntryBB = entryBB.getInstructions();

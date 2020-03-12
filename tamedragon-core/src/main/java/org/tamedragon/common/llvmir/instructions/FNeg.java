@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import org.tamedragon.common.LatticeValue;
 import org.tamedragon.common.Pair;
+import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.types.ArrayType;
@@ -24,108 +25,18 @@ import org.tamedragon.common.llvmir.types.VectorType;
 import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 import org.tamedragon.common.llvmir.utils.LLVMIREmitter;
 
-/**
- * This class represents LLVM's GetElementPtr Instruction. An instruction for type-safe pointer arithmetic to
- * access elements of arrays and structs.
- * @author ipsg
- *
- */
-public class GetElementPtrInst extends Instruction {
-	private List<Pair<Value, Type>> indexVsType;
-	private Boolean isInBounds = false;
-	private Boolean isUnnamedAddr = false;
-	private String pointeeType;
+public class FNeg extends Instruction{
 	
-	private Type sourceElementType;
-	private Type resultElementType;
-
-	public GetElementPtrInst(Type type, List<Value> operandList, 
-			List<Pair<Value, Type>> indexVsType, String name, String pointeeType, BasicBlock parent) {
-		super(InstructionID.GET_ELEMENT_PTR, type, operandList, parent);
-		this.indexVsType = indexVsType;
-		this.pointeeType = pointeeType;
+	public FNeg(Type type, List<Value> operandList, String name, BasicBlock parent) {
+		super(InstructionID.UNARY_FNEG, type, operandList, parent);
 		setName(name);
 	}
 
-	static Type checkGEPType(Type Ty) throws InstructionCreationException {
+	static Type checkNegType(Type Ty) throws InstructionCreationException {
 		if (Ty == null)
 			throw new InstructionCreationException(
-					InstructionCreationException.TYPE_CANNOT_BE_NULL_WHILE_INSTANTIATING_GEP_INSTR);
+					InstructionCreationException.TYPE_CANNOT_BE_NULL_WHILE_INSTANTIATING_FNEG);
 		return Ty;
-	}
-
-	void init(Value ptr, List<ConstantInt> idxList, String name) { }
-
-	/**
-	 * Returns the type of the element that would be loaded
-	 * with a load instruction with the specified parameters. Null
-	 * is returned if the indices are invalid for the specified pointer
-	 * type.
-	 * @param Ptr
-	 * @param list
-	 * @return
-	 * @throws InstructionDetailAccessException
-	 */
-	public static Type getIndexedType(Type Ptr, List<Entry<Value, Type>> list) throws InstructionDetailAccessException{
-		PointerType pointerType = (PointerType) Ptr;
-		if (pointerType == null)
-			return null; // Type isn't a pointer type!
-		Type Agg = pointerType.getContainedType();
-
-		// Handle the special case of the empty set index set, which is always
-		// valid.
-		if (list.isEmpty())
-			return Agg;
-
-		// If there is at least one index, the top level type must be sized,
-		// otherwise
-		// it cannot be 'stepped over'.
-		if (!Agg.isSized())
-			return null;
-
-		if (Agg.isPointerType())
-			return null;
-
-		if (Agg.isPrimitiveType())
-			return Agg;
-
-		int i = 0;
-		if (Agg.isStructType()) {
-			StructType structType = (StructType) Agg;
-			for (; i < list.size(); i++) {
-				Value value = list.get(i).getKey();
-				if(value instanceof ConstantInt){
-					ConstantInt  constantInt = (ConstantInt)value;
-					int index = Integer.parseInt(constantInt.getApInt().getVal());
-					if (!structType.isValidIndex(index))
-						throw new InstructionDetailAccessException(InstructionDetailAccessException.INVALID_INDEX_FOR_GEP_INSTR);
-					else
-						Agg = structType.getTypeAtIndex(index);
-				}
-			}
-		}
-		else if(Agg.isArrayType()){
-			ArrayType arrayType = (ArrayType)Agg;
-			return arrayType.getContainedType();
-		}
-
-		if (i == list.size())
-			return Agg;
-		else
-			return null;
-	}
-
-	public Value getPointerOperand() {
-		return getOperand(0);
-	}
-
-	static Integer getPointerOperandIndex() {
-		return 0; // get index for modifying correct operand
-	}
-
-	Integer getPointerAddressSpace() {
-		PointerType pointerType = (PointerType) getType();
-		return pointerType.getAddressSpace();
 	}
 
 	Integer getNumIndexes() {
@@ -135,60 +46,6 @@ public class GetElementPtrInst extends Instruction {
 
 	boolean hasIndices() {
 		return getNumOperands() > 1;
-	}
-
-	/**
-	 * Return true if all of the indices of this GEP are
-	 * zeros. If so, the result pointer and the first operand have the same
-	 * value, just potentially different types.
-	 * @return
-	 */
-	public boolean hasAllZeroIndices() {
-		for (int i = 1; i < getNumOperands(); ++i) {
-			Value value = getOperand(i);
-			if (value instanceof ConstantInt) {
-				ConstantInt CI = (ConstantInt) value;
-				if (!CI.isZero())
-					return false;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Return true if all of the indices of this GEP
-	 * are constant integers. If so, the result pointer and the first
-	 * operand have a constant offset between them.
-	 * @return
-	 */
-	public boolean hasAllConstantIndices() {
-		for (int i = 1; i < getNumOperands(); ++i) {
-			if (!(getOperand(i) instanceof ConstantInt))
-				return false;
-		}
-		return true;
-	}
-
-	public void setIsInBounds(boolean isInBounds) {
-		this.isInBounds = isInBounds;
-	}
-
-	public boolean isInBounds() {
-		return isInBounds;
-	}
-
-	public Boolean getIsUnnamedAddr() {
-		return isUnnamedAddr;
-	}
-
-	public void setIsUnnamedAddr(Boolean isUnnamedAddr) {
-		this.isUnnamedAddr = isUnnamedAddr;
-	}
-
-	public List<Pair<Value, Type>> getIndexVsType() {
-		return indexVsType;
 	}
 
 	public static GetElementPtrInst create(String name, Value pointerOperand, List<Pair<Value, Type>> indexVsType, String pointeeType, BasicBlock parent)
@@ -244,9 +101,9 @@ public class GetElementPtrInst extends Instruction {
 	@Override
 	public String emit() {
 		String description = "";
-		String name = LLVMIREmitter.getInstance().getValidName(this);
+		/*String name = LLVMIREmitter.getInstance().getValidName(this);
 		if(name != null && name.length() != 0)
-			description = name + " = getelementptr ";
+			description = name + " = fneg ";
 		else
 			description = getType().toString() + " getelementptr ";
 		if (isInBounds())
@@ -274,6 +131,7 @@ public class GetElementPtrInst extends Instruction {
 		}
 
 		description += (name == null || name.length() == 0) ? ")" : "";
+		*/
 		return description;
 	}
 
@@ -345,25 +203,11 @@ public class GetElementPtrInst extends Instruction {
 	@Override
 	public void setOperand(int i, Value newOperand) {
 		super.setOperand(i, newOperand);
-		if(i != 0)
-			indexVsType.get(i-1).setFirst(newOperand);
 	}
 
 	@Override
 	public Constant foldIfPossible() {
 		// TODO Implement later
 		return null;
-	}
-
-	public String getPointeeType() {
-		return pointeeType;
-	}
-
-	public Type getSourceElementType() {
-		return sourceElementType;
-	}
-
-	public Type getResultElementType() {
-		return resultElementType;
 	}
 }

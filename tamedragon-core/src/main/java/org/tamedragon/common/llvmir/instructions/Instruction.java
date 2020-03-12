@@ -9,6 +9,7 @@ import org.tamedragon.common.LatticeValue;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Constant;
+import org.tamedragon.common.llvmir.types.OpCodeID;
 import org.tamedragon.common.llvmir.types.Type;
 import org.tamedragon.common.llvmir.types.User;
 import org.tamedragon.common.llvmir.types.Value;
@@ -16,7 +17,7 @@ import org.tamedragon.common.llvmir.types.Value;
 public abstract class Instruction extends User{
 	boolean isTerminatorInstruction = false;
 	boolean isCastInstruction = false;
-	public enum InstructionID {
+	public enum InstructionID implements OpCodeID{
 		ALLOCA_INST(0) ,              //  0: type with no size
 		LOAD_INST(1),   		      //  1: 16-bit floating point type
 		STORE_INST(2),                //  1: 32-bit floating point type
@@ -59,7 +60,8 @@ public abstract class Instruction extends User{
 		GET_ELEMENT_PTR(39),
 		TYPE_INSTR(40),
 		//FUNC_DEF(41),
-		GLOBAL_DECLR(42);
+		GLOBAL_DECLR(42),
+		UNARY_FNEG(43);
 		//FUNC_DECLR(43);
 
 		private int value;
@@ -111,14 +113,21 @@ public abstract class Instruction extends User{
 
 	private InstructionID instructionID;
 	private BasicBlock parent;
-
+	private FastMathFlags fastMathFlags;
+	private boolean noUnsignedWrap;
+	private boolean noSignedWrap;
+	private boolean exact;
+	
 	public Instruction(InstructionID instructionID, Type type, List<Value> operandList, BasicBlock parent){
-
 		super(type, operandList);
 		this.instructionID = instructionID;
 		this.parent = parent;
 		setValueTypeID(ValueTypeID.INSTRUCTION);
-
+	}
+	
+	public Instruction(InstructionID instructionID, Type type, List<Value> operandList, BasicBlock parent, FastMathFlags fastMathFlags){
+		this(instructionID, type, operandList, parent);
+		this.fastMathFlags = fastMathFlags;
 	}
 
 	public InstructionID getInstructionID() {
@@ -165,7 +174,7 @@ public abstract class Instruction extends User{
 
 	public abstract Constant foldIfPossible();
 
-	/*public boolean isCastInstruction(){
+	public boolean isCastInst(){
 		if(instructionID == InstructionID.TRUNC_INST
 				|| instructionID == InstructionID.ZEXT_INST
 				|| instructionID == InstructionID.SEXT_INST
@@ -181,7 +190,31 @@ public abstract class Instruction extends User{
 			return true;
 
 		return false;
-	} */
+	} 
+	
+	public boolean isPointerToIntCastInst() {
+		if(instructionID == InstructionID.PTR_TO_INT_INST) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isZextCastInst() {
+		if(instructionID == InstructionID.ZEXT_INST) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isSextCastInst() {
+		if(instructionID == InstructionID.SEXT_INST) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Returns true if the instruction defines a new value. For example,
@@ -406,9 +439,42 @@ public abstract class Instruction extends User{
 		}
 	}
 
+	public FastMathFlags getFastMathFlags() {
+		return fastMathFlags;
+	}
+
+	public void setFastMathFlags(FastMathFlags fastMathFlags) {
+		this.fastMathFlags = fastMathFlags;
+	}
+
+	public boolean hasNoUnsignedWrap() {
+		return noUnsignedWrap;
+	}
+
+	public void setNoUnsignedWrap(boolean noUnsignedWrap) {
+		this.noUnsignedWrap = noUnsignedWrap;
+	}
+
+	public boolean hasNoSignedWrap() {
+		return noSignedWrap;
+	}
+
+	public void setNoSignedWrap(boolean noSignedWrap) {
+		this.noSignedWrap = noSignedWrap;
+	}
+
+	public boolean isExact() {
+		return exact;
+	}
+
+	public void setExact(boolean exact) {
+		this.exact = exact;
+	}
+	
 	@Override
 	public String toString() {
 		//this.getParent().toString();
 		return emit();
 	}
+
 }

@@ -1517,10 +1517,14 @@ public class LLVMIRGenerator {
 			List<Value> operandList = new ArrayList<Value>();
 			operandList.add(value);
 			InstructionID opcode = null;
+			BinaryOperator.BinaryOperatorID otherOpCode = null;
 			if(value.getValueTypeID() == ValueTypeID.INSTRUCTION){
 				opcode = ((Instruction)value).getInstructionID();
+				if(opcode == Instruction.InstructionID.BINARY_INST) {
+					otherOpCode = ((BinaryOperator)value).getOpCode();
+				}
 			}
-			ConstantExpr constantExpr = new ConstantExpr(value.getType(), operandList , opcode);
+			ConstantExpr constantExpr = new ConstantExpr(value.getType(), operandList , opcode, otherOpCode);
 			listOfConstants.add(constantExpr);
 		}
 

@@ -595,6 +595,10 @@ public class LLVMSemantic {
 			return null;
 		}
 
+		if("undef".equals(value)) {
+			return UndefValue.createOrGet(type);
+		}
+		
 		if(type instanceof PointerType){
 			typeStr = typeStr.substring(0,typeStr.length()-1);
 		}
@@ -705,7 +709,7 @@ public class LLVMSemantic {
 				List<Value> operandList = new ArrayList<Value>();
 				operandList.add(ptrInstr);
 				ConstantExpr constantExpr = new ConstantExpr(ptrInstr.getType(), operandList, 
-						InstructionID.GET_ELEMENT_PTR);
+						InstructionID.GET_ELEMENT_PTR, null);
 				values.add(constantExpr);
 			}
 		}

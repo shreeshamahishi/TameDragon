@@ -1,19 +1,62 @@
 package org.tamedragon.common.tests.optimizations.scalar;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
 import org.tamedragon.common.llvmir.utils.LLVMIREmitter;
 import org.tamedragon.common.optimization.MemToRegPromoter;
-import org.tamedragon.common.utils.LLVMIRUtils;
 import org.tamedragon.common.utils.ComparisionUtils;
+import org.tamedragon.common.utils.LLVMIRUtils;
+	import org.xml.sax.SAXException;
 
 public class Mem2RegTests  {
 
 	private static final String ROOT_PATH = "ScalarOpts/Mem2Reg";
+
+	@Test
+	public void tempTest() {
+		Source xmlFile = new StreamSource(new File(this.getClass().getClassLoader().getResource("EFilingBatchXMLMini.xml").getFile()));
+		
+		SchemaFactory schemaFactory = SchemaFactory
+				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		try {
+			String schemaFileName = "EFL_SARXBatchSchema.xsd";
+			// String schemaFileName = "BSA_XML_2_0.xsd";
+			URL schemaFileUrl = this.getClass().getClassLoader().getResource(schemaFileName);
+			Schema schema = schemaFactory.newSchema(schemaFileUrl);
+			Validator validator = schema.newValidator();
+			validator.validate(xmlFile);
+			System.out.println(xmlFile.getSystemId() + " is valid");
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/*
+	@Test
+	public void runSample2() throws Exception {
+		String cSrcfilename =  "TDProg2Raw.ll";
+		String llvmOutFileName = "TDProg2RawOutTD.ll";
+
+		runMem2Reg(cSrcfilename, llvmOutFileName, "Prog2");
+	}
 
 	@Test
 	public void runSimpleStraightLineProg() throws Exception {
@@ -182,7 +225,7 @@ public class Mem2RegTests  {
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
-	
+
 	@Test
 	public void ComplexStruct1Test() throws Exception {
 		String cSrcfilename = "ComplexStruct1Src.ll";
@@ -190,7 +233,7 @@ public class Mem2RegTests  {
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
-
+*/
 	/*
 	 // Not sure what these are, check them out
 	@Test
@@ -234,7 +277,7 @@ public class Mem2RegTests  {
 			System.out.println("Function not found");
 			return;
 		}
-		
+
 		// Mem2reg
 		MemToRegPromoter memToRegPromoter = new MemToRegPromoter();
 		memToRegPromoter.execute(function);
