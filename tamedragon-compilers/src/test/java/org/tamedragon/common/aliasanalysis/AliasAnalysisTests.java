@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.tamedragon.common.llvmir.instructions.Instruction;
+import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.GlobalVariable;
@@ -24,19 +25,35 @@ import org.tamedragon.common.llvmir.types.PointerType;
 import org.tamedragon.common.llvmir.types.Value;
 import org.tamedragon.common.optimization.MemToRegPromoter;
 import org.tamedragon.compilers.LLVMBaseTest;
+import org.tamedragon.compilers.clang.CLangUtils;
+import org.tamedragon.compilers.clang.CompilerSettings;
 
 public class AliasAnalysisTests extends LLVMBaseTest{
 
-	private static final String ROOT_PATH = "CSrc/AliasAnalysis/";
 	
-	@Test
-	public void test1() throws Exception {
-		String cSrcfilename =  "Prog1.c";
+	private CompilerSettings compilerSettings;
+	private String projectPath = "CSrc/AliasAnalysis/";
+	private String projectRootPath;
+	
+	@Before
+	public void setUp(){		
+		super.setUp();
+		properties = LLVMUtility.getDefaultProperties();
 		
-		getRawLLVRIRInstrs(ROOT_PATH, cSrcfilename);
+		CLangUtils.populateSettings();
+		compilerSettings = CompilerSettings.getInstance();
+		compilerSettings.setProjectPath(projectPath);
+
+		projectRootPath = compilerSettings.getProjectRoot();
 	}
 	
 	
+	@Test
+	public void test1() throws Exception {
+		String cSrcfilename =  "Prog2.c";
+		
+		getRawLLVRIRInstrs(projectRootPath + projectPath, cSrcfilename);
+	}
 	
 //	
 //

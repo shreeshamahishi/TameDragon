@@ -7,8 +7,16 @@ public class MathUtils {
 	private static final int API_INT_BITS_PER_WORD = 64;
 
 	public static int countLeadingOnes(ULong unsignedValue) {
-		BigInteger valBigInt = unsignedValue.toBigInteger();
-		return countLeadingZeros(valBigInt.not());
+		/*BigInteger valBigInt = unsignedValue.toBigInteger();
+		System.out.println("Number :  " + valBigInt + ": Bit count: " + valBigInt.bitCount() + ", Bit length : " +  valBigInt.bitLength()
+		+ ", Lowest set bit : " + valBigInt.getLowestSetBit());
+		BigInteger valComplement = valBigInt.not();
+		System.out.println("Complement :  " + valComplement + ": Bit count: " + valComplement.bitCount() + ", Bit length : " +  valComplement.bitLength()
+		+ ", Lowest set bit : " + valComplement.getLowestSetBit());
+		*/
+		
+		ULong valComplement = unsignedValue.complement();
+		return countLeadingZeros(valComplement);
 	}
 	
 	public static int countLeadingZeros(ULong unsignedVal) {
@@ -16,7 +24,10 @@ public class MathUtils {
 	}
 	
 	public static int countLeadingZeros(BigInteger valBigInt) {
+		/*System.out.println(valBigInt.bitLength());
+		
 		BigInteger search = new BigInteger("1").shiftLeft(API_INT_BITS_PER_WORD -1);
+		int bitCount = valBigInt.bitCount();
 		int count = 0;
 		for(int i = 0; i < API_INT_BITS_PER_WORD; i++) {
 			if(valBigInt.shiftLeft(i).and(search).intValue() == 0) {
@@ -24,8 +35,11 @@ public class MathUtils {
 			}
 			count++;
 		}
-		
+		 
 		return count;
+		*/
+		int bitLength = valBigInt.bitLength();
+		return API_INT_BITS_PER_WORD - bitLength;
 	}
 	
 	/// Sign-extend the number in the bottom B bits of X to a 64-bit integer.
@@ -39,6 +53,20 @@ public class MathUtils {
 		  throw new IllegalArgumentException("Bit width out of range.");
 	  } 
 	  
-	  return X.leftShift(64 - B).rightShift(64 - B).longValue();
+	  return X.longValue() << (64- B) >> (64 - B);
+	}
+	
+	/* Return true if the argument is a power of two > 0 (64 bit edition.)
+	 */
+	public static boolean isPowerOf2_64(ULong value) {
+	  if(value.isLesserThanOrEqualTo(0)) {
+		  return false;
+	  }
+	  
+	  if (value.and(value.subtract(1)).isLesserThanOrEqualTo(0)) {
+		  return true;
+	  }
+	  
+	  return false;
 	}
 }

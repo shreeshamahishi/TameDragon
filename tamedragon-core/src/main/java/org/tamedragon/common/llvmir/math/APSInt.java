@@ -37,20 +37,23 @@ public class APSInt extends APInt {
 
 	//public APSInt(APInt otherAPInt, boolean isUnsigned = true) {
 	public APSInt(APInt otherAPInt, boolean isUnsigned) {
-
-		setNumBits(otherAPInt.getNumBits());
-		setUnsignedVal(otherAPInt.getUnsignedVal());
-		this.IsUnsigned = isUnsigned;
+		setAPSInt(otherAPInt, isUnsigned);
 	}
 
+	private void setAPSInt(APInt apInt, boolean isUnsigned) {
+		setNumBits(apInt.getNumBits());
+		setUnsignedVal(apInt.getUnsignedVal());
+		this.IsUnsigned = isUnsigned;
+	}
+	
 
 	/* Construct an APSInt from a string representation.
 	 *
-	 * This constructor interprets the string \p Str using the radix of 10.
+	 * This constructor interprets the string str using the radix of 10.
 	 * The interpretation stops at the end of the string. The bit width of the
 	 * constructed APSInt is determined automatically.
 	 *
-	 * \param Str the string to be interpreted.
+	 * @param str the string to be interpreted.
 	 */
 	public APSInt(String str) {
 		if(str == null || str.length() == 0){
@@ -66,7 +69,7 @@ public class APSInt extends APInt {
 			if (minBits > 0 && minBits < numBits) {
 				temp = temp.trunc(minBits);
 			}
-			//this = APSInt(Tmp, /*isUnsigned=*/false);
+			setAPSInt(temp, /*isUnsigned=*/false);
 			return;
 		}
 
@@ -75,7 +78,7 @@ public class APSInt extends APInt {
 			temp = temp.trunc(activeBits);
 		}
 
-		//this = APSInt(Tmp, /*isUnsigned=*/true);
+		setAPSInt(temp, /*isUnsigned=*/true);
 	}
 
 	/* Determine sign of this APSInt.
@@ -106,10 +109,9 @@ public class APSInt extends APInt {
 	public void setIsSigned(boolean Val) { IsUnsigned = !Val; }
 
 
-	/* toString - Converts an APInt to a String
-	 */
+	/* toString - Converts an APInt to a String */
 	public String toString(int Radix){
-		return toString(Radix, isSigned());
+		return toString(Radix, true, false);
 	}
 
 	/* Get the correctly-extended long value.
@@ -122,7 +124,7 @@ public class APSInt extends APInt {
 	}
 
 	public APSInt trunc(int width){
-		return new APSInt(trunc(width), IsUnsigned);
+		return new APSInt(super.trunc(width), IsUnsigned);
 	}
 
 	public APSInt extend(int width){
@@ -201,6 +203,10 @@ public class APSInt extends APInt {
 			 //return EqualSlowCase(RHS);
 			 return false;
 		 }
+	}
+
+	public String toString() {
+		return toString(10);
 	}
 	
 	public boolean neq(APSInt RHS){
@@ -289,14 +295,14 @@ public class APSInt extends APInt {
 		if(IsUnsigned == RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		return new APSInt(((APInt)(this)).and(RHS), IsUnsigned);
+		return new APSInt(((APInt)(this)).andWith(RHS), IsUnsigned);
 	}
 
 	public APSInt or(APSInt RHS){
 		if(IsUnsigned == RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		return new APSInt(((APInt)(this)).or(RHS), IsUnsigned);
+		return new APSInt(((APInt)(this)).orWith(RHS), IsUnsigned);
 	}
 
 	public APSInt not(){
@@ -357,7 +363,5 @@ public class APSInt extends APInt {
 
 	public static APSInt get(long X) { return new APSInt(new APInt(64, ULong.valueOf(X), false), false); }
 	public static APSInt getUnsigned(ULong X) { return new APSInt(new APInt(64, X, false), true); }
-
-
-};
+}
 

@@ -944,7 +944,7 @@ public class TargetData {
 
 				//TODO Implement zero extension
 				//int FieldNo = cstInt.getZeroExt();
-				int FieldNo = cstInt.getApInt().getZExtValue();
+				int FieldNo = cstInt.getApInt().getZExtValueNew().intValue();
 
 				// Get structure layout information...
 				StructLayout Layout = getStructLayout(STy);
@@ -964,7 +964,7 @@ public class TargetData {
 				// Get the array index and the size of each array element.
 				ConstantInt cstInt = (ConstantInt) Indices.get(CurIDX);
 				//TODO : To get Size extension below?
-				long arrayIdx = cstInt.getApInt().getZExtValue();
+				long arrayIdx = cstInt.getApInt().getZExtValueNew().intValue();
 				if(arrayIdx != 0){
 					Result += (long)arrayIdx * getTypeAllocSize(type);
 				}

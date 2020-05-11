@@ -88,7 +88,7 @@ public class SparseConditionalConstantPropagation {
 			Iterator<Instruction> instrs = cfNode.getInstructions();
 			while(instrs.hasNext()){
 				Instruction ins = instrs.next();
-				
+			
 				if(ins.definesNewValue()){
 					tempVsLatticeValue.put(ins, new LatticeValue(LatticeValue.UNDEFINED));
 				}
@@ -139,6 +139,7 @@ public class SparseConditionalConstantPropagation {
 				continue;
 
 			Instruction ins = (Instruction)variableWorkList.remove(0);
+			
 			int numUses = ins.getNumUses();
 			for(int i = 0; i < numUses; i++){
 				Instruction useInstr = (Instruction)ins.getUserAt(i);
@@ -214,7 +215,9 @@ public class SparseConditionalConstantPropagation {
 		}
 	}
 	
-	private void modelReachableInstruction(Instruction ins){		
+	private void modelReachableInstruction(Instruction ins){
+
+		System.out.println(" Trying to model Ins = " + ins);
 
 		LatticeValue latticeValueBeforeModelling = tempVsLatticeValue.get(ins);
 		LatticeValue latticeValueAfterModelling = 

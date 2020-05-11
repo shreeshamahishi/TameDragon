@@ -235,7 +235,7 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 
 						//TODO Implement zero extension
 						//int FieldNo = cstInt.getZeroExt();
-						int FieldNo = cstInt.getApInt().getZExtValue();
+						int FieldNo = cstInt.getApInt().getZExtValueNew().intValue();
 						if (FieldNo == 0)
 							continue;
 
@@ -258,7 +258,7 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 						//TODO Implement getSignExtension and use that instead of ZeroExtension below
 						//BaseOffs += targetData.getTypeAllocSize(type) * CIdx.getApInt().getSExtValue();
 						try{
-							BaseOffs += targetData.getTypeAllocSize(type) * CIdx.getApInt().getZExtValue();
+							BaseOffs += targetData.getTypeAllocSize(type) * CIdx.getApInt().getZExtValueNew().intValue();
 						}
 						catch(Exception e){
 							e.printStackTrace();
@@ -297,8 +297,8 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 					//TODO : Implement getSExtValue and change this below to use it instead of getZextValue
 					//					BaseOffs += IndexOffset.getSExtValue()*Scale;
 					//					Scale *= IndexScale.getSExtValue();
-					BaseOffs += IndexOffset.getZExtValue()*Scale;
-					Scale *= IndexScale.getZExtValue();
+					BaseOffs += IndexOffset.getZExtValueNew().intValue()*Scale;
+					Scale *= IndexScale.getZExtValueNew().intValue();
 
 
 					// If we already had an occurrence of this index variable, merge this

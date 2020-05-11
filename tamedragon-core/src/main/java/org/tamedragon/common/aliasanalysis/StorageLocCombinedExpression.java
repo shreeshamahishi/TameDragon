@@ -142,13 +142,13 @@ public class StorageLocCombinedExpression {
 
 		List<Pair<ConstantInt, Value>> otherExprList = otherExpr.getExpression();
 		for(Pair<ConstantInt, Value> term: expression){
-			Long coefficient = new Long(term.getFirst().getApInt().getVal());
+			Long coefficient = new Long(term.getFirst().getApInt().getUnsignedVal().longValue());
 			Value value = term.getSecond();
 
 			Long otherCoefficient = null;
 			for(Pair<ConstantInt, Value> otherTerm: otherExprList){
 				if(value.equals(otherTerm.getSecond())){
-					otherCoefficient = new Long(otherTerm.getFirst().getApInt().getVal());
+					otherCoefficient = new Long(otherTerm.getFirst().getApInt().getUnsignedVal().longValue());
 					break;
 				}
 			}
@@ -206,7 +206,7 @@ public class StorageLocCombinedExpression {
 			for(Pair<ConstantInt, Value> otherPair : otherExpr){
 				Value otherValue = otherPair.getSecond();
 				if(value.equals(otherValue)){
-					otherFactor = Long.parseLong(otherPair.getFirst().getApInt().getVal());
+					otherFactor = otherPair.getFirst().getApInt().getUnsignedVal().longValue();
 					break;
 				}
 			}
@@ -216,7 +216,7 @@ public class StorageLocCombinedExpression {
 				return null;
 			}
 
-			Long factor = Long.parseLong(pair.getFirst().getApInt().getVal());
+			Long factor = pair.getFirst().getApInt().getUnsignedVal().longValue();
 			if(factor % otherFactor != 0){
 				// Not a factor
 				return null;
@@ -251,7 +251,7 @@ public class StorageLocCombinedExpression {
 				ConstantInt constInt = new ConstantInt((IntegerType)factor.getType(), 
 						new APInt(factor.getApInt().getNumBits(), "" + count, false));
 
-				ConstantInt result = (ConstantInt)factor.multiply(constInt);
+				ConstantInt result = ConstantInt.create(constInt.getType().getCompilationContext(), factor.getApInt().mul(constInt.getApInt()));
 				
 				Pair<ConstantInt, Value> updatedPair = new Pair<ConstantInt, Value>(result, term.getSecond());
 				newExpression.add(updatedPair);

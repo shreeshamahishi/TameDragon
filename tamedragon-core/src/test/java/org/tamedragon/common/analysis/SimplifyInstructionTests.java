@@ -1,5 +1,7 @@
 package org.tamedragon.common.analysis;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +17,9 @@ import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Function;
 import org.tamedragon.common.llvmir.types.Module;
+import org.tamedragon.common.llvmir.types.Value;
 import org.tamedragon.common.utils.LLVMIRUtils;
 
-@Ignore
 public class SimplifyInstructionTests {
 
 	private static final String ROOT_PATH = "Analysis";
@@ -34,12 +36,26 @@ public class SimplifyInstructionTests {
 
 		List<Instruction> instructions = getInstructions(cSrcfilename, llvmOutFileName);
 		SimplifyInstruction si = new SimplifyInstruction();
+		int insCount = 0;
 		for(Instruction ins: instructions) {
 			System.out.println("Simplifying instruction " + ins);
-			si.simplifyInstruction(ins, sq, MAX_RECURSE);
+			Value value = si.simplifyInstruction(ins, sq, MAX_RECURSE);
+			if(insCount == 0) {   // Check simplify add instruction
+				assertTrue(value.toString().equals("i8 91"));
+			}
+			else if(insCount == 1) {  // Check simplify add instruction
+				assertTrue(value.toString().equals("i8 -65"));
+			}
+			else if(insCount == 2) {  // Check simplify add instruction
+				assertTrue(value.toString().equals("i8 9"));
+			}
+			else if(insCount == 2) {  // Check simplify add instruction
+				assertTrue(value.toString().equals("i8 -13"));
+			}
+			insCount++;
+			System.out.println("Result of simplifying = " + value);
 		}
 	}
-
 	
 	@Test
 	public void runSimplifyIns2() throws Exception {
@@ -80,7 +96,5 @@ public class SimplifyInstructionTests {
 		}
 
 		return instructions;
-
-
 	}
 }

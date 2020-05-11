@@ -3,6 +3,7 @@ package org.tamedragon.common.llvmir.types;
 import org.apache.tools.ant.taskdefs.condition.IsSigned;
 import org.tamedragon.common.llvmir.math.APInt;
 import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Type.TypeID;
 import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 
@@ -84,54 +85,52 @@ public class ConstantInt extends Constant {
 	}
 
 	public boolean isZero() {
-		return apInt.getVal().equals("0");
+		return apInt.isNullValue();
 	}
 
 	public boolean isOne() {
-		return apInt.getVal().equals("1");
+		return apInt.isOneValue();
 	}
 	
 	public boolean isPositiveUnity(){
-		return apInt.getVal().equals("1")
-				|| apInt.getVal().equals("+1");
+		return apInt.isOneValue();
 	}
 
 	public boolean isNegativeUnity(){
-		return apInt.getVal().equals("-1");
+		return apInt.getUnsignedVal().equals(ULong.valueOf("-1"));
 	}
 
 	public boolean isAllOnesValue() {
-		// TODO Auto-generated method stub
-		return false;
+		return apInt.isAllOnesValue();
 
 	}
 
 	public boolean equalsInt(long i) {
-		return apInt.getVal().equals("" + i);
-
+		return apInt.getUnsignedVal().equals(ULong.valueOf(i));
 	}
 
+	/*
 	public Constant add(ConstantInt other) throws Exception {
-		int result = apInt.addOrSubtract(other.getApInt(), true);
-		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(), "" + result, false));
+		apInt.add(other.getApInt());
+		return new ConstantInt((IntegerType)getType(), apInt);
 	}
 
 	public Constant subtract(ConstantInt other)  throws Exception {
-		int result = apInt.addOrSubtract(other.getApInt(), false);
-		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(), "" + result, false));
+		apInt.subtract(other.getApInt());
+		return new ConstantInt((IntegerType)getType(), apInt);
 
 	}
 
 	public  Constant multiply(ConstantInt other) throws Exception{
-		int result = apInt.multiply(other.getApInt());
-		return new ConstantInt((IntegerType)getType(),
-				new APInt(apInt.getNumBits(), "" + result, false));
-
+		apInt.mul(other.getApInt());
+		return new ConstantInt((IntegerType)getType(), apInt);
 	}
 
+	
 	public Constant udiv(ConstantInt other) throws Exception {
+		
+	        return ConstantInt::get(CI1->getContext(), C1V.udiv(C2V));
+		
 		int result = apInt.udiv(other.getApInt());
 		return new ConstantInt((IntegerType)getType(),
 				new APInt(apInt.getNumBits(), "" + result, false));
@@ -191,10 +190,11 @@ public class ConstantInt extends Constant {
 		return new ConstantInt((IntegerType)getType(),
 				new APInt(apInt.getNumBits(), "" + result, false));
 	}
-
+	*/
+	
 	public boolean equals(ConstantInt otherConst){
 		APInt otherApInt = otherConst.getApInt();
-		if(apInt.compare(otherApInt) == 0)
+		if(apInt.getUnsignedVal().equals(otherApInt.getUnsignedVal()))
 			return true;
 
 		return false;

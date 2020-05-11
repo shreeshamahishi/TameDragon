@@ -70,6 +70,8 @@ import org.tamedragon.common.llvmir.irdata.SwitchInstrData;
 import org.tamedragon.common.llvmir.irdata.UnreachableInstrData;
 import org.tamedragon.common.llvmir.irdata.ValueData;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.Argument;
 import org.tamedragon.common.llvmir.types.ArrayType;
@@ -572,7 +574,7 @@ public class LLVMSemantic {
 
 		return instructionID;
 	}
-
+	
 	/**
 	 * Returns a constant value based on the value and type descriptions  
 	 */
@@ -616,8 +618,11 @@ public class LLVMSemantic {
 				apInt = new APInt(1, "false", false);
 			}
 			else{
-				apInt = new APInt(nosOfBits, value, isSigned);
+				//apInt = new APInt(nosOfBits, value, isSigned);
+				APSInt apsInt = new APSInt(value);
+				apInt = apsInt.extOrTrunc(type.getPrimitiveSizeInBits());
 			}
+			
 			constant = new ConstantInt((IntegerType) type, apInt);
 		} 
 		else if (typeStr.equals("float") || typeStr.equals("double")) {

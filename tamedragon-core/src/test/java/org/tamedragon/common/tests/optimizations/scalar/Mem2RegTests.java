@@ -27,29 +27,7 @@ public class Mem2RegTests  {
 
 	private static final String ROOT_PATH = "ScalarOpts/Mem2Reg";
 
-	@Test
-	public void tempTest() {
-		Source xmlFile = new StreamSource(new File(this.getClass().getClassLoader().getResource("EFilingBatchXMLMini.xml").getFile()));
-		
-		SchemaFactory schemaFactory = SchemaFactory
-				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		try {
-			String schemaFileName = "EFL_SARXBatchSchema.xsd";
-			// String schemaFileName = "BSA_XML_2_0.xsd";
-			URL schemaFileUrl = this.getClass().getClassLoader().getResource(schemaFileName);
-			Schema schema = schemaFactory.newSchema(schemaFileUrl);
-			Validator validator = schema.newValidator();
-			validator.validate(xmlFile);
-			System.out.println(xmlFile.getSystemId() + " is valid");
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/*
+	
 	@Test
 	public void runSample2() throws Exception {
 		String cSrcfilename =  "TDProg2Raw.ll";
@@ -233,7 +211,7 @@ public class Mem2RegTests  {
 
 		runMem2Reg(cSrcfilename, llvmOutFileName,"foo");
 	}
-*/
+
 	/*
 	 // Not sure what these are, check them out
 	@Test

@@ -163,45 +163,30 @@ public class Constant extends User {
 
 		switch(predicate){
 		case ICMP_EQ:
-			if(apInt1.compare(apInt2) == 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
-
+			return getTrueOrFalse(compilationContext, apInt1.equals(apInt2));
 		case ICMP_NE: 
-			if(apInt1.compare(apInt2) != 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
-
+			return getTrueOrFalse(compilationContext, apInt1.notEquals(apInt2));
 		case ICMP_UGT:
+			return getTrueOrFalse(compilationContext, apInt1.ugt(apInt2));
 		case ICMP_SGT:
-			if(apInt1.compare(apInt2) > 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
-
+			return getTrueOrFalse(compilationContext, apInt1.sgt(apInt2));
 		case ICMP_UGE: 
+			return getTrueOrFalse(compilationContext, apInt1.uge(apInt2));
 		case ICMP_SGE:
-			if(apInt1.compare(apInt2) >= 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
-
+			return getTrueOrFalse(compilationContext, apInt1.sge(apInt2));
 		case ICMP_ULT: 
+			return getTrueOrFalse(compilationContext, apInt1.ult(apInt2));
 		case ICMP_SLT:
-			if(apInt1.compare(apInt2) < 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
-
+			return getTrueOrFalse(compilationContext, apInt1.slt(apInt2));
 		case ICMP_ULE:
+			return getTrueOrFalse(compilationContext, apInt1.ule(apInt2));
 		case ICMP_SLE:
-			if(apInt1.compare(apInt2) <= 0)
-				return getTrueOrFalse(compilationContext, true);
-			return getTrueOrFalse(compilationContext, false);
+			return getTrueOrFalse(compilationContext, apInt1.sle(apInt2));
 
 		default:
 			// Return false for now
 			return getTrueOrFalse(compilationContext, false);
-
 		}
-
 	}
 
 	private static Constant getFCmp(CmpInst.Predicate predicate, 
@@ -327,8 +312,8 @@ public class Constant extends User {
 		indices.add(gEPIdx);
 		return getElementPtr(constPtr, indices);
 	}
-	
-	
+
+
 	public static Constant getCast(InstructionID castInsOp, Constant trunc, Type dstTy) {
 		// TODO Auto-generated method stub
 		return null;
@@ -343,7 +328,7 @@ public class Constant extends User {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public static Constant getConstant(BinaryOperatorID operatorID,
 			Constant constantValue, Constant constantValue2) throws Exception {
 

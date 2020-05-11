@@ -85,26 +85,10 @@ public class SimplifyInstruction {
 		}
 		else if(instrID == InstructionID.BINARY_INST) {
 			BinaryOperator binOperator = (BinaryOperator) instruction;
-			if(binOperator.getOpCode() == BinaryOperatorID.FADD) {
-				Result = simplifyFAddInst(instruction.getOperand(0), instruction.getOperand(1), instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.ADD) {
+			if(binOperator.getOpCode() == BinaryOperatorID.ADD) {
 				Result = SimplifyAddInst(instruction.getOperand(0), instruction.getOperand(1),
 						Q.IIQ.hasNoSignedWrap((BinaryOperator)instruction),
 						Q.IIQ.hasNoUnsignedWrap((BinaryOperator)instruction), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.FSUB) {
-				Result = simplifyFSubInst(instruction.getOperand(0), instruction.getOperand(1),
-						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.FSUB) {
-				Result = SimplifySubInst(instruction.getOperand(0), instruction.getOperand(1),
-						Q.IIQ.hasNoSignedWrap((BinaryOperator)instruction),
-						Q.IIQ.hasNoUnsignedWrap((BinaryOperator)instruction), SQ, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.FMUL) {
-				Result = simplifyFMulInst(instruction.getOperand(0), instruction.getOperand(1),
-						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
 			}
 			else if(binOperator.getOpCode() == BinaryOperatorID.MUL) {
 				Result = simplifyMulInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
@@ -114,20 +98,6 @@ public class SimplifyInstruction {
 			}
 			else if(binOperator.getOpCode() == BinaryOperatorID.UDIV) {
 				Result = simplifyUDivInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.FDIV) {
-				Result = simplifyFDivInst(instruction.getOperand(0), instruction.getOperand(1),
-						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.SREM) {
-				Result = simplifySRemInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.UREM) {
-				Result = simplifyURemInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
-			}
-			else if(binOperator.getOpCode() == BinaryOperatorID.FREM) {
-				Result = simplifyFRemInst(instruction.getOperand(0), instruction.getOperand(1),
-						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
 			}
 			else if(binOperator.getOpCode() == BinaryOperatorID.SHL) {
 				Result = simplifyShlInst(instruction.getOperand(0), instruction.getOperand(1),
@@ -150,6 +120,37 @@ public class SimplifyInstruction {
 			}
 			else if(binOperator.getOpCode() == BinaryOperatorID.XOR) {
 				Result = simplifyXorInst(instruction.getOperand(0), instruction.getOperand(1), Q, 3);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.SREM) {
+				Result = simplifySRemInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.UREM) {
+				Result = simplifyURemInst(instruction.getOperand(0), instruction.getOperand(1), Q, RECURSION_LIMIT);
+			}
+			// All floating point operations now
+			else if(binOperator.getOpCode() == BinaryOperatorID.FADD) {
+				Result = simplifyFAddInst(instruction.getOperand(0), instruction.getOperand(1), instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.FSUB) {
+				Result = simplifyFSubInst(instruction.getOperand(0), instruction.getOperand(1),
+						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.FSUB) {
+				Result = SimplifySubInst(instruction.getOperand(0), instruction.getOperand(1),
+						Q.IIQ.hasNoSignedWrap((BinaryOperator)instruction),
+						Q.IIQ.hasNoUnsignedWrap((BinaryOperator)instruction), SQ, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.FMUL) {
+				Result = simplifyFMulInst(instruction.getOperand(0), instruction.getOperand(1),
+						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.FDIV) {
+				Result = simplifyFDivInst(instruction.getOperand(0), instruction.getOperand(1),
+						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
+			}
+			else if(binOperator.getOpCode() == BinaryOperatorID.FREM) {
+				Result = simplifyFRemInst(instruction.getOperand(0), instruction.getOperand(1),
+						instruction.getFastMathFlags(), Q, RECURSION_LIMIT);
 			}
 		}
 		else if(instrID == InstructionID.ICMP_INST) {

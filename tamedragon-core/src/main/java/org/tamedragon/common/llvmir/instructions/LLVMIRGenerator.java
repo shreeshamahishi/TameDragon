@@ -1141,7 +1141,7 @@ public class LLVMIRGenerator {
 			if(destValue instanceof ConstantInt){
 				ConstantInt constantInt = (ConstantInt)destValue;
 				APInt apInt = constantInt.getApInt();
-				if(apInt.getVal().equals("0")){
+				if(apInt.isNullValue()){
 					return null;
 				}
 			}
@@ -1155,7 +1155,7 @@ public class LLVMIRGenerator {
 			if(srcValue instanceof ConstantInt){
 				ConstantInt constantInt = (ConstantInt)srcValue;
 				APInt apInt = constantInt.getApInt();
-				if(apInt.getVal().equals("0"))
+				if(apInt.isNullValue())
 					return constantInt;
 			}
 			castInst = CastInst.createIntToPointerCast(srcValue, destType, null, currentBasicBlock);
@@ -1981,22 +1981,25 @@ public class LLVMIRGenerator {
 				if(constValue instanceof ConstantInt){
 					ConstantInt constantInt = (ConstantInt)constValue;
 					APInt apInt = constantInt.getApInt();
-					String val = apInt.getVal();
+					
+					String val = apInt.toString();
 					int indexVal = Integer.parseInt(val);
 					if(indexVal >= 0 && isNegative){
 						val = "-" + val;
-						apInt.setVal(val);
 					}
 					Value value2 = irTreeConst.getExpressionValue();
 					int wordSize = LLVMUtility.getWordSize(properties);
 					if(wordSize == 64 && apInt != null && indexVal != 0 && apInt.getNumBits() == 32 && i != 0 && !isStructure){
 						apInt.setNumBits(64);
 						value2.setType(Type.getInt64Type(compilationContext, true));
+						apInt = new APInt(64, val, 10);
 					}
 					else if(apInt != null && apInt.getNumBits() == 64 && wordSize == 32){
 						apInt.setNumBits(32);
 						value2.setType(Type.getInt32Type(compilationContext, true));
+						apInt = new APInt(32, val, 10);
 					}
+					constantInt.setApInt(apInt);
 				}
 				Pair<Value, Type> entry_IndexVsType = new Pair<Value, Type>(constValue, type);
 				indxVsType.add(entry_IndexVsType);

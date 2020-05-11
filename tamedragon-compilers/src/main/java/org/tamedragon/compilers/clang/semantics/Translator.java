@@ -2235,7 +2235,7 @@ public class Translator {
 			leftFloatVal = Float.valueOf(leftVal);
 		}
 		else if(leftApInt != null){
-			leftVal = leftApInt.getVal();
+			leftVal = leftApInt.toString();
 			leftIntVal = Integer.valueOf(leftVal);
 		}
 		if(rightApFloat != null){
@@ -2243,7 +2243,7 @@ public class Translator {
 			rightFloatVal = Float.valueOf(rightVal);
 		}
 		else if(rightApInt != null){
-			rightVal = rightApInt.getVal();
+			rightVal = rightApInt.toString();
 			rightIntVal = Integer.valueOf(rightVal);
 		}
 
@@ -2374,7 +2374,7 @@ public class Translator {
 			leftFloatVal = Float.valueOf(leftVal);
 		}
 		else if(leftApInt != null){
-			leftVal = leftApInt.getVal();
+			leftVal = leftApInt.toString();
 			leftIntVal = Integer.valueOf(leftVal);
 		}
 		if(rightApFloat != null){
@@ -2382,7 +2382,7 @@ public class Translator {
 			rightFloatVal = Float.valueOf(rightVal);
 		}
 		else if(rightApInt != null){
-			rightVal = rightApInt.getVal();
+			rightVal = rightApInt.toString();
 			rightIntVal = Integer.valueOf(rightVal);
 		}
 
@@ -2998,7 +2998,7 @@ public class Translator {
 										IRTreeConst irTreeConst = (IRTreeConst)indexTree;
 										Value value = irTreeConst.getExpressionValue();
 										APInt apInt = irTreeConst.getApInt();
-										String val = apInt.getVal();
+										String val = apInt.toString();
 										int constValue = Integer.parseInt(val);
 										if(constValue < 0)
 											isNegative = true;
@@ -3202,7 +3202,7 @@ public class Translator {
 					isNegative = true;
 			}
 			else{
-				val = apInt.getVal();
+				val = apInt.toString();
 				int constValue = Integer.parseInt(val);
 				if(constValue < 0)
 					isNegative = true;
@@ -3987,7 +3987,7 @@ public class Translator {
 				else if(initializerType.isIntegerType() && initialValueType.isFloatingPointType()){
 					ConstantInt constantInt = ((ConstantInt)initializer);
 					ConstantFP constantFP = null;
-					APFloat apFloat = new APFloat(APFloat.IEEEdouble, constantInt.getApInt().getVal());
+					APFloat apFloat = new APFloat(APFloat.IEEEdouble, constantInt.getApInt().toString());
 					try {
 						constantFP = new ConstantFP(Type.getDoubleType(compilationContext), apFloat );
 						listOfConstants.remove(0);
@@ -4012,7 +4012,7 @@ public class Translator {
 				}
 				List<Value> operands = new ArrayList<Value>();
 				operands.add(castInst);
-				ConstantExpr constantExpr = new ConstantExpr(castInst.getType(), operands , instrID);
+				ConstantExpr constantExpr = new ConstantExpr(castInst.getType(), operands , instrID, null);
 				listOfConstants.remove(0);
 				listOfConstants.add(0, constantExpr);
 			}
@@ -4139,7 +4139,7 @@ public class Translator {
 			if(value instanceof ConstantInt){
 				ConstantInt constantInt = (ConstantInt)value;
 				APInt apInt = constantInt.getApInt();
-				String val = apInt.getVal();
+				String val = apInt.toString();
 				Integer integer = Integer.parseInt(val);
 				if(integer != 0){
 					// True case
@@ -4191,7 +4191,7 @@ public class Translator {
 			String val = null;
 
 			if(apInt != null){
-				val = apInt.getVal();
+				val = apInt.toString();
 			}
 			else{
 				val = apFloat.getStrRepresentation();
@@ -4733,7 +4733,7 @@ public class Translator {
 	protected boolean chkIfShiftCountIsMoreThanSizeOfType(BasicType leftBasicType,
 			Translated rightExprAndType) {
 		IRTreeConst irTreeConst = (IRTreeConst)rightExprAndType.getIRTree();
-		int shiftCount = Integer.parseInt(irTreeConst.getApInt().getVal());
+		int shiftCount = Integer.parseInt(irTreeConst.getApInt().toString());
 		if(leftBasicType instanceof IntTypeEntry && shiftCount >= 32)
 			return true;
 		else if(leftBasicType instanceof DoubleTypeEntry && shiftCount >= 64)
@@ -4869,7 +4869,7 @@ public class Translator {
 			elementPtrInst.setIsInBounds(true);
 			List<Value> operands = new ArrayList<Value>();
 			operands.add(elementPtrInst);
-			constantExpr = new ConstantExpr(elementPtrInst.getType(), operands , elementPtrInst.getInstructionID());
+			constantExpr = new ConstantExpr(elementPtrInst.getType(), operands , elementPtrInst.getInstructionID(), null);
 		} catch (InstructionCreationException e) {
 			e.printStackTrace();
 			System.exit(-1);

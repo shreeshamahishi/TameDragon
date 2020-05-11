@@ -3,9 +3,11 @@ package org.tamedragon.common.llvmir.utils;
 import org.tamedragon.common.llvmir.instructions.Instruction;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.ConstantFP;
 import org.tamedragon.common.llvmir.types.ConstantInt;
+import org.tamedragon.common.llvmir.types.IntegerType;
 import org.tamedragon.common.llvmir.types.UndefValue;
 import org.tamedragon.common.llvmir.types.VectorType;
 
@@ -220,62 +222,62 @@ public class ConstantFolding {
 				switch (operatorID) {
 				default:
 					break;
-					
+
 				case ADD:     
-					return CI1.add(CI2);
-					
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.add(C2V));
 				case SUB:
-					return CI1.subtract(CI2);
-				
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.subtract(C2V));
 				case MUL:     
-					return CI1.multiply(CI2);
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.mul(C2V));
 				case UDIV:
-					return CI1.udiv(CI2);
+					if(CI2.isZero()) {
+						throw new IllegalArgumentException("Div by zero!");
+					}
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.udiv(C2V));
 				case SDIV:
-					//if (C2V.isAllOnesValue() && C1V.isMinSignedValue())
-					//	return UndefValue.get(CI1.getType());   // MIN_INT / -1 . undef
-					return CI1.sdiv(CI2);
-				
+					if(CI2.isZero()) {
+						throw new IllegalArgumentException("Div by zero!");
+					}
+					if (C2V.isAllOnesValue() && C1V.isMinSignedValue()) {
+						return UndefValue.createOrGet(CI1.getType());   // MIN_INT / -1 -> undef
+					}
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.sdiv(C2V));
 				case UREM:
-					return CI1.urem(CI2);
-					
+					if(!CI2.isZero()) {
+						throw new IllegalArgumentException("Div by zero!");
+					}
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.urem(C2V));
+
 				case SREM:
-				//if (C2V.isAllOnesValue() && C1V.isMinSignedValue())
-				//	return UndefValue.get(CI1.getType());   // MIN_INT % -1 . undef
-					return CI1.srem(CI2);
-				
+					if(!CI2.isZero()) {
+						throw new IllegalArgumentException("Div by zero!");
+					}
+					if (C2V.isAllOnesValue() && C1V.isMinSignedValue()) {
+						return UndefValue.createOrGet(CI1.getType());   // MIN_INT % -1 -> undef
+					}
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.srem(C2V));
+
 				case AND:
-					return CI1.and(CI2);
-					
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.andWith(C2V));
 				case OR:
-					return CI1.or(CI2);
-					
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.orWith(C2V));
 				case XOR:
-					return CI1.xor(CI2);
-					
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.xorWith(C2V));
 				case SHL: 
-					int shiftAmt = C2V.getZExtValue();
-					if (shiftAmt < C1V.getNumBits())
-						return CI1.shl(CI2);
-					else
-						// too big shift is undef
-						return UndefValue.createOrGet(C1.getType());  
-					
+					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
+						return new ConstantInt((IntegerType)CI1.getType(), C1V.shl(C2V));
+					}
+					return UndefValue.createOrGet(C1.getType());  // too big shift is undef
 				case LSHR :
-					shiftAmt = C2V.getZExtValue();
-					if (shiftAmt < C1V.getNumBits())
-						return CI1.lshr(CI2);
-					else
-						// too big shift is undef
-						return UndefValue.createOrGet(C1.getType());   
-					
+					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
+						return new ConstantInt((IntegerType)CI1.getType(), C1V.lshr(C2V));
+					}
+					return UndefValue.createOrGet(C1.getType());  // too big shift is undef
 				case ASHR : 
-					shiftAmt = C2V.getZExtValue();
-					if (shiftAmt < C1V.getNumBits())
-						return CI1.ashr(CI2);
-					else
-						// too big shift is undef
-						return UndefValue.createOrGet(C1.getType());
+					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
+						return new ConstantInt((IntegerType)CI1.getType(), C1V.ashr(C2V));
+					}
+					return UndefValue.createOrGet(C1.getType());  // too big shift is undef
 				}
 			}
 
@@ -289,34 +291,34 @@ public class ConstantFolding {
 			case ASHR:
 			case SHL:
 				if (CI1.equalsInt(0)) return C1;
-			break;
+				break;
 			default:
 				break;
 			}
-			
+
 		} 
 		else if (C1 instanceof ConstantFP ) {
 			ConstantFP CFP1 = (ConstantFP) C1;
 			if (C2 instanceof ConstantFP ) {
 				ConstantFP CFP2 = (ConstantFP) C2;
 				switch (operatorID) {
-					default:                   
-						break;
-					
-					case FADD :
-						return CFP1.add(CFP2);
-					
-					case FSUB:
-						return CFP1.subtract(CFP2);
-				
-					case FMUL:
-						return CFP1.mul(CFP2);
-				
-					case FDIV:
-						return CFP1.divide(CFP2);
-				
-					case FREM:
-						return CFP1.frem(CFP2);
+				default:                   
+					break;
+
+				case FADD :
+					return CFP1.add(CFP2);
+
+				case FSUB:
+					return CFP1.subtract(CFP2);
+
+				case FMUL:
+					return CFP1.mul(CFP2);
+
+				case FDIV:
+					return CFP1.divide(CFP2);
+
+				case FREM:
+					return CFP1.frem(CFP2);
 				}
 			}
 		} 
@@ -334,7 +336,7 @@ public class ConstantFolding {
 
 			if (Result.size() == VTy.getNumElements())
 				return ConstantVector.get(Result);
-				*/
+			 */
 			return C1;
 		}
 
@@ -358,7 +360,7 @@ public class ConstantFolding {
 			if (Instruction.isCommutative(Opcode))
 				return ConstantFoldBinaryInstruction(Opcode, C2, C1);
 		}
-		*/
+		 */
 
 		// i1 can be simplified in many cases.
 		if (C1.getType().isInt1Type()) {
@@ -366,30 +368,28 @@ public class ConstantFolding {
 			switch(operatorID) {
 			case ADD:
 			case SUB:
-				return CI1.xor((ConstantInt)C2);
-				
+				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().xorWith(((ConstantInt)C2).getApInt()));
 			case MUL:
-				return CI1.and((ConstantInt)C2);
-				
+				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().andWith(((ConstantInt)C2).getApInt()));
 			case SHL:
 			case LSHR:
 			case ASHR:
 				// We can assume that C2 == 0.  If it were one the result would be
 				// undefined because the shift value is as large as the bitwidth.
 				return C1;
-				
+
 			case SDIV:
 			case UDIV:
 				// We can assume that C2 == 1.  If it were zero the result would be
 				// undefined through division by zero.
 				return C1;
-				
+
 			case UREM:
 			case SREM:
 				// We can assume that C2 == 1.  If it were zero the result would be
 				// undefined through division by zero.
 				return ConstantInt.getTrueOrFalse(C1.getContext(), false);
-				
+
 			default:
 				break;
 			}

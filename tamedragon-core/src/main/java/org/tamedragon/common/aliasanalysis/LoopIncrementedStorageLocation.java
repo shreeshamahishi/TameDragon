@@ -50,7 +50,7 @@ public class LoopIncrementedStorageLocation  extends StorageLocation{
 		desc += ",linear_expr=[";
 		int count = 0;
 		for(Pair<ConstantInt, Value> expr : linearExpression){
-			desc += expr.getFirst().getApInt().getVal() + "*" + emitter.getValidName(expr.getSecond())
+			desc += expr.getFirst().getApInt() + "*" + emitter.getValidName(expr.getSecond())
 			+ (count++ < linearExpression.size() -1? ", " : "");
 		}
 

@@ -268,8 +268,7 @@ public:
 			if(constant instanceof ConstantInt){
 				ConstantInt constantInt = (ConstantInt)constant;
 				APInt apInt = constantInt.getApInt();
-				String val = apInt.getVal();
-				if(!val.equals("0")){
+				if(! apInt.isNullValue()){
 					hasZeroInitializer = false;
 					break;
 				}

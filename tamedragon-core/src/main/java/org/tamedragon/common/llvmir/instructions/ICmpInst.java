@@ -177,8 +177,7 @@ public class ICmpInst extends CmpInst{
 			if((rhs instanceof ConstantInt) && lhsType.isPointerType()){
 				ConstantInt constantInt = (ConstantInt)rhs;
 				APInt apInt = constantInt.getApInt();
-				if(apInt.getVal().equals("0")){
-					
+				if(apInt.isNullValue()){
 					// In this case, we are checking for a null value;
 					// for example, in LLVM this will be expressed as:
 					// %2 = icmp ne *i32 %3, null

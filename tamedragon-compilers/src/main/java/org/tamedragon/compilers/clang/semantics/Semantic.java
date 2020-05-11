@@ -1675,7 +1675,7 @@ public class Semantic {
 				if(val != null && irTree != null && irTree instanceof IRTreeConst && val.getLiteralValue() != null){
 					IRTreeConst irTreeConst = (IRTreeConst)irTree;
 					// should of integer type only
-					val.setLiteralValue(irTreeConst.getApInt().getVal());
+					val.setLiteralValue(irTreeConst.getApInt().toString());
 					analyzeArraySizeExpr(val, location);
 				}
 				else if(irTree != null) // Variable length Array (irTree can be null in case we pass a variable length array as a parameter)
@@ -2776,7 +2776,7 @@ public class Semantic {
 					IRTreeConst irTreeConst = (IRTreeConst) teInitValue.getIRTree();
 					ConstantInt constantInt = (ConstantInt)irTreeConst.getExpressionValue();
 					enumNames.put(name, constantInt);
-					initialValue = Integer.parseInt(constantInt.getApInt().getVal());
+					initialValue = Integer.parseInt(constantInt.getApInt().toString());
 				}
 			}
 			else{
@@ -4249,7 +4249,7 @@ public class Semantic {
 					if(lhsIrType.isFloatingPointType() && (value instanceof ConstantInt)){
 						ConstantInt constantInt = (ConstantInt)value;
 						APInt apInt = constantInt.getApInt();
-						String strVal = apInt.getVal();
+						String strVal = apInt.toString();
 						ConstantFP constantFP = null;
 						APFloat apFloat = new APFloat(APFloat.IEEEdouble, strVal+".0");
 						try {
@@ -4786,11 +4786,12 @@ public class Semantic {
 					Value value = irTreeConst.getExpressionValue();
 					if(apInt != null){
 						if(binaryOpExprType == BinaryOpExpr.MINUS){
-							String val = apInt.getVal();
+							String val = apInt.toString();
 							val = "-"+val;
-							apInt.setVal(val);
+							apInt = new APInt(64, val, 10);
+							irTreeConst.setApInt(apInt);
 						}
-						apInt.setNumBits(64);
+						
 						value.setType(Type.getInt64Type(compilationContext, true));
 					}
 				}
@@ -5072,10 +5073,13 @@ public class Semantic {
 					APInt apInt = irTreeConst.getApInt();
 					APFloat apFloat = irTreeConst.getApFloat();
 
-					if(apInt != null)
-						apInt.setVal("-" + apInt.getVal());
-					else
+					if(apInt != null) {
+						apInt = new APInt(apInt.getNumBits(), "-" + apInt.toString(), 10);
+						irTreeConst.setApInt(apInt);
+					}
+					else {
 						apFloat.setStrRepresentation("-" + apFloat.getStrRepresentation());
+					}
 
 				}
 			}			

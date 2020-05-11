@@ -168,7 +168,7 @@ public class StoreInst extends Instruction {
 		if(firstArg instanceof ConstantInt){
 			ConstantInt constantInt = (ConstantInt)firstArg;
 			APInt apInt = constantInt.getApInt();
-			if(apInt.getVal().equals("0")){
+			if(apInt.isNullValue()){
 				// If the secondArg is also a pointer to pointer (could be extended to any level...), then make firstAgr as null pointer
 				isFirstArgConstantZero = true;
 			}

@@ -183,7 +183,7 @@ public class ConstantFolding {
 					if(CI2.isZero()) {
 						throw new IllegalArgumentException("Div by zero should have been handled above");
 					}
-					return ConstantInt.create(CI1.getContext(), C1V.unsignedDiv(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.udiv(C2V));
 				case SDIV:
 					if(CI2.isZero()) {
 						throw new IllegalArgumentException("Div by zero should have been handled above");
@@ -191,12 +191,12 @@ public class ConstantFolding {
 					if (C2V.isAllOnesValue() && C1V.isMinSignedValue()) {
 						return UndefValue.createOrGet(CI1.getType());   // MIN_INT / -1 -> undef
 					}
-					return ConstantInt.create(CI1.getContext(), C1V.signedDiv(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.sdiv(C2V));
 				case UREM:
 					if(CI2.isZero()) {
 						throw new IllegalArgumentException("Div by zero should have been handled above");
 					}
-					return ConstantInt.create(CI1.getContext(), C1V.unsignedRem(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.urem(C2V));
 				case SREM:
 					if(CI2.isZero()) {
 						throw new IllegalArgumentException("Div by zero should have been handled above");
@@ -204,7 +204,7 @@ public class ConstantFolding {
 					if (C2V.isAllOnesValue() && C1V.isMinSignedValue()) {
 						return UndefValue.createOrGet(CI1.getType());   // MIN_INT % -1 -> undef
 					}
-					return ConstantInt.create(CI1.getContext(), C1V.signedRem(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.srem(C2V));
 				case AND:
 					return ConstantInt.create(CI1.getContext(), C1V.andWith(C2V));
 				case OR:
@@ -213,17 +213,17 @@ public class ConstantFolding {
 					return ConstantInt.create(CI1.getContext(), C1V.xorWith(C2V));
 				case SHL:
 					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
-						return ConstantInt.create(CI1.getContext(), C1V.shiftLeft(C2V));
+						return ConstantInt.create(CI1.getContext(), C1V.shl(C2V));
 					}
 					return UndefValue.createOrGet(C1.getType()); // too big shift is undef
 				case LSHR:
 					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
-						return ConstantInt.create(CI1.getContext(), C1V.logicalShiftRight(C2V));
+						return ConstantInt.create(CI1.getContext(), C1V.lshr(C2V));
 					}
 					return UndefValue.createOrGet(C1.getType()); // too big shift is undef
 				case ASHR:
 					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
-						return ConstantInt.create(CI1.getContext(), C1V.arithmeticShiftRight(C2V));
+						return ConstantInt.create(CI1.getContext(), C1V.ashr(C2V));
 					}
 					return UndefValue.createOrGet(C1.getType()); // too big shift is undef
 				}
