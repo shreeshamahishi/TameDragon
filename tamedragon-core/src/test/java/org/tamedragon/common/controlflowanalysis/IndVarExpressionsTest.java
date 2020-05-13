@@ -440,6 +440,9 @@ public class IndVarExpressionsTest {
 			ConstantInt operandVal5 = new ConstantInt( intType, apInt3);
 			IndVarExpression dependentIndVar5 = new IndVarExpression(
 					operandVal5, dependentIndVar4, BinaryOperatorID.SUB, true);
+			
+			System.out.println("IndVar5 = " + dependentIndVar5.toString());
+			
 			assertEquals("%i+-76-%k", dependentIndVar5.toString());
 
 			// -a + (-b) = -1 * (a + b)

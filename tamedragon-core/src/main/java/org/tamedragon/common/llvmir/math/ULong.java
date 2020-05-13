@@ -247,9 +247,25 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return this;
 	}
 
-	public ULong mul(final ULong val) {
-		final long result = value * val.longValue();
-		setValues(result);
+	// Operations - subtractions
+	public ULong mul(final ULong otherVal){
+		final long result = value * otherVal.value;
+		return ULong.valueOf(result);
+	}
+
+	public ULong mul(long otherVal) {
+		final long result = value - otherVal;
+		return ULong.valueOf(result);
+	}
+
+	// Operations - subtractions in place versions
+	public ULong mulInPlace(final ULong otherVal){
+		setValues(value * otherVal.value);
+		return this;
+	}
+
+	public ULong mulInPlace(long otherVal) {
+		setValues(value * otherVal);
 		return this;
 	}
 
@@ -286,7 +302,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		BigInteger sr = unsignedBigInt.shiftRight(bits);
 		return ULong.valueOf(sr);
 	}
-	
+
 	public ULong rightShiftInPlace(int bits) {
 		setWithBigIntValue(unsignedBigInt.shiftRight(bits));
 		return this;
@@ -300,20 +316,20 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		setWithBigIntValue(unsignedBigInt.xor(other.getUnsignedBigInt()));
 		return this;
 	}
-	
+
 	public ULong and(ULong other) {
 		return ULong.valueOf(unsignedBigInt.and(other.getUnsignedBigInt()));
 	}
-	
+
 	public ULong andInPlace(ULong other) {
 		setWithBigIntValue(unsignedBigInt.and(other.getUnsignedBigInt()));
 		return this;
 	}
-	
+
 	public ULong or(ULong other) {
 		return ULong.valueOf(unsignedBigInt.or(other.getUnsignedBigInt()));
 	}
-	
+
 	public ULong orInPlace(ULong other) {
 		setWithBigIntValue(unsignedBigInt.or(other.getUnsignedBigInt()));
 		return this;
@@ -332,7 +348,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		}
 		return false;
 	}
-	
+
 	public boolean isLesserThanOrEqualTo(int other) {
 		if(value == other || value < other) {
 			return true;
@@ -360,7 +376,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		}
 		return false;
 	}
-	
+
 	public boolean isGreaterThanOrEqualTo(int rHS) {
 		if(value == rHS || value > rHS) {
 			return true;

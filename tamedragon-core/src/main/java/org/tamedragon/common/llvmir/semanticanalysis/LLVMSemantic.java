@@ -127,7 +127,7 @@ public class LLVMSemantic {
 
 	private LLVMErrorHandler errorHandler;
 	private Properties properties;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(LLVMSemantic.class);
 	private static final String NO_LLVM_SOURCE = "No source code was found by the semantic analyzer. Check the parser.";
 	private static final String UNKNOWN_IR_DATA = "Fatal error: Unknown intermediate representation.";
@@ -142,10 +142,11 @@ public class LLVMSemantic {
 	private static final String UNABLE_TO_CREATE_TYPE = "Fatal error: Not able to create type: ";
 	private static final String UNKNOWN_LINKAGE_TYPE = "Unknown linkage type: ";
 	private static final String POINTEE_TYPE_DOES_NOT_MATCH_POINTER_CONTAINED_TYPE = "error: explicit pointee type doesn't match operand's pointee type";
+	private static final String INVALID_TYPE_FOR_BOOLEAN_CONSTANT = "Fatal error: Invalid type for boolean constant";
 
 	private static final String UNKNOWN_ERROR = "Unknown error: ";
 	private static final String COMPILER_SETTINGS_PATH = "CompilerSettings.properties";
-	
+
 	public LLVMSemantic(String fileName, List<ValueData> irData){
 		this.fileName = fileName;
 		irDataList = irData;
@@ -160,23 +161,23 @@ public class LLVMSemantic {
 		labelAndBasicBlock = new LinkedHashMap<Label, BasicBlock>();
 		structAndType = new LinkedHashMap<String, StructType>();
 		errorHandler = LLVMErrorHandler.getInstance();
-		
+
 		// Set up compiler settings and set default values if the properties file is not found
 		properties = getProperties();
-		
+
 	}
 
 	private Properties getProperties() {
 		Properties properties = new Properties();
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource(COMPILER_SETTINGS_PATH).getFile());
-		
+
 		FileReader reader = null;
 		try {
 			reader = new FileReader(file.getAbsoluteFile());
 			properties = new Properties();
 			properties.load(reader);
-			
+
 		} catch (FileNotFoundException e) {
 			LOG.warn("Unable to locate compiler settings. Using default values.");
 			return LLVMUtility.getDefaultProperties();
@@ -184,7 +185,7 @@ public class LLVMSemantic {
 			LOG.warn("Unable to locate compiler settings. Using default values.");
 			return LLVMUtility.getDefaultProperties();
 		}
-		
+
 		// Close the Reader object
 		try{
 			if(reader != null){
@@ -196,7 +197,7 @@ public class LLVMSemantic {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+
 		return properties;
 	}
 
@@ -212,7 +213,7 @@ public class LLVMSemantic {
 		int count = 0;
 		while(iterator.hasNext()){
 			ValueData valueData = iterator.next();
-			
+
 			if (valueData instanceof DataLayout) {
 				DataLayout dataLayout = (DataLayout) valueData;
 				createAndSetTargetData(dataLayout);
@@ -446,7 +447,7 @@ public class LLVMSemantic {
 			// Cannot recover from this exception. Lets assert and return null
 			LOG.error(tce.getMessage());
 			assert false : tce.getMessage();
-			
+
 			return null;
 		}
 
@@ -574,11 +575,11 @@ public class LLVMSemantic {
 
 		return instructionID;
 	}
-	
+
 	/**
 	 * Returns a constant value based on the value and type descriptions  
 	 */
-	private Value createConstantValue(String value, String typeStr) throws Exception {
+	private Value createConstantValue(SourceLocation location, String value, String typeStr) throws Exception {
 		Type type = null;
 		Constant constant = null;
 		APInt apInt = null;
@@ -596,33 +597,39 @@ public class LLVMSemantic {
 			// Cannot create type; this error is already handled, return null
 			return null;
 		}
+		
+		if(value.equals("false")) {
+			System.out.println("WAIT HERE");
+		}
 
 		if("undef".equals(value)) {
 			return UndefValue.createOrGet(type);
 		}
-		
+
+		if("true".equals(value) || "false".equals(value)) {
+			if(!typeStr.equals("i1")) {
+				errorHandler.addError(fileName, location, null, typeStr, POINTEE_TYPE_DOES_NOT_MATCH_POINTER_CONTAINED_TYPE);
+				return ConstantInt.getFalse(compilationContext); 
+			}
+
+			if("true".equals(value)){
+				return ConstantInt.getTrue(compilationContext); 
+			}
+			else {
+				return ConstantInt.getFalse(compilationContext); 
+			}
+		}
+
 		if(type instanceof PointerType){
 			typeStr = typeStr.substring(0,typeStr.length()-1);
 		}
 
 		if (typeStr.equals("i64") || typeStr.equals("i32")
-				|| typeStr.equals("i16") || typeStr.equals("i8")
-				|| typeStr.equals("i1") || typeStr.equals("true") || typeStr.equals("false")) {
+				|| typeStr.equals("i16") || typeStr.equals("i8") || typeStr.equals("i1")) {
 
-			String nosOfBitsStr = typeStr.substring(1, typeStr.length());
-			Integer nosOfBits = Integer.parseInt(nosOfBitsStr);
-			if (typeStr.equals("true")){
-				apInt = new APInt(1, "true", false);
-			}
-			else if (typeStr.equals("false")){
-				apInt = new APInt(1, "false", false);
-			}
-			else{
-				//apInt = new APInt(nosOfBits, value, isSigned);
-				APSInt apsInt = new APSInt(value);
-				apInt = apsInt.extOrTrunc(type.getPrimitiveSizeInBits());
-			}
-			
+			APSInt apsInt = new APSInt(value);
+			apInt = apsInt.extOrTrunc(type.getPrimitiveSizeInBits());
+
 			constant = new ConstantInt((IntegerType) type, apInt);
 		} 
 		else if (typeStr.equals("float") || typeStr.equals("double")) {
@@ -645,7 +652,7 @@ public class LLVMSemantic {
 	 * Creates a constant array based on the initial value, type and pointer data.
 	 */
 
-	private Value createConstantArray(String initialValueStr, ArrayType type, boolean isArray, 
+	private Value createConstantArray(SourceLocation location, String initialValueStr, ArrayType type, boolean isArray, 
 			boolean isString, List<ValueData> ptrDataList) throws Exception {
 		Value value = null;
 
@@ -661,7 +668,7 @@ public class LLVMSemantic {
 				value = ConstantArray.get(initialValueStr, addNull,compilationContext);
 			} 
 			else{ 
-				value = initializeArray(initialValueStr,type, ptrDataList);
+				value = initializeArray(location, initialValueStr,type, ptrDataList);
 			}
 		} 
 		else {
@@ -675,7 +682,7 @@ public class LLVMSemantic {
 	/**
 	 *  Initializes an array from the array type,  the initial value string and a list of pointer data.
 	 */
-	private Value initializeArray(String initialValueStr, ArrayType type, 
+	private Value initializeArray(SourceLocation location, String initialValueStr, ArrayType type, 
 			List<ValueData> ptrDataList ) throws Exception {
 		List<Constant> values = new ArrayList<Constant>();
 		Value array = null;
@@ -699,7 +706,7 @@ public class LLVMSemantic {
 				}
 
 				if(containedType instanceof ArrayType){
-					elementValue = initializeArray(str, (ArrayType) containedType, null);
+					elementValue = initializeArray(location, str, (ArrayType) containedType, null);
 				}
 
 				values.add((Constant) elementValue);
@@ -726,7 +733,7 @@ public class LLVMSemantic {
 				String typeAndValue[] = argStr.split(" ");
 				String typeStr = typeAndValue[0];
 				String valueStr = typeAndValue[1];
-				Constant constant = (Constant) createConstantValue(valueStr, typeStr);
+				Constant constant = (Constant) createConstantValue(location, valueStr, typeStr);
 				values.add(constant);
 			}
 		}
@@ -800,7 +807,7 @@ public class LLVMSemantic {
 				module.getFunctions().add(currentFunction);
 			}
 		}
-		
+
 		List<Argument> args = createArgumentsFromArgData(currentFunction, argData);
 		for(Argument arg : args){
 			currentFunction.getArgumentList().add(arg);
@@ -861,7 +868,7 @@ public class LLVMSemantic {
 		for(ArgumentData argumentData : argDataList){
 			SourceLocation location = new SourceLocation(argumentData.getLineNum());
 			hasEllipses = argumentData.isHasEllipses();
-			
+
 			if(hasEllipses){
 				// TODO Support variable arguments
 				break;
@@ -875,11 +882,11 @@ public class LLVMSemantic {
 			catch(Exception e){
 				errorHandler.addError(fileName, location, dataTyprStr, null, e.getMessage());
 			}
-			
+
 			paramTypes.add(type);
-			
+
 		}
-		
+
 		return paramTypes;
 
 	}
@@ -995,7 +1002,7 @@ public class LLVMSemantic {
 		if(!isVariable && isFloatingPointType(firstOperandStr)){
 			// Is a constant value
 			try {
-				firstOperand = createConstantValue(firstOperandStr, typeStr);
+				firstOperand = createConstantValue(location, firstOperandStr, typeStr);
 			} 
 			catch (Exception e) {
 				errorHandler.addError(fileName, location, firstOperandStr, null, LLVMErrorHandler.E_CANNOT_BE_NULL);
@@ -1135,15 +1142,15 @@ public class LLVMSemantic {
 			errorHandler.addError(fileName, location, name, null, LLVMErrorHandler.E_NO_DECLARATION);
 			return;
 		}
-		
+
 		// Confirm that the pointer type refers to the pointee type
 		String pointeeTypeStr = load.getPointeeTypeStr();
 		String pointerTypeStr = load.getTypeStr();
-		
+
 		Type pointerType = getLLVMType(pointerTypeStr, compilationContext, false); 
-		
+
 		Type pointeeType = getLLVMType(pointeeTypeStr, compilationContext, false); 
-		
+
 		try {
 			Type containterType = Type.getPointerType(compilationContext, pointeeType, 0);
 			if(containterType != pointerType) {
@@ -1236,7 +1243,7 @@ public class LLVMSemantic {
 			} 
 			else{
 				try {
-					value = createConstantValue(valueStr, typeStr);
+					value = createConstantValue(location, valueStr, typeStr);
 				} 
 				catch (Exception e) {
 					errorHandler.addError(fileName, location, valueStr, null, e.getMessage());
@@ -1322,7 +1329,7 @@ public class LLVMSemantic {
 		location.setLineNum(lineNo);
 
 		String dataTypeOfValues = data.getFirstType();
-				
+
 		try{
 			String firstOprstr = data.getFirstValue();
 			String secondOprStr = data.getSecondValue();
@@ -1333,7 +1340,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				first = createConstantValue(firstOprstr, dataTypeOfValues);
+				first = createConstantValue(location, firstOprstr, dataTypeOfValues);
 			}
 
 			if(isVariable(secondOprStr)){			
@@ -1343,7 +1350,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				second = createConstantValue(secondOprStr, dataTypeOfValues);
+				second = createConstantValue(location, secondOprStr, dataTypeOfValues);
 			}
 
 			if(isVariable(conditionalValueStr)){			
@@ -1353,7 +1360,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				condition = createConstantValue(conditionalValueStr, typeStr);
+				condition = createConstantValue(location, conditionalValueStr, typeStr);
 			}
 		}
 		catch(Exception e) {
@@ -1392,7 +1399,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				firstOprValue = createConstantValue(firstOprstr, typeStr);
+				firstOprValue = createConstantValue(location, firstOprstr, typeStr);
 			}
 
 			if(isVariable(secondOprStr)){			
@@ -1402,7 +1409,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				secondOprValue = createConstantValue(secondOprStr, typeStr);
+				secondOprValue = createConstantValue(location, secondOprStr, typeStr);
 			}
 
 			type = getLLVMType(typeStr,compilationContext,true);  	
@@ -1502,7 +1509,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				lhsValue = createConstantValue(firstOprstr, typeStr);
+				lhsValue = createConstantValue(location, firstOprstr, typeStr);
 			}
 
 			if(isVariable(secondOprStr) || secondOprStr.equals("null")){
@@ -1512,7 +1519,7 @@ public class LLVMSemantic {
 				}
 			}
 			else{
-				rhsValue = createConstantValue(secondOprStr, typeStr);
+				rhsValue = createConstantValue(location, secondOprStr, typeStr);
 			}
 
 			String lresult = handleName(result);
@@ -1554,7 +1561,7 @@ public class LLVMSemantic {
 			condition = getValueFromMap(conditionStr);
 			if(condition == null){
 				try {
-					condition = createConstantValue(conditionStr, "i1");
+					condition = createConstantValue(location, conditionStr, "i1");
 				} 
 				catch (Exception e) {
 					errorHandler.addError(fileName, location, conditionStr, null, e.getMessage());
@@ -1611,7 +1618,7 @@ public class LLVMSemantic {
 			}
 			else{
 				try {
-					retValue = createConstantValue(returnDataStr, retTypeStr);
+					retValue = createConstantValue(location, returnDataStr, retTypeStr);
 				} 
 				catch (Exception e) {
 					errorHandler.addError(fileName, location, returnDataStr, retTypeStr, e.getMessage());
@@ -1688,7 +1695,7 @@ public class LLVMSemantic {
 
 		Value caseConst = null;
 		try {
-			caseConst = createConstantValue(conditionStr, typStr);
+			caseConst = createConstantValue(location, conditionStr, typStr);
 			switchInstr.addCase((ConstantInt) caseConst, targetBB);
 		} 
 		catch (Exception e1) {
@@ -1840,7 +1847,7 @@ public class LLVMSemantic {
 		if(!(isArray || isString)){
 			// Is a constant value
 			try {
-				value = createConstantValue(initialValueStr, typStr);
+				value = createConstantValue(location, initialValueStr, typStr);
 			} 
 			catch (Exception e) {
 				errorHandler.addError(fileName, location, '%'+typStr, null, e.getMessage());
@@ -1859,7 +1866,7 @@ public class LLVMSemantic {
 				initialValueStr = "[" + typeAndValue[1]; 
 				try {
 					Type initializeArrayType = getLLVMType(typeString, compilationContext, false);
-					value = createConstantArray(initialValueStr, (ArrayType) initializeArrayType,
+					value = createConstantArray(location, initialValueStr, (ArrayType) initializeArrayType,
 							isArray, isString, ptrDataList);
 				} 
 				catch (Exception e) {
@@ -1870,7 +1877,7 @@ public class LLVMSemantic {
 
 		if(containedType instanceof ArrayType){
 			try {
-				value = createConstantArray(initialValueStr, (ArrayType)containedType,
+				value = createConstantArray(location, initialValueStr, (ArrayType)containedType,
 						isArray, isString, ptrDataList);
 			} catch (Exception e) {
 				errorHandler.addError(fileName, location, initialValueStr, null, e.getMessage());
@@ -1923,10 +1930,10 @@ public class LLVMSemantic {
 				try {
 					if(typeStr.charAt(0)=='[') {
 						ArrayType dummyArrayType = null;
-						value = createConstantArray(valueStr, dummyArrayType,true,false, ptrDataList);
+						value = createConstantArray(location, valueStr, dummyArrayType,true,false, ptrDataList);
 					} 
 					else{
-						value = createConstantValue(valueStr, typeStr);
+						value = createConstantValue(location, valueStr, typeStr);
 					}
 				}
 				catch (Exception e) {
@@ -1990,7 +1997,7 @@ public class LLVMSemantic {
 					}
 				}
 				else{
-					value = createConstantValue(valueStr, typeStr);
+					value = createConstantValue(location, valueStr, typeStr);
 				}
 			}
 			catch (Exception e) {
@@ -2235,7 +2242,7 @@ public class LLVMSemantic {
 
 				if(paramValue == null){
 					try {
-						paramValue = createConstantValue(lnameStr , paraTypeStr);
+						paramValue = createConstantValue(location, lnameStr , paraTypeStr);
 					} 
 					catch (Exception e) {
 						errorHandler.addError(fileName, location, name, null, e.getMessage());
@@ -2323,7 +2330,7 @@ public class LLVMSemantic {
 		} 
 		else{
 			try {
-				sourceValue = createConstantValue(valueStr, sourceStr);
+				sourceValue = createConstantValue(location, valueStr, sourceStr);
 			} 
 			catch (Exception e) {
 				errorHandler.addError(fileName, location, fileName, valueStr, e.getMessage());

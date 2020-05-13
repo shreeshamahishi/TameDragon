@@ -232,13 +232,18 @@ public class CallInst extends Instruction {
 		if(getNumOperands() >= 2){
 			for(int i = 1; i < getNumOperands(); i++){
 				Value val = getOperand(i);
+				
+				if(val.toString().equals("false")) {
+					System.out.println("WAIT HERE");
+				}
+				
 				String name = LLVMIREmitter.getInstance().getValidName(val);
 
 				if(val instanceof Constant){
 					if(i < (getNumOperands() - 1))
-						description += val.getType() + " " + name + ", ";
+						description += val.toString() + ", ";
 					else
-						description += val.getType() + " " + name;
+						description += val.toString();
 				}
 				else{
 					if(i < (getNumOperands() - 1))

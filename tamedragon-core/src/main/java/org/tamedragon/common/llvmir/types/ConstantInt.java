@@ -1,6 +1,5 @@
 package org.tamedragon.common.llvmir.types;
 
-import org.apache.tools.ant.taskdefs.condition.IsSigned;
 import org.tamedragon.common.llvmir.math.APInt;
 import org.tamedragon.common.llvmir.math.APSInt;
 import org.tamedragon.common.llvmir.math.ULong;
@@ -10,9 +9,7 @@ import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 public class ConstantInt extends Constant {
 
 	private APInt apInt;
-
-	private ConstantInt theTrueVal;
-	private ConstantInt theFalseVal;
+	private boolean isBooleanConst;
 
 	public ConstantInt(IntegerType intType, APInt val) throws InstantiationException{
 		super(intType, null);
@@ -62,11 +59,10 @@ public class ConstantInt extends Constant {
 		try {
 			return new ConstantInt(intType, apInt);
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			return null;
 		}
 	}
-
+	
 	public APInt getApInt() {
 		return apInt;
 	}
@@ -76,11 +72,19 @@ public class ConstantInt extends Constant {
 	}
 
 	public String toString() {
-		return type.toString() + " " + apInt.toString();
+		return type.toString() + " " + getName();
 	}
 
 	@Override
 	public String getName() {
+		if(isBooleanConst) {
+			if(apInt.isNullValue()) {
+				return "false";
+			}
+			else {
+				return "true";
+			}
+		}
 		return apInt.toString();
 	}
 
@@ -214,6 +218,7 @@ public class ConstantInt extends Constant {
 		ConstantInt trueVal = context.getTheFalseVal();
 		if (trueVal == null) {
 			trueVal = ConstantInt.create(Type.getInt1Type(context, false), 1, false);
+			trueVal.isBooleanConst = true;
 			context.setTheFalseVal(trueVal);
 		}
 		return trueVal;
@@ -223,6 +228,7 @@ public class ConstantInt extends Constant {
 		ConstantInt falseVal = context.getTheFalseVal();
 		if (falseVal == null) {
 			falseVal = ConstantInt.create(Type.getInt1Type(context, false), 0, false);
+			falseVal.isBooleanConst = true;
 			context.setTheFalseVal(falseVal);
 		}
 		return falseVal;

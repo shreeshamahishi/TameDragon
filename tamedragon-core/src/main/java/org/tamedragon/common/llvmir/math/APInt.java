@@ -458,16 +458,39 @@ public class APInt {
 		}
 		return clearUnusedBits();
 	}
+	
+	public APInt subtract(final APInt other) {
+		return subtract(other.unsignedVal);
+	}
+	
+	public APInt subtract(final ULong RHS) {
+		if (isSingleWord()) {
+			unsignedVal.subtractInPlace(RHS);
+		}
+		else {
+			// TODO Implement this
+			//tcAddPart(U.pVal, RHS, getNumWords());
+		}
+		return clearUnusedBits();
+	}
+
+	
+	public APInt mul(APInt other) {
+		return mul(other.unsignedVal);
+	}
+	
+	public APInt mul(final ULong RHS) {
+		if (isSingleWord()) {
+			unsignedVal.mulInPlace(RHS);
+		}
+		else {
+			// TODO Implement this
+			//tcAddPart(U.pVal, RHS, getNumWords());
+		}
+		return clearUnusedBits();
+	}
 
 	// TODO Replace above with the ones below:
-	public APInt subtract(APInt other) {
-		return null;
-	}
-
-	public APInt mul(APInt other) {
-		return null;
-	}
-
 	public APInt udiv(APInt other) {
 		return null;
 	}
