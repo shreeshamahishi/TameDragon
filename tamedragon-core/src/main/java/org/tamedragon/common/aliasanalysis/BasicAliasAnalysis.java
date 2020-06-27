@@ -17,6 +17,7 @@ import org.tamedragon.common.llvmir.instructions.SelectInst;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Argument;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.ConstantInt;
@@ -286,8 +287,8 @@ public class BasicAliasAnalysis extends AliasAnalysis{
 					}
 
 					// Use GetLinearExpression to decompose the index into a C1*V+C2 form.
-					APInt IndexScale = new APInt(Width, "0", false);
-					APInt IndexOffset = new APInt(Width,  "0", false);
+					APInt IndexScale = new APInt(Width, ULong.valueOf(0), false);
+					APInt IndexOffset = new APInt(Width,  ULong.valueOf(0), false);
 
 					Index = GetLinearExpression(Index, IndexScale, IndexOffset, Extension,
 							targetData, 0);

@@ -44,6 +44,7 @@ import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
 import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.CompilationContext;
@@ -633,7 +634,7 @@ public class Semantic {
 						Type type2 = translatingMediator.getLLVMType(basicType2, attributes.isUnsigned(), compilationContext);
 						Integer alignment = AllocaInst.getAlignmentForType(properties, type2);
 						ConstantInt constantInt = null;
-						APInt apInt = new APInt(32, alignment.toString(), true);
+						APInt apInt = new APInt(32, ULong.valueOf(alignment.toString()), true);
 						try{
 							constantInt = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt);
 						}
@@ -2167,7 +2168,7 @@ public class Semantic {
 		IRTreeConst irTreeConst = null;
 		while(size < dimension && (!type.isPointerType())){
 			if(basicType instanceof CharTypeEntry){
-				val = new APInt(8, "000", false);
+				val = new APInt(8, ULong.valueOf("000"), false);
 				try {
 					constant = new ConstantInt(Type.getInt8Type(compilationContext, false), val);
 				} catch (InstantiationException e) {
@@ -2177,7 +2178,7 @@ public class Semantic {
 				irTreeConst = new IRTreeConst(constant);
 			}
 			else if(basicType instanceof IntTypeEntry){
-				val = new APInt(32, "0", true);
+				val = new APInt(32, ULong.valueOf(0), true);
 				try {
 					constant = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
 				} catch (InstantiationException e) {

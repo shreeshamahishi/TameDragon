@@ -30,7 +30,7 @@ public class APSInt extends APInt {
 	//public APSInt(int BitWidth, boolean isUnsigned = true) {
 	public APSInt(int numBits, boolean isUnsigned) {
 		setNumBits(numBits);
-		setUnsignedVal(ULong.valueOf("0"));
+		setUnsignedVals(new ULong[] {ULong.valueOf("0")});
 		this.IsUnsigned = isUnsigned;
 
 	}
@@ -42,10 +42,14 @@ public class APSInt extends APInt {
 
 	private void setAPSInt(APInt apInt, boolean isUnsigned) {
 		setNumBits(apInt.getNumBits());
-		setUnsignedVal(apInt.getUnsignedVal());
+		setUnsignedVals(apInt.getUnsignedVals());
 		this.IsUnsigned = isUnsigned;
 	}
 	
+	public APSInt clone() {
+		APInt newAPInt = new APInt(numBits, unsignedVals, isSigned());
+		return new APSInt(newAPInt, IsUnsigned);
+	}
 
 	/* Construct an APSInt from a string representation.
 	 *
@@ -192,11 +196,11 @@ public class APSInt extends APInt {
 	}
 	
 	public boolean equals(APInt RHS){
-		 if(numBits == RHS.getNumBits()) {
+		 if(numBits != RHS.getNumBits()) {
 			 return false;
 		 }
 		 if (isSingleWord()) {
-		      return unsignedVal == RHS.getUnsignedVal();
+		      return unsignedVals[0].equals(RHS.getUnsignedVals()[0]);
 		 }
 		 else {
 			 // TODO Implement this
@@ -244,40 +248,41 @@ public class APSInt extends APInt {
 		return new APSInt(((APInt)(this)).shiftLeft(Bits), IsUnsigned);
 	}
 
-
 	public APSInt incr() {
-		unsignedVal.add(1);
-		return this;
+		APInt apInt = add(ULong.valueOf(1));
+		return new APSInt(apInt, IsUnsigned);
 	}
 
 	public APSInt decr() {
-		unsignedVal.add(-1);
-		return this;
+		APInt apInt = subtract(ULong.valueOf(1));
+		return new APSInt(apInt, IsUnsigned);
 	}
 
 	public APSInt add(APSInt RHS) {
-		if(IsUnsigned == RHS.IsUnsigned) {
+		if(IsUnsigned != RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
 		
-		unsignedVal.add(RHS.getUnsignedVal());
-		return this;
+		APInt apInt = add(RHS);
+		return new APSInt(apInt, IsUnsigned);
 	}
 
 	public APSInt subtract(APSInt RHS) {
-		if(IsUnsigned == RHS.IsUnsigned) {
+		if(IsUnsigned != RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		unsignedVal.subtract(RHS.getUnsignedVal());
-		return this;
+		
+		APInt apInt = subtract(RHS);
+		return new APSInt(apInt, IsUnsigned);
 	}
 
 	public APSInt mul(APSInt RHS) {
-		if(IsUnsigned == RHS.IsUnsigned) {
+		if(IsUnsigned != RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		unsignedVal.mul(RHS.getUnsignedVal());
-		return this;
+		
+		APInt apInt = mul(RHS);
+		return new APSInt(apInt, IsUnsigned);
 	}
 
 	public APSInt xor(APSInt RHS) {
@@ -292,7 +297,7 @@ public class APSInt extends APInt {
 	}
 
 	public APSInt and(APSInt RHS){
-		if(IsUnsigned == RHS.IsUnsigned) {
+		if(IsUnsigned != RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
 		return new APSInt(((APInt)(this)).andWith(RHS), IsUnsigned);
@@ -361,7 +366,7 @@ public class APSInt extends APInt {
 			return I1.compare(I2);
 	}
 
-	public static APSInt get(long X) { return new APSInt(new APInt(64, ULong.valueOf(X), false), false); }
-	public static APSInt getUnsigned(ULong X) { return new APSInt(new APInt(64, X, false), true); }
+	public static APSInt get(long X) { return new APSInt(new APInt(64, new ULong[] {ULong.valueOf(X)}, false), false); }
+	public static APSInt getUnsigned(ULong X) { return new APSInt(new APInt(64, new ULong[] {X}, false), true); }
 }
 

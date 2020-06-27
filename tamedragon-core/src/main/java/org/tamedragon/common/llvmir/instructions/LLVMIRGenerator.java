@@ -55,6 +55,7 @@ import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationE
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionUpdateException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Argument;
 import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.BasicBlock;
@@ -309,7 +310,7 @@ public class LLVMIRGenerator {
 				if(funcName.equals("main")){
 					ConstantInt firstArg = null;
 					StoreInst storeInst = null;
-					APInt val = new APInt(32, "0", true);
+					APInt val = new APInt(32, ULong.valueOf(0), true);
 
 					try{
 						firstArg = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -895,13 +896,13 @@ public class LLVMIRGenerator {
 					IntegerType integerType = (IntegerType)caseValue.getType();
 
 					if(integerType.getNumBits() < 32){
-						caseValue.setApInt(new APInt(32, caseValue.getApInt().toString(), integerType.isSigned()));
+						caseValue.setApInt(new APInt(32, ULong.valueOf(caseValue.getApInt().toString()), integerType.isSigned()));
 						caseValue.setType(Type.getInt32Type(compilationContext, integerType.isSigned()));
 					}
 
 					IntegerType switchOnType = (IntegerType)switchOn.getType();
 					if(switchOnType.getNumBits() > 32){
-						caseValue.setApInt(new APInt(switchOnType.getNumBits(), caseValue.getApInt().toString(), integerType.isSigned()));
+						caseValue.setApInt(new APInt(switchOnType.getNumBits(), ULong.valueOf(caseValue.getApInt().toString()), integerType.isSigned()));
 						caseValue.setType(switchOnType);
 					}
 
@@ -1051,7 +1052,7 @@ public class LLVMIRGenerator {
 					ConstantInt constantInt = (ConstantInt)srcValue;
 					boolean isSigned = ((IntegerType)destType).isSigned();
 					String strVal = constantInt.getApInt().toString();
-					APInt apInt = new APInt(noOfDestBits, strVal, isSigned);
+					APInt apInt = new APInt(noOfDestBits, ULong.valueOf(strVal), isSigned);
 					((ConstantInt) srcValue).setApInt(apInt);
 					((ConstantInt) srcValue).setType(destIntType);
 					return null;
@@ -1085,7 +1086,7 @@ public class LLVMIRGenerator {
 					intValue = Integer.valueOf(strVal);
 					Integer wrappedValue = wrapUp(intValue,isSigned,noOfDestBits);
 					strVal = wrappedValue.toString();
-					APInt apInt = new APInt(noOfDestBits, strVal, isSigned);
+					APInt apInt = new APInt(noOfDestBits, ULong.valueOf(strVal), isSigned);
 					((ConstantInt) srcValue).setApInt(apInt);
 					((ConstantInt) srcValue).setType(destIntType);
 					return constantInt;
@@ -2122,11 +2123,11 @@ public class LLVMIRGenerator {
 			Value leftVal = null;
 			try {
 				if(rightVal.getType().isInt32Type()){
-					val = new APInt(32, "0", false);
+					val = new APInt(32, ULong.valueOf(0), false);
 					leftVal = new ConstantInt(Type.getInt32Type(compilationContext, false), val);
 				}
 				else if(rightVal.getType().isInt64Type()){
-					val = new APInt(64, "0", false);
+					val = new APInt(64, ULong.valueOf(0), false);
 					leftVal = new ConstantInt(Type.getInt64Type(compilationContext, false), val);
 				}
 			} 

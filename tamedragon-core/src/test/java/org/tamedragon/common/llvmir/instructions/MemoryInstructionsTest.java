@@ -20,6 +20,7 @@ import org.tamedragon.common.llvmir.instructions.Instruction.SynchronizationScop
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionUpdateException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.CompilationContext;
@@ -903,7 +904,7 @@ public class MemoryInstructionsTest {
 	@Test
 	public void testStoreCreation() {
 		// creating "normal" **non** atomic Store instructions
-		APInt val = new APInt(32, "3", false);
+		APInt val = new APInt(32, ULong.valueOf(3), false);
 		ConstantInt firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1080,7 +1081,7 @@ public class MemoryInstructionsTest {
 				.equals(InstructionCreationException.FIRST_ARG_OF_STORE_INSTR_CANNOT_BE_NULL));
 
 		//creating store instruction with second argument as null
-		APInt val = new APInt(32, "3", false);
+		APInt val = new APInt(32, ULong.valueOf(3), false);
 		firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1101,7 +1102,7 @@ public class MemoryInstructionsTest {
 
 		// creating "normal" **non** atomic Store instructions, where pointer
 		// type and value type don't match
-		val = new APInt(32, "3", false);
+		val = new APInt(32, ULong.valueOf(3), false);
 		firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1168,7 +1169,7 @@ public class MemoryInstructionsTest {
 
 		// creating "normal" atomic Store instructions, where atomic ordering is
 		// either AcquiredRelease or Release
-		val = new APInt(32, "3", false);
+		val = new APInt(32, ULong.valueOf(3), false);
 		firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1250,7 +1251,7 @@ public class MemoryInstructionsTest {
 		// creating a atomic store instruction where the stored value is a
 		// integer of bit width less than 8
 
-		val = new APInt(1, "0", false);
+		val = new APInt(1, ULong.valueOf(0), false);
 		firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt1Type(compilationContext, false), val);
@@ -1281,7 +1282,7 @@ public class MemoryInstructionsTest {
 
 		// creating a atomic store instruction where the stored value is a
 		// integer of bit width more than target specific size limit
-		val = new APInt(64, "45", false);
+		val = new APInt(64, ULong.valueOf(45), false);
 		firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt64Type(compilationContext, true), val);
@@ -1312,7 +1313,7 @@ public class MemoryInstructionsTest {
 	@Test
 	public void testStoreUpdate() {
 		// updating the alignment of a store instruction
-		APInt val = new APInt(32, "3", false);
+		APInt val = new APInt(32, ULong.valueOf(3), false);
 		ConstantInt firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1350,7 +1351,7 @@ public class MemoryInstructionsTest {
 	public void testStoreInvalidUpdate() {
 		// updating the atomic order of a atomic store instruction to
 		// AcquiredRelease or Release
-		APInt val = new APInt(32, "3", false);
+		APInt val = new APInt(32, ULong.valueOf(3), false);
 		ConstantInt firstOp = null;
 		try {
 			firstOp = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1435,7 +1436,7 @@ public class MemoryInstructionsTest {
 		}
 		Value value = new Value(pointerType);
 		value.setName("s");
-		APInt apInt1 = new APInt(32, "0", false);
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
 		ConstantInt constantInt1 = null;
 		try {
 			constantInt1 = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt1);
@@ -1443,7 +1444,7 @@ public class MemoryInstructionsTest {
 			indexVsType.add(entry_IndexVsType);
 		} catch (InstantiationException e1) {}
 		assertNotNull(constantInt1);
-		APInt apInt2 = new APInt(32, "1", false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(1), false);
 		ConstantInt constantInt2 = null;
 		try {
 			constantInt2 = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt2);
@@ -1471,7 +1472,7 @@ public class MemoryInstructionsTest {
 		}
 		value = new Value(pointerType);
 		value.setName("s");
-		apInt1 = new APInt(32, "0", false);
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
 		constantInt1 = null;
 		try {
 			constantInt1 = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt1);
@@ -1479,7 +1480,7 @@ public class MemoryInstructionsTest {
 			indexVsType.add(entry_IndexVsType);
 		} catch (InstantiationException e1) {}
 		assertNotNull(constantInt1);
-		apInt2 = new APInt(32, "1", false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
 		constantInt2 = null;
 		try {
 			constantInt2 = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt2);

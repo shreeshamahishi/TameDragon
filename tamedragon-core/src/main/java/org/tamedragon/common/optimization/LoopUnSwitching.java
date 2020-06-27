@@ -26,6 +26,7 @@ import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationE
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionUpdateException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.Constant;
@@ -324,10 +325,10 @@ public class LoopUnSwitching {
 					if(!stackOfLoopInvariantCondExpr.isEmpty() && condition == stackOfLoopInvariantCondExpr.peek()){
 						Value cmpCond = stackOfLoopInvariantCondExpr.pop();
 						if(cmpCond instanceof ICmpInst){
-							APInt apInt = new APInt(1, "1", false);
+							APInt apInt = new APInt(1, ULong.valueOf(1), false);
 							ConstantInt constantInt = new ConstantInt(Type.getInt1Type(cmpCond.getContext(), false), apInt);
 							branchInst.setCondition(constantInt);
-							apInt = new APInt(1, "0", false);
+							apInt = new APInt(1, ULong.valueOf(0), false);
 							constantInt = new ConstantInt(Type.getInt1Type(cmpCond.getContext(), false), apInt);
 							((BranchInst)newInstruction).setCondition(constantInt);
 						}

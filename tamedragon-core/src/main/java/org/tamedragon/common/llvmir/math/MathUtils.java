@@ -69,4 +69,19 @@ public class MathUtils {
 	  
 	  return false;
 	}
+	
+	/* Return the high 32 bits of a 64 bit value. */
+	public static int Hi_32(ULong Value) {
+	  return Value.rightShift(32).intValue();
+	}
+
+	/*Return the low 32 bits of a 64 bit value. */
+	public static int Lo_32(ULong Value) {
+	  return Value.intValue();
+	}
+	
+	/* Make a 64-bit integer from a high / low pair of 32-bit integers. */
+	public static  ULong Make_64(int High, int Low) {
+	  return (ULong.valueOf(High).leftShift(32)).or(ULong.valueOf(Low));
+	}
 }

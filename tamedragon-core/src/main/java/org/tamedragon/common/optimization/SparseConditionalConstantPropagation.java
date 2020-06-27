@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tamedragon.common.LatticeValue;
 import org.tamedragon.common.llvmir.instructions.CFG;
+import org.tamedragon.common.llvmir.instructions.ICmpInst;
 import org.tamedragon.common.llvmir.instructions.Instruction;
+import org.tamedragon.common.llvmir.instructions.PhiNode;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.Function;
@@ -218,6 +220,10 @@ public class SparseConditionalConstantPropagation {
 	private void modelReachableInstruction(Instruction ins){
 
 		System.out.println(" Trying to model Ins = " + ins);
+		
+		if(ins instanceof ICmpInst) {
+			System.out.println(" Trying to model ICmpInst = " + ins);
+		}
 
 		LatticeValue latticeValueBeforeModelling = tempVsLatticeValue.get(ins);
 		LatticeValue latticeValueAfterModelling = 

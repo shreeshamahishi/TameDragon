@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.exceptions.TypeCreationException;
 
 /**
@@ -97,8 +98,8 @@ public class ConstantArray extends Constant {
 				}
 			}
 
-			String strVal = Integer.valueOf((int)ch).toString();
-			APInt val = new APInt(8, strVal, false);
+			int v = (int)ch;
+			APInt val = new APInt(8, ULong.valueOf(v), false);
 			ConstantInt constantInt = null;
 			try {
 				constantInt = new ConstantInt(integerType, val);
@@ -110,7 +111,7 @@ public class ConstantArray extends Constant {
 		}
 
 		if(addNull){
-			APInt val = new APInt(8, "000", false);
+			APInt val = new APInt(8, ULong.valueOf("000"), false);
 			ConstantInt constantInt = null;
 			try {
 				constantInt = new ConstantInt(integerType, val);

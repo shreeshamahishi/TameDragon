@@ -2,6 +2,8 @@ package org.tamedragon.common.llvmir.math;
 
 import java.math.BigInteger;
 
+import org.antlr.grammar.v3.CodeGenTreeWalker.setBlock_return;
+
 
 public class ULong extends UNumber implements Comparable<ULong> {
 
@@ -92,9 +94,9 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	private void setWithBigIntValue(BigInteger bigIntValue) {
-		if(bigIntValue.compareTo(MIN_NEGATIVE_VALUE) < 0 || bigIntValue.compareTo(MAX_VALUE) > 0) {
-			throw new NumberFormatException(ERROR_INT_CONST_TOO_LARGE);
-		}
+		//if(bigIntValue.compareTo(MIN_NEGATIVE_VALUE) < 0 || bigIntValue.compareTo(MAX_VALUE) > 0) {
+		//	throw new NumberFormatException(ERROR_INT_CONST_TOO_LARGE);
+		//}
 
 		long val = bigIntValue.longValue();
 		setValues(val);
@@ -109,6 +111,10 @@ public class ULong extends UNumber implements Comparable<ULong> {
 			long wrap = value & Long.MAX_VALUE;
 			unsignedBigInt = BigInteger.valueOf(wrap).add(MAX_VALUE_LONG);
 		}
+	}
+	
+	public ULong clone() {
+		return new ULong(value);
 	}
 
 	/**
@@ -205,70 +211,77 @@ public class ULong extends UNumber implements Comparable<ULong> {
 
 	// Operations - additions
 	public ULong add(final ULong otherVal){
-		final long result = value + otherVal.value;
+		BigInteger result = unsignedBigInt.add(otherVal.getUnsignedBigInt());
 		return ULong.valueOf(result);
 	}
 
 	public ULong add(long otherVal) {
-		final long result = value + otherVal;
+		BigInteger result = unsignedBigInt.add(BigInteger.valueOf(otherVal));
 		return ULong.valueOf(result);
 	}
 
 	// Operations - additions in place versions
 	public ULong addInPlace(final ULong otherVal){
-		setValues(value + otherVal.value);
+		BigInteger result = unsignedBigInt.add(otherVal.getUnsignedBigInt());
+		setWithBigIntValue(result);
 		return this;
 	}
 
 	public ULong addInPlace(long otherVal) {
-		setValues(value + otherVal);
+		BigInteger result = unsignedBigInt.add(BigInteger.valueOf(otherVal));
+		setWithBigIntValue(result);
 		return this;
 	}
 
 	// Operations - subtractions
 	public ULong subtract(final ULong otherVal){
-		final long result = value - otherVal.value;
+		BigInteger result = unsignedBigInt.subtract(otherVal.getUnsignedBigInt());
 		return ULong.valueOf(result);
 	}
 
 	public ULong subtract(long otherVal) {
-		final long result = value - otherVal;
+		BigInteger result = unsignedBigInt.subtract(BigInteger.valueOf(otherVal));
 		return ULong.valueOf(result);
 	}
 
 	// Operations - subtractions in place versions
 	public ULong subtractInPlace(final ULong otherVal){
-		setValues(value - otherVal.value);
+		BigInteger result = unsignedBigInt.subtract(otherVal.getUnsignedBigInt());
+		setWithBigIntValue(result);
 		return this;
 	}
 
 	public ULong subtractInPlace(long otherVal) {
-		setValues(value - otherVal);
+		BigInteger result = unsignedBigInt.subtract(BigInteger.valueOf(otherVal));
+		setWithBigIntValue(result);
 		return this;
 	}
 
-	// Operations - subtractions
+	// Operations - multiplications
 	public ULong mul(final ULong otherVal){
-		final long result = value * otherVal.value;
+		BigInteger result = unsignedBigInt.multiply(otherVal.getUnsignedBigInt());
 		return ULong.valueOf(result);
 	}
 
 	public ULong mul(long otherVal) {
-		final long result = value - otherVal;
+		BigInteger result = unsignedBigInt.multiply(BigInteger.valueOf(otherVal));
 		return ULong.valueOf(result);
 	}
 
 	// Operations - subtractions in place versions
 	public ULong mulInPlace(final ULong otherVal){
-		setValues(value * otherVal.value);
+		BigInteger result = unsignedBigInt.multiply(otherVal.getUnsignedBigInt());
+		setWithBigIntValue(result);
 		return this;
 	}
 
 	public ULong mulInPlace(long otherVal) {
-		setValues(value * otherVal);
+		BigInteger result = unsignedBigInt.multiply(BigInteger.valueOf(otherVal));
+		setWithBigIntValue(result);
 		return this;
 	}
 
+	// Operations - divisions
 	public ULong div(final ULong val) {
 		BigInteger res = unsignedBigInt.divide(val.getUnsignedBigInt());
 		return valueOf(res);
@@ -343,7 +356,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	public boolean isLesserThan(ULong other) {
-		if(value < other.value) {
+		if(unsignedBigInt.compareTo(other.getUnsignedBigInt()) < 0) {
 			return true;
 		}
 		return false;
@@ -357,7 +370,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	public boolean isLesserThanOrEqualTo(ULong other) {
-		if(value == other.value || value < other.value) {
+		if(unsignedBigInt.compareTo(other.getUnsignedBigInt()) <= 0) {
 			return true;
 		}
 		return false;
@@ -370,8 +383,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
-	public boolean isGreaterThan(ULong rHS) {
-		if(value > rHS.value) {
+	public boolean isGreaterThan(ULong other) {
+		if(unsignedBigInt.compareTo(other.getUnsignedBigInt()) > 0) {
 			return true;
 		}
 		return false;
@@ -384,8 +397,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
-	public boolean isGreaterThanOrEqualTo(ULong rHS) {
-		if(value == rHS.value || value > rHS.value) {
+	public boolean isGreaterThanOrEqualTo(ULong other) {
+		if(unsignedBigInt.compareTo(other.getUnsignedBigInt()) >= 0) {
 			return true;
 		}
 		return false;

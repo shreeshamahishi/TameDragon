@@ -1585,8 +1585,10 @@ public class BinaryOperatorTest {
 		BinaryOperator binaryOpr12 = null;
 		BinaryOperatorID binOpId12 = BinaryOperatorID.OR;
 		
-		Value value23 = new Value(int1Type); value23.setName("98");
 		ConstantInt constInt = ConstantInt.create((IntegerType)int1Type, 98, false);
+		
+		System.out.println("ConstInt string = " + constInt.toString());
+		
 		Value value24 = new Value(int1Type); value24.setName("21");
 		try{
 			binaryOpr12 =  BinaryOperator.create(binOpId12, 
@@ -1596,7 +1598,7 @@ public class BinaryOperatorTest {
 			boce.printStackTrace();
 		}
 		assertNotNull(binaryOpr12);
-		assertTrue(binaryOpr12.toString().equals("%abc = or i1 98, %21"));
+		assertTrue(binaryOpr12.toString().equals("%abc = or i1 0, %21"));
 		
 		BinaryOperator binaryOpr13 = null;
 		BinaryOperatorID binOpId13 = BinaryOperatorID.XOR;

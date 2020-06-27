@@ -21,7 +21,7 @@ public class ConstantInt extends Constant {
 
 	public static ConstantInt create(IntegerType intType, long V, 
 			boolean isSigned) throws InstantiationException {
-		return new ConstantInt(intType, new APInt(intType.getNumBits(), V + "", isSigned));
+		return new ConstantInt(intType, new APInt(intType.getNumBits(), ULong.valueOf(V), isSigned));
 	}
 
 	public static Constant create(Type type, long V, boolean isSigned) throws InstantiationException {
@@ -63,6 +63,12 @@ public class ConstantInt extends Constant {
 		}
 	}
 	
+	public ConstantInt clone() {
+		
+		return ConstantInt.create(getContext(), apInt.clone());
+	}
+	
+	
 	public APInt getApInt() {
 		return apInt;
 	}
@@ -101,7 +107,7 @@ public class ConstantInt extends Constant {
 	}
 
 	public boolean isNegativeUnity(){
-		return apInt.getUnsignedVal().equals(ULong.valueOf("-1"));
+		return apInt.equals(ULong.valueOf("-1"));
 	}
 
 	public boolean isAllOnesValue() {
@@ -110,7 +116,7 @@ public class ConstantInt extends Constant {
 	}
 
 	public boolean equalsInt(long i) {
-		return apInt.getUnsignedVal().equals(ULong.valueOf(i));
+		return apInt.equals(ULong.valueOf(i));
 	}
 
 	/*
@@ -198,8 +204,9 @@ public class ConstantInt extends Constant {
 	
 	public boolean equals(ConstantInt otherConst){
 		APInt otherApInt = otherConst.getApInt();
-		if(apInt.getUnsignedVal().equals(otherApInt.getUnsignedVal()))
+		if(apInt.equals(otherApInt)) {
 			return true;
+		}
 
 		return false;
 	}

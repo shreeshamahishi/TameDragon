@@ -10,6 +10,7 @@ import org.tamedragon.common.llvmir.instructions.CastInst;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.ConstantInt;
 import org.tamedragon.common.llvmir.types.Type;
@@ -49,7 +50,7 @@ public class CastInstrsTest {
 		try{
 			ConstantInt ci = null;
 			try {
-				ci = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "257", true));
+				ci = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(257), true));
 			} catch (InstantiationException e) {}
 			assertNotNull(ci);
 			castInst2 =  CastInst.create(InstructionID.TRUNC_INST, "X", 

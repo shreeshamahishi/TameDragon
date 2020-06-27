@@ -96,8 +96,7 @@ public class IndVarExpression {
 				return; 
 			}
 
-			List<ExpressionElement> baseIndVarExpressions =
-				exprOfBaseIndVar.getExpression();
+			List<ExpressionElement> baseIndVarExpressions = exprOfBaseIndVar.getExpression();
 
 			for(ExpressionElement exprElement : baseIndVarExpressions){
 				expression.add(exprElement);
@@ -381,7 +380,7 @@ public class IndVarExpression {
 					Constant foldedConstant = Constant.getConstant(
 							isIntegerOperation? BinaryOperatorID.MUL :
 								BinaryOperatorID.FMUL,
-								(Constant)newValue, operandConst);
+								operandConst, (Constant)newValue);
 
 					expression.set(operandIndex, new ExpressionElement(foldedConstant));
 					foldedSubExpr = true;

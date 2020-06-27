@@ -59,6 +59,7 @@ import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.LLVMUtility;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.CompilationContext;
@@ -341,8 +342,7 @@ public class Translator {
 		try{
 			// TODO Vikash : add others later
 			if(constType == CONSTANT_INT){
-				return new IRTreeConst(new ConstantInt(Type.getInt32Type(compilationContext, isSigned),
-						new APInt(32, value, isSigned)));
+				return new IRTreeConst(new ConstantInt(Type.getInt32Type(compilationContext, isSigned), new APInt(32, ULong.valueOf(value), isSigned)));
 			}
 			else if(constType == CONSTANT_DOUBLE){
 				try {
@@ -365,7 +365,7 @@ public class Translator {
 					asciiValue = 0;
 
 				return new IRTreeConst(new ConstantInt(Type.getInt8Type(compilationContext, isSigned),
-						new APInt(8, new Integer(asciiValue).toString(), isSigned)));
+						new APInt(8, ULong.valueOf(new Integer(asciiValue).toString()), isSigned)));
 			}
 		}
 		catch(Exception e){
@@ -624,7 +624,7 @@ public class Translator {
 			}
 			else if(type.isIntegerType()){
 				IntegerType integerType = (IntegerType)type;
-				ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), "1", integerType.isSigned()));
+				ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), ULong.valueOf(1), integerType.isSigned()));
 				assemConst = new IRTreeConst(constInt);
 			}
 			IRTreeExp incrementedTree = (IRTreeExp) translateBinOp(
@@ -669,12 +669,12 @@ public class Translator {
 		}
 		else if(type.isIntegerType()){
 			IntegerType integerType = (IntegerType)type;
-			ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), "1", integerType.isSigned()));
+			ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), ULong.valueOf(1), integerType.isSigned()));
 			assemConst = new IRTreeConst(constInt);
 		}
 		// Postfix or Prefix Pointers
 		else if(type.isPointerType()){
-			ConstantInt constInt = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, "1", false));
+			ConstantInt constInt = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, ULong.valueOf(1), false));
 			assemConst = new IRTreeConst(constInt);
 			IRTreeIndex irTreeIndex = new IRTreeIndex(assemConst, false);
 			Entry<IRTreeIndex, Type> entry_indexVsType = getMapEntry(irTreeIndex, type);
@@ -696,7 +696,7 @@ public class Translator {
 		boolean isUnSigned = typeEntryWithAttributes.isUnsigned();
 		IntegerType intType = (IntegerType)getLLVMType(basicType, isUnSigned, compilationContext);
 
-		APInt val = new APInt(intType.getNumBits(), "-1", !isUnSigned);
+		APInt val = new APInt(intType.getNumBits(), ULong.valueOf(-1), !isUnSigned);
 		ConstantInt constInt = null;
 		try {
 			constInt = new ConstantInt(intType, val);
@@ -764,7 +764,7 @@ public class Translator {
 		}
 		Stack<IRTree> seqAssemTypes = new Stack<IRTree>();
 		//create constant zero
-		APInt zero = new APInt(32, "0", true);
+		APInt zero = new APInt(32, ULong.valueOf(0), true);
 		ConstantInt zeroConst = null;
 		try {
 			zeroConst = new ConstantInt(Type.getInt32Type(compilationContext, true), zero);
@@ -840,14 +840,14 @@ public class Translator {
 		IRTreeExp val1 = null;
 		IRTreeConst irTreeConstTrue = null;
 		try {
-			irTreeConstTrue = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "true", false)));
+			irTreeConstTrue = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(1), false)));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 		IRTreeConst irTreeConstFalse = null;
 		try {
-			irTreeConstFalse = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "false", false)));
+			irTreeConstFalse = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(0), false)));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -984,7 +984,7 @@ public class Translator {
 		if(type.isIntegerType()){
 			IntegerType integerType = (IntegerType)type;
 			predicate = Predicate.ICMP_NE;
-			APInt val = new APInt(integerType.getNumBits(), "0", integerType.isSigned());
+			APInt val = new APInt(integerType.getNumBits(), ULong.valueOf(0), integerType.isSigned());
 			ConstantInt constantZero = null;
 			try {
 				constantZero = new ConstantInt(integerType, val);
@@ -1427,7 +1427,7 @@ public class Translator {
 				isFloatingPointExpr = true;
 			}
 		}
-		APInt val = new APInt(32, "0", true);
+		APInt val = new APInt(32, ULong.valueOf(0), true);
 		ConstantInt constInt = null;
 		try {
 			constInt = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -1449,7 +1449,7 @@ public class Translator {
 	protected void createTwoZeroIndexes(CompilationContext compilationContext, Type pointerType, Type containedType, List<Entry<IRTreeIndex, Type>> indexVsType) {
 		ConstantInt constInt = null;
 		try {
-			constInt = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, "0", false));
+			constInt = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, ULong.valueOf(0), false));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -1529,7 +1529,7 @@ public class Translator {
 		}
 		else if(type.isIntegerType()){
 			IntegerType integerType = (IntegerType)type;
-			APInt val = new APInt(integerType.getNumBits(), "0", !isUnSigned);
+			APInt val = new APInt(integerType.getNumBits(), ULong.valueOf(0), !isUnSigned);
 			ConstantInt constInt = null;
 			try {
 				constInt = new ConstantInt(integerType, val);
@@ -1543,7 +1543,7 @@ public class Translator {
 
 		IRTreeConst irTreeConstTrue = null;
 		try {
-			irTreeConstTrue = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "true", false)));
+			irTreeConstTrue = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(1), false)));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -2121,7 +2121,7 @@ public class Translator {
 	}
 
 	public IRTree translateConstant(int i, CompilationContext compilationContext) {
-		APInt val = new APInt(32, new Integer(i).toString(), true);
+		APInt val = new APInt(32, ULong.valueOf(new Integer(i).toString()), true);
 		ConstantInt constInt = null;
 		try {
 			constInt = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -2272,7 +2272,7 @@ public class Translator {
 			}
 
 			String val = result.toString();
-			APInt apInt = new APInt(32, val, true);
+			APInt apInt = new APInt(32, ULong.valueOf(val), true);
 			ConstantInt constantInt = null;
 			try {
 				constantInt = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt);
@@ -2405,7 +2405,7 @@ public class Translator {
 			}
 
 			String val = result.toString();
-			APInt apInt = new APInt(32, val, true);
+			APInt apInt = new APInt(32, ULong.valueOf(val), true);
 			ConstantInt constantInt = null;
 			try {
 				constantInt = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt);
@@ -3069,7 +3069,7 @@ public class Translator {
 
 		ConstantInt zeroConst = null;
 		try {
-			zeroConst = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, "0", false));
+			zeroConst = new ConstantInt(Type.getInt32Type(compilationContext, false), new APInt(32, ULong.valueOf(0), false));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -3494,7 +3494,7 @@ public class Translator {
 
 
 	public IRTree createIndexTreeForStructure(Integer index, CompilationContext compilationContext) {
-		APInt val = new APInt(32, index.toString(), true);
+		APInt val = new APInt(32, ULong.valueOf(index.toString()), true);
 		ConstantInt constInt = null;
 		try {
 			constInt = new ConstantInt(Type.getInt32Type(compilationContext, true), val);
@@ -4144,7 +4144,7 @@ public class Translator {
 				if(integer != 0){
 					// True case
 					try {
-						whileTestExp = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "true", false)));
+						whileTestExp = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(1), false)));
 					} catch (InstantiationException e) {
 						e.printStackTrace();
 						System.exit(-1);
@@ -4153,7 +4153,7 @@ public class Translator {
 				else{
 					// False case
 					try {
-						whileTestExp = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "false", false)));
+						whileTestExp = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(0), false)));
 					} catch (InstantiationException e) {
 						e.printStackTrace();
 						System.exit(-1);
@@ -4204,7 +4204,7 @@ public class Translator {
 		}
 		if(condExp.getExpType() != TreeNodeExpType.CONDITIONAL_EXPR){
 			//create constant zero
-			APInt zero = new APInt(32, "0", true);
+			APInt zero = new APInt(32, ULong.valueOf(0), true);
 			ConstantInt zeroConst = null;
 			try {
 				zeroConst = new ConstantInt(Type.getInt32Type(compilationContext, true), zero);
@@ -4509,7 +4509,7 @@ public class Translator {
 		else
 			nosOfBitsToBeCopied = size;
 
-		APInt apInt = new APInt(64, nosOfBitsToBeCopied.toString(), false);
+		APInt apInt = new APInt(64, ULong.valueOf(nosOfBitsToBeCopied), false);
 		ConstantInt constantInt = null;
 		try {
 			constantInt = new ConstantInt(Type.getInt64Type(compilationContext, false), apInt);
@@ -4526,7 +4526,7 @@ public class Translator {
 		else
 			alignment = AllocaInst.getAlignmentForType(properties, arrayType);
 
-		apInt = new APInt(32, alignment.toString(), false);
+		apInt = new APInt(32, ULong.valueOf(alignment.toString()), false);
 		try {
 			constantInt = new ConstantInt(Type.getInt32Type(compilationContext, false), apInt);
 		} catch (InstantiationException e) {
@@ -4537,14 +4537,14 @@ public class Translator {
 
 		IRTreeConst irTreeConstFalse = null;
 		try {
-			irTreeConstFalse = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, "false", false)));
+			irTreeConstFalse = new IRTreeConst(new ConstantInt(Type.getInt1Type(compilationContext, false), new APInt(1, ULong.valueOf(0), false)));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
 		if(hasZeroInitializer){
-			apInt = new APInt(8, "0", true);
+			apInt = new APInt(8, ULong.valueOf(0), true);
 			constantInt = null;
 			try {
 				constantInt = new ConstantInt(Type.getInt8Type(compilationContext, true), apInt);

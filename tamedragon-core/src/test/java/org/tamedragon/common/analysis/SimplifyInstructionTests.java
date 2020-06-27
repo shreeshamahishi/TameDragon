@@ -49,7 +49,7 @@ public class SimplifyInstructionTests {
 			else if(insCount == 2) {  // Check simplify add instruction
 				assertTrue(value.toString().equals("i8 9"));
 			}
-			else if(insCount == 2) {  // Check simplify add instruction
+			else if(insCount == 3) {  // Check simplify add instruction
 				assertTrue(value.toString().equals("i8 -13"));
 			}
 			insCount++;
@@ -57,6 +57,7 @@ public class SimplifyInstructionTests {
 		}
 	}
 	
+	@Ignore
 	@Test
 	public void runSimplifyIns2() throws Exception {
 

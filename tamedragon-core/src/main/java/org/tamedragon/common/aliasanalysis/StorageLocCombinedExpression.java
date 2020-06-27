@@ -6,6 +6,7 @@ import java.util.List;
 import org.tamedragon.common.Pair;
 import org.tamedragon.common.llvmir.math.APInt;
 import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.ConstantInt;
 import org.tamedragon.common.llvmir.types.IntegerType;
 import org.tamedragon.common.llvmir.types.Value;
@@ -142,13 +143,13 @@ public class StorageLocCombinedExpression {
 
 		List<Pair<ConstantInt, Value>> otherExprList = otherExpr.getExpression();
 		for(Pair<ConstantInt, Value> term: expression){
-			Long coefficient = new Long(term.getFirst().getApInt().getUnsignedVal().longValue());
+			Long coefficient = new Long(term.getFirst().getApInt().getUnsignedVals()[0].longValue());
 			Value value = term.getSecond();
 
 			Long otherCoefficient = null;
 			for(Pair<ConstantInt, Value> otherTerm: otherExprList){
 				if(value.equals(otherTerm.getSecond())){
-					otherCoefficient = new Long(otherTerm.getFirst().getApInt().getUnsignedVal().longValue());
+					otherCoefficient = new Long(otherTerm.getFirst().getApInt().getUnsignedVals()[0].longValue());
 					break;
 				}
 			}
@@ -206,7 +207,7 @@ public class StorageLocCombinedExpression {
 			for(Pair<ConstantInt, Value> otherPair : otherExpr){
 				Value otherValue = otherPair.getSecond();
 				if(value.equals(otherValue)){
-					otherFactor = otherPair.getFirst().getApInt().getUnsignedVal().longValue();
+					otherFactor = otherPair.getFirst().getApInt().getUnsignedVals()[0].longValue();
 					break;
 				}
 			}
@@ -216,7 +217,7 @@ public class StorageLocCombinedExpression {
 				return null;
 			}
 
-			Long factor = pair.getFirst().getApInt().getUnsignedVal().longValue();
+			Long factor = pair.getFirst().getApInt().getUnsignedVals()[0].longValue();
 			if(factor % otherFactor != 0){
 				// Not a factor
 				return null;
@@ -249,7 +250,7 @@ public class StorageLocCombinedExpression {
 
 			try{
 				ConstantInt constInt = new ConstantInt((IntegerType)factor.getType(), 
-						new APInt(factor.getApInt().getNumBits(), "" + count, false));
+						new APInt(factor.getApInt().getNumBits(), ULong.valueOf("" + count), false));
 
 				ConstantInt result = ConstantInt.create(constInt.getType().getCompilationContext(), factor.getApInt().mul(constInt.getApInt()));
 				

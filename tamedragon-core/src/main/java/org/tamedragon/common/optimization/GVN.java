@@ -31,6 +31,7 @@ import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Argument;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.CompilationContext;
@@ -507,7 +508,7 @@ public class GVN {
 						case FCMP_OLE: 
 						case FCMP_OGE :
 
-						{APInt val = new APInt(1, "1", false);
+						{APInt val = new APInt(1, ULong.valueOf(1), false);
 						IntegerType intType =Type.getInt1Type(compilationContext, false);;
 						ConstantInt constantIntTrueValue = new ConstantInt(intType, val);
 						userInstruction.replaceAllUsesOfThisWith(constantIntTrueValue);
@@ -523,7 +524,7 @@ public class GVN {
 						case FCMP_FALSE :
 						case FCMP_OLT :
 						case FCMP_OGT :
-						{APInt val = new APInt(1, "0", false);
+						{APInt val = new APInt(1, ULong.valueOf(0), false);
 						IntegerType intType =Type.getInt1Type(compilationContext, false);;
 						ConstantInt constantIntFalseValue = new ConstantInt(intType, val);
 						userInstruction.replaceAllUsesOfThisWith(constantIntFalseValue);

@@ -14,6 +14,8 @@ import org.tamedragon.common.controlflowanalysis.IndVarExpression;
 import org.tamedragon.common.controlflowanalysis.InductionVariable;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.ConstantFP;
@@ -43,7 +45,7 @@ public class IndVarExpressionsTest {
 			IndVarExpression basicIndVarExpr = new IndVarExpression(basicVal, null, null, true);
 
 			// Create the dependent ind var
-			APInt apInt = new APInt(intType.getNumBits(), "12", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(12), intType.isSigned());
 			ConstantInt incrVal = new ConstantInt(intType, apInt);
 
 			IndVarExpression dependentIndVar1 = new IndVarExpression(
@@ -195,13 +197,13 @@ public class IndVarExpressionsTest {
 					operandVal3, dependentIndVar2, BinaryOperatorID.MUL, true);
 			assertEquals("%i*%m+%j*%m-%k*%m", dependentIndVar3.toString());
 
-			APInt apInt = new APInt(intType.getNumBits(), "12", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(12), intType.isSigned());
 			ConstantInt operandVal4 = new ConstantInt( intType, apInt);
 			IndVarExpression dependentIndVar4 = new IndVarExpression(
 					operandVal4, dependentIndVar3, BinaryOperatorID.MUL, true);
 			assertEquals("%i*%m*12+%j*%m*12-%k*%m*12", dependentIndVar4.toString());
 
-			APInt apInt1 = new APInt(intType.getNumBits(), "4", intType.isSigned());
+			APInt apInt1 = new APInt(intType.getNumBits(), ULong.valueOf(4), intType.isSigned());
 			ConstantInt operandVal5 = new ConstantInt( intType, apInt1);
 			IndVarExpression dependentIndVar5 = new IndVarExpression(
 					operandVal5, dependentIndVar4, BinaryOperatorID.ADD, true);
@@ -213,7 +215,7 @@ public class IndVarExpressionsTest {
 					operandVal6, dependentIndVar5, BinaryOperatorID.MUL, true);
 			assertEquals("%i*%m*12*%x+%j*%m*12*%x-%k*%m*12*%x+4*%x", dependentIndVar6.toString());
 
-			APInt apInt2 = new APInt(intType.getNumBits(), "56", intType.isSigned());
+			APInt apInt2 = new APInt(intType.getNumBits(), ULong.valueOf(56), intType.isSigned());
 			ConstantInt operandVal7 = new ConstantInt( intType, apInt2);
 			IndVarExpression dependentIndVar7 = new IndVarExpression(
 					operandVal7, dependentIndVar6, BinaryOperatorID.SUB, true);
@@ -324,13 +326,13 @@ public class IndVarExpressionsTest {
 					operandVal4, dependentIndVar3, BinaryOperatorID.SUB, false);
 			assertEquals("%x-%m*%k+%m*%j+%m*%i", dependentIndVar4.toString());
 
-			APInt apInt1 = new APInt(intType.getNumBits(), "98", intType.isSigned());
+			APInt apInt1 = new APInt(intType.getNumBits(), ULong.valueOf(98), intType.isSigned());
 			ConstantInt operandVal5 = new ConstantInt( intType, apInt1);
 			IndVarExpression dependentIndVar5 = new IndVarExpression(
 					operandVal5, dependentIndVar4, BinaryOperatorID.MUL, false);
 			assertEquals("98*%x-98*%m*%k+98*%m*%j+98*%m*%i", dependentIndVar5.toString());
 
-			APInt apInt2 = new APInt(intType.getNumBits(), "19", intType.isSigned());
+			APInt apInt2 = new APInt(intType.getNumBits(), ULong.valueOf(19), intType.isSigned());
 			ConstantInt operandVal6 = new ConstantInt( intType, apInt2);
 			IndVarExpression dependentIndVar6 = new IndVarExpression(
 					operandVal6, dependentIndVar5, BinaryOperatorID.SUB, false);
@@ -409,7 +411,7 @@ public class IndVarExpressionsTest {
 			basicVal.setName("i");
 			IndVarExpression basicIndVarExpr = new IndVarExpression(basicVal, null, null, true);
 
-			APInt apInt = new APInt(intType.getNumBits(), "43", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(43), intType.isSigned());
 			ConstantInt operandVal1 = new ConstantInt( intType, apInt);
 			IndVarExpression dependentIndVar1 = new IndVarExpression(
 					operandVal1, basicIndVarExpr, BinaryOperatorID.ADD, true);
@@ -422,87 +424,87 @@ public class IndVarExpressionsTest {
 			assertEquals("%i+43-%k", dependentIndVar2.toString());
 
 			// a - b (b is positive)
-			APInt apInt1 = new APInt(intType.getNumBits(), "20", intType.isSigned());
+			APInt apInt1 = new APInt(intType.getNumBits(), ULong.valueOf(20), intType.isSigned());
 			ConstantInt operandVal3 = new ConstantInt( intType, apInt1);
 			IndVarExpression dependentIndVar3 = new IndVarExpression(
 					operandVal3, dependentIndVar2, BinaryOperatorID.SUB, true);
 			assertEquals("%i+23-%k", dependentIndVar3.toString());
 
 			// a + b (b is positive)
-			APInt apInt2 = new APInt(intType.getNumBits(), "101", intType.isSigned());
+			APInt apInt2 = new APInt(intType.getNumBits(), ULong.valueOf(101), intType.isSigned());
 			ConstantInt operandVal4 = new ConstantInt( intType, apInt2);
 			IndVarExpression dependentIndVar4 = new IndVarExpression(
 					operandVal4, dependentIndVar3, BinaryOperatorID.ADD, true);
 			assertEquals("%i+124-%k", dependentIndVar4.toString());
 
 			// a - b (b is positive and larger)
-			APInt apInt3 = new APInt(intType.getNumBits(), "200", intType.isSigned());
-			ConstantInt operandVal5 = new ConstantInt( intType, apInt3);
+			APInt apInt3 = new APInt(intType.getNumBits(), ULong.valueOf(200), intType.isSigned());
+			APSInt apsInt3 = new APSInt(apInt3, false);
+			ConstantInt operandVal5 = new ConstantInt( intType, apsInt3);
 			IndVarExpression dependentIndVar5 = new IndVarExpression(
 					operandVal5, dependentIndVar4, BinaryOperatorID.SUB, true);
-			
-			System.out.println("IndVar5 = " + dependentIndVar5.toString());
 			
 			assertEquals("%i+-76-%k", dependentIndVar5.toString());
 
 			// -a + (-b) = -1 * (a + b)
-			APInt apInt4 = new APInt(intType.getNumBits(), "-21", intType.isSigned());
+			APInt apInt4 = new APInt(intType.getNumBits(), ULong.valueOf(-21), intType.isSigned());
 			ConstantInt operandVal6 = new ConstantInt( intType, apInt4);
 			IndVarExpression dependentIndVar6 = new IndVarExpression(
 					operandVal6, dependentIndVar5, BinaryOperatorID.ADD, true);
 			assertEquals("%i+-97-%k", dependentIndVar6.toString());
 
 			// -a + b = b -a
-			APInt apInt5 = new APInt(intType.getNumBits(), "100", intType.isSigned());
+			APInt apInt5 = new APInt(intType.getNumBits(), ULong.valueOf(100), intType.isSigned());
 			ConstantInt operandVal7 = new ConstantInt( intType, apInt5);
 			IndVarExpression dependentIndVar7 = new IndVarExpression(
 					operandVal7, dependentIndVar6, BinaryOperatorID.ADD, true);
 			assertEquals("%i+3-%k", dependentIndVar7.toString());
 
 			// a + (-b) = a - b
-			APInt apInt6 = new APInt(intType.getNumBits(), "-200", intType.isSigned());
+			APInt apInt6 = new APInt(intType.getNumBits(), ULong.valueOf(-200), intType.isSigned());
 			ConstantInt operandVal8 = new ConstantInt( intType, apInt6);
 			IndVarExpression dependentIndVar8 = new IndVarExpression(
 					operandVal8, dependentIndVar7, BinaryOperatorID.ADD, true);
 			assertEquals("%i+-197-%k", dependentIndVar8.toString());
 
 			// -a - b = -(a+b)
-			APInt apInt7 = new APInt(intType.getNumBits(), "23", intType.isSigned());
+			APInt apInt7 = new APInt(intType.getNumBits(), ULong.valueOf(23), intType.isSigned());
 			ConstantInt operandVal9 = new ConstantInt( intType, apInt7);
 			IndVarExpression dependentIndVar9 = new IndVarExpression(
 					operandVal9, dependentIndVar8, BinaryOperatorID.SUB, true);
 			assertEquals("%i+-220-%k", dependentIndVar9.toString());
 
 			// -a - (-b) = b -a
-			APInt apInt8 = new APInt(intType.getNumBits(), "-400", intType.isSigned());
+			APInt apInt8 = new APInt(intType.getNumBits(), ULong.valueOf(-400), intType.isSigned());
 			ConstantInt operandVal10 = new ConstantInt( intType, apInt8);
 			IndVarExpression dependentIndVar10 = new IndVarExpression(
 					operandVal10, dependentIndVar9, BinaryOperatorID.SUB, true);
 			assertEquals("%i+180-%k", dependentIndVar10.toString());
 
 			// a * b
-			APInt apInt9 = new APInt(intType.getNumBits(), "2", intType.isSigned());
+			APInt apInt9 = new APInt(intType.getNumBits(), ULong.valueOf(2), intType.isSigned());
 			ConstantInt operandVal11 = new ConstantInt( intType, apInt9);
 			IndVarExpression dependentIndVar11 = new IndVarExpression(
 					operandVal11, dependentIndVar10, BinaryOperatorID.MUL, true);
+		
 			assertEquals("%i*2+360-%k*2", dependentIndVar11.toString());
 
 			// a - b (b > a)
-			APInt apInt10 = new APInt(intType.getNumBits(), "400", intType.isSigned());
+			APInt apInt10 = new APInt(intType.getNumBits(), ULong.valueOf(400), intType.isSigned());
 			ConstantInt operandVal12 = new ConstantInt( intType, apInt10);
 			IndVarExpression dependentIndVar12 = new IndVarExpression(
 					operandVal12, dependentIndVar11, BinaryOperatorID.SUB, true);
 			assertEquals("%i*2+-40-%k*2", dependentIndVar12.toString());
 
 			// -a * b 
-			APInt apInt11 = new APInt(intType.getNumBits(), "2", intType.isSigned());
+			APInt apInt11 = new APInt(intType.getNumBits(), ULong.valueOf(2), intType.isSigned());
 			ConstantInt operandVal13 = new ConstantInt( intType, apInt11);
 			IndVarExpression dependentIndVar13 = new IndVarExpression(
 					operandVal13, dependentIndVar12, BinaryOperatorID.MUL, true);
 			assertEquals("%i*4+-80-%k*4", dependentIndVar13.toString());
 
 			// -a * (-b) 
-			APInt apInt12 = new APInt(intType.getNumBits(), "-3", intType.isSigned());
+			APInt apInt12 = new APInt(intType.getNumBits(), ULong.valueOf(-3), intType.isSigned());
 			ConstantInt operandVal14 = new ConstantInt( intType, apInt12);
 			IndVarExpression dependentIndVar14 = new IndVarExpression(
 					operandVal14, dependentIndVar13, BinaryOperatorID.MUL, true);
@@ -638,7 +640,7 @@ public class IndVarExpressionsTest {
 			basicVal.setName("i");
 			IndVarExpression basicIndVarExpr = new IndVarExpression(basicVal, null, null, true);
 
-			APInt apInt = new APInt(intType.getNumBits(), "43", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(43), intType.isSigned());
 			ConstantInt operandVal1 = new ConstantInt( intType, apInt);
 			IndVarExpression dependentIndVar1 = new IndVarExpression(
 					operandVal1, basicIndVarExpr, BinaryOperatorID.ADD, true);
@@ -650,25 +652,25 @@ public class IndVarExpressionsTest {
 					operandVal2, dependentIndVar1, BinaryOperatorID.SUB, true);
 			assertEquals("%i+43-%k", dependentIndVar2.toString());
 
-			APInt apInt1 = new APInt(intType.getNumBits(), "12", intType.isSigned());
+			APInt apInt1 = new APInt(intType.getNumBits(), ULong.valueOf(12), intType.isSigned());
 			ConstantInt operandVal3 = new ConstantInt( intType, apInt1);
 			IndVarExpression dependentIndVar3 = new IndVarExpression(
 					operandVal3, dependentIndVar2, BinaryOperatorID.ADD, false);
 			assertEquals("%i+55-%k", dependentIndVar3.toString());
 
-			APInt apInt2 = new APInt(intType.getNumBits(), "3", intType.isSigned());
+			APInt apInt2 = new APInt(intType.getNumBits(), ULong.valueOf(3), intType.isSigned());
 			ConstantInt operandVal4 = new ConstantInt( intType, apInt2);
 			IndVarExpression dependentIndVar4 = new IndVarExpression(
 					operandVal4, dependentIndVar3, BinaryOperatorID.MUL, false);
 			assertEquals("3*%i+165-3*%k", dependentIndVar4.toString());
 
-			APInt apInt3 = new APInt(intType.getNumBits(), "-2", intType.isSigned());
+			APInt apInt3 = new APInt(intType.getNumBits(), ULong.valueOf(-2), intType.isSigned());
 			ConstantInt operandVal5 = new ConstantInt( intType, apInt3);
 			IndVarExpression dependentIndVar5 = new IndVarExpression(
 					operandVal5, dependentIndVar4, BinaryOperatorID.MUL, false);
 			assertEquals("-6*%i+-330--6*%k", dependentIndVar5.toString());
 
-			APInt apInt4 = new APInt(intType.getNumBits(), "10", intType.isSigned());
+			APInt apInt4 = new APInt(intType.getNumBits(), ULong.valueOf(10), intType.isSigned());
 			ConstantInt operandVal6 = new ConstantInt( intType, apInt4);
 			IndVarExpression dependentIndVar6 = new IndVarExpression(
 					operandVal6, dependentIndVar5, BinaryOperatorID.SUB, false);
@@ -680,13 +682,13 @@ public class IndVarExpressionsTest {
 					operandVal7, dependentIndVar6, BinaryOperatorID.MUL, false);
 			assertEquals("%m*6*%i+%m*340+%m*-6*%k", dependentIndVar7.toString());
 
-			APInt apInt5 = new APInt(intType.getNumBits(), "7", intType.isSigned());
+			APInt apInt5 = new APInt(intType.getNumBits(), ULong.valueOf(7), intType.isSigned());
 			ConstantInt operandVal8 = new ConstantInt( intType, apInt5);
 			IndVarExpression dependentIndVar8 = new IndVarExpression(
 					operandVal8, dependentIndVar7, BinaryOperatorID.SUB, false);
 			assertEquals("7-%m*6*%i-%m*340-%m*-6*%k", dependentIndVar8.toString());
 
-			APInt apInt6 = new APInt(intType.getNumBits(), "3", intType.isSigned());
+			APInt apInt6 = new APInt(intType.getNumBits(), ULong.valueOf(3), intType.isSigned());
 			ConstantInt operandVal9 = new ConstantInt( intType, apInt6);
 			IndVarExpression dependentIndVar9 = new IndVarExpression(
 					operandVal9, dependentIndVar8, BinaryOperatorID.SUB, false);
@@ -698,13 +700,13 @@ public class IndVarExpressionsTest {
 					operandVal10, dependentIndVar9, BinaryOperatorID.MUL, true);
 			assertEquals("-4*%x+%m*6*%i*%x+%m*340*%x+%m*-6*%k*%x", dependentIndVar10.toString());
 
-			APInt apInt7 = new APInt(intType.getNumBits(), "15", intType.isSigned());
+			APInt apInt7 = new APInt(intType.getNumBits(), ULong.valueOf(15), intType.isSigned());
 			ConstantInt operandVal11 = new ConstantInt( intType, apInt7);
 			IndVarExpression dependentIndVar11 = new IndVarExpression(
 					operandVal11, dependentIndVar10, BinaryOperatorID.SUB, true);
 			assertEquals("-4*%x+%m*6*%i*%x+%m*340*%x+%m*-6*%k*%x-15", dependentIndVar11.toString());
 
-			APInt apInt8 = new APInt(intType.getNumBits(), "23", intType.isSigned());
+			APInt apInt8 = new APInt(intType.getNumBits(), ULong.valueOf(23), intType.isSigned());
 			ConstantInt operandVal12 = new ConstantInt( intType, apInt8);
 			IndVarExpression dependentIndVar12 = new IndVarExpression(
 					operandVal12, dependentIndVar11, BinaryOperatorID.SUB, false);
@@ -816,7 +818,7 @@ public class IndVarExpressionsTest {
 			Value basicVal = new Value(type);
 			basicVal.setName("i");
 			
-			APInt apInt = new APInt(intType.getNumBits(), "43", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(43), intType.isSigned());
 			ConstantInt const1 = new ConstantInt( intType, apInt);
 
 			// i * 43 compared with j
@@ -857,7 +859,7 @@ public class IndVarExpressionsTest {
 			assertTrue(InductionVariable.multiplicativeExpressionsAreSimilar(expr, otherExpr));
 			
 			// i * 43 compared to i * 43 (different constant)
-			APInt apInt1 = new APInt(intType.getNumBits(), "43", intType.isSigned());
+			APInt apInt1 = new APInt(intType.getNumBits(), ULong.valueOf(43), intType.isSigned());
 			ConstantInt const2 = new ConstantInt( intType, apInt1);
 			otherExpr = new ArrayList<ExpressionElement>();
 			otherExpr.add(new ExpressionElement(basicVal)); otherExpr.add(new ExpressionElement(BinaryOperatorID.MUL));
@@ -946,7 +948,7 @@ public class IndVarExpressionsTest {
 			basicVal.setName("i");
 			IndVarExpression basicIndVarExpr = new IndVarExpression(basicVal, null, null, true);
 
-			APInt apInt = new APInt(intType.getNumBits(), "43", intType.isSigned());
+			APInt apInt = new APInt(intType.getNumBits(), ULong.valueOf(43), intType.isSigned());
 			ConstantInt operandVal1 = new ConstantInt( intType, apInt);
 			IndVarExpression dependentIndVar1 = new IndVarExpression(
 					operandVal1, basicIndVarExpr, BinaryOperatorID.ADD, true);

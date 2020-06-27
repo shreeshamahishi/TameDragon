@@ -9,6 +9,7 @@ import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.math.APInt;
 import org.tamedragon.common.llvmir.math.APSInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.utils.ConstantFolding;
 
 /**
@@ -387,8 +388,7 @@ public class Constant extends User {
 
 		if(refValue instanceof ConstantInt){
 			ConstantInt constInt = (ConstantInt)refValue;
-			APInt apInt = new APInt(constInt.getApInt().getNumBits(), "0", 
-					((APSInt)constInt.getApInt()).isSigned());
+			APInt apInt = new APInt(constInt.getApInt().getNumBits(), ULong.valueOf(0),  ((APSInt)constInt.getApInt()).isSigned());
 			return new ConstantInt((IntegerType)constInt.getType(), apInt);
 		}
 		else if(refValue instanceof ConstantFP){
@@ -403,9 +403,10 @@ public class Constant extends User {
 	public static Constant getTrueOrFalse(CompilationContext compilationContext,
 			boolean getTrue){
 		try {
-			APInt val = new APInt(1, "1", false);
+			APInt val = new APInt(1, ULong.valueOf(1), false);
+			System.out.println("Val = " + val.toString());
 			if(!getTrue)
-				val = new APInt(1, "0", false);
+				val = new APInt(1, ULong.valueOf(0), false);
 
 			return new ConstantInt(Type.getInt1Type(compilationContext, false),
 					val);
@@ -518,7 +519,7 @@ public class Constant extends User {
 
 		if(refValue instanceof ConstantInt){
 			ConstantInt constInt = (ConstantInt)refValue;
-			APInt apInt = new APInt(constInt.getApInt().getNumBits(), "-1", false);
+			APInt apInt = new APInt(constInt.getApInt().getNumBits(), ULong.valueOf(-1), false);
 			return new ConstantInt((IntegerType)constInt.getType(), apInt);
 		}
 		else if(refValue instanceof ConstantFP){

@@ -22,6 +22,7 @@ import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationE
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionDetailAccessException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionUpdateException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.BasicBlock;
 import org.tamedragon.common.llvmir.types.CompilationContext;
@@ -521,7 +522,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst2);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "0", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(0), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -529,7 +530,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("onzero");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -537,7 +538,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("onone");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		BasicBlock succBlock3 = new BasicBlock(compilationContext);
@@ -625,7 +626,7 @@ public class TerminatorInstrsTest {
 		String errMsg = null;
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "0", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(0), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -633,7 +634,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("onzero");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "0", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(0), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -641,7 +642,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("onzero");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		BasicBlock succBlock3 = new BasicBlock(compilationContext);
@@ -673,7 +674,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -681,14 +682,14 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("onone");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		BasicBlock succBlock2 = new BasicBlock(compilationContext);
 		succBlock2.setName("ontwo");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "3", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(3), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		
@@ -755,7 +756,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -763,7 +764,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("onzero");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -771,7 +772,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("onone");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "3", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(3), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		
@@ -841,7 +842,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -849,7 +850,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -857,7 +858,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("13");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "14", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(14), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		
@@ -878,7 +879,7 @@ public class TerminatorInstrsTest {
 		// Add a new case
 		ConstantInt newCaseVal = null;
 		try {
-			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "15", true));
+			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(15), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseVal);
 		
@@ -911,7 +912,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -919,7 +920,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -927,7 +928,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("13");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "14", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(14), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		BasicBlock succBlock3 = new BasicBlock(compilationContext);
@@ -963,7 +964,7 @@ public class TerminatorInstrsTest {
 		errMsg = "";
 		newCaseVal = null;
 		try {
-			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "15", true));
+			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(15), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseVal);
 		newSuccBlock = null;
@@ -979,7 +980,7 @@ public class TerminatorInstrsTest {
 		errMsg = "";
 		newCaseVal = null;
 		try {
-			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "14", true));
+			newCaseVal = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(14), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseVal);
 		newSuccBlock = new BasicBlock(compilationContext);
@@ -1009,7 +1010,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1017,7 +1018,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1064,14 +1065,14 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		BasicBlock succBlock1 = new BasicBlock(compilationContext);
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		BasicBlock succBlock2 = new BasicBlock(compilationContext);
@@ -1116,7 +1117,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1124,7 +1125,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1132,21 +1133,21 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("13");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "14", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(14), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		BasicBlock succBlock3 = new BasicBlock(compilationContext);
 		succBlock3.setName("14");
 		ConstantInt caseVal4 = null;
 		try {
-			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "15", true));
+			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(15), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal4);
 		BasicBlock succBlock4 = new BasicBlock(compilationContext);
 		succBlock4.setName("15");
 		ConstantInt caseVal5 = null;
 		try {
-			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "16", true));
+			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(16), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal5);
 		
@@ -1224,7 +1225,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "12", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(12), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1232,7 +1233,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("12");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "13", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(13), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1308,7 +1309,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1316,7 +1317,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("dothis");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1335,7 +1336,7 @@ public class TerminatorInstrsTest {
 		// Set successor value
 		ConstantInt newCaseForSucc1 = null;
 		try {
-			newCaseForSucc1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "67", true));
+			newCaseForSucc1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(67), true));
 		} catch (InstantiationException e1) {}
 		assertNotNull(newCaseForSucc1);
 		String errMsg = "";
@@ -1352,7 +1353,7 @@ public class TerminatorInstrsTest {
 		// Set successor value
 		ConstantInt newCaseForSucc2 = null;
 		try {
-			newCaseForSucc2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "52", true));
+			newCaseForSucc2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(52), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseForSucc2);
 		errMsg = "";
@@ -1382,7 +1383,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1390,7 +1391,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("dothis");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1409,7 +1410,7 @@ public class TerminatorInstrsTest {
 		// Try setting successor value with invalid successor index (-1)
 		ConstantInt newCaseForSucc1 = null;
 		try {
-			newCaseForSucc1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "88", true));
+			newCaseForSucc1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(88), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseForSucc1);
 		String errMsg = "";
@@ -1427,7 +1428,7 @@ public class TerminatorInstrsTest {
 		// Try setting successor value with invalid successor index (> number of successors)
 		ConstantInt newCaseForSucc2 = null;
 		try {
-			newCaseForSucc2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "77", true));
+			newCaseForSucc2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(77), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(newCaseForSucc2);
 		errMsg = "";
@@ -1458,7 +1459,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "1", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(1), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1466,7 +1467,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("dothis");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "2", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(2), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1525,7 +1526,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "10", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(10), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1533,7 +1534,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("thunder");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "20", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(20), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1587,7 +1588,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "10", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(10), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1595,7 +1596,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("red");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "20", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(20), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1649,7 +1650,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "90", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(90), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1657,7 +1658,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("bus");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "100", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(100), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		BasicBlock succBlock2 = new BasicBlock(compilationContext);
@@ -1708,14 +1709,14 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "10", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(10), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		BasicBlock succBlock1 = new BasicBlock(compilationContext);
 		succBlock1.setName("red");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "20", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(20), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1770,7 +1771,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "90", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(90), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1778,7 +1779,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("bus");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "100", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(100), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1833,7 +1834,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "5", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(5), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1841,7 +1842,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("box");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "6", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(6), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1849,7 +1850,7 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("cube");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "7", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(7), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		
@@ -1857,7 +1858,7 @@ public class TerminatorInstrsTest {
 		succBlock3.setName("rhomboid");
 		ConstantInt caseVal4 = null;
 		try {
-			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "8", true));
+			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(8), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal4);
 		BasicBlock succBlock4 = new BasicBlock(compilationContext);
@@ -1911,7 +1912,7 @@ public class TerminatorInstrsTest {
 		// Look for a valid value with some constint that is not in the switch instruction
 		ConstantInt caseVal5 = null;
 		try {
-			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "9", true));
+			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(9), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal5);
 		foundIndex = -1; 
@@ -1937,7 +1938,7 @@ public class TerminatorInstrsTest {
 		assertNotNull(switchInst1);
 		ConstantInt caseVal1 = null;
 		try {
-			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "5", true));
+			caseVal1 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(5), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal1);
 		
@@ -1945,7 +1946,7 @@ public class TerminatorInstrsTest {
 		succBlock1.setName("box");
 		ConstantInt caseVal2 = null;
 		try {
-			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "6", true));
+			caseVal2 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(6), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal2);
 		
@@ -1953,14 +1954,14 @@ public class TerminatorInstrsTest {
 		succBlock2.setName("cube");
 		ConstantInt caseVal3 = null;
 		try {
-			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "7", true));
+			caseVal3 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(7), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal3);
 		BasicBlock succBlock3 = new BasicBlock(compilationContext);
 		succBlock3.setName("rhomboid");
 		ConstantInt caseVal4 = null;
 		try {
-			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "8", true));
+			caseVal4 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(8), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal4);
 		
@@ -1970,7 +1971,7 @@ public class TerminatorInstrsTest {
 		// Create a constInt that leads to basic block 2
 		ConstantInt caseVal5 = null;
 		try {
-			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "9", true));
+			caseVal5 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(9), true));
 		} catch (InstantiationException e) {}
 		assertNotNull(caseVal5);
 		

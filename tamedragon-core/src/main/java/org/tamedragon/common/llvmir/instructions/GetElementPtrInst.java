@@ -96,7 +96,7 @@ public class GetElementPtrInst extends Instruction {
 				Value value = list.get(i).getKey();
 				if(value instanceof ConstantInt){
 					ConstantInt  constantInt = (ConstantInt)value;
-					int index = constantInt.getApInt().getUnsignedVal().getUnsignedBigInt().intValue();
+					int index = constantInt.getApInt().getUnsignedVals()[0].getUnsignedBigInt().intValue();
 					if (!structType.isValidIndex(index))
 						throw new InstructionDetailAccessException(InstructionDetailAccessException.INVALID_INDEX_FOR_GEP_INSTR);
 					else

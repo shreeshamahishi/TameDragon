@@ -13,6 +13,7 @@ import org.tamedragon.common.llvmir.instructions.BinaryOperator;
 import org.tamedragon.common.llvmir.instructions.Instruction;
 import org.tamedragon.common.llvmir.instructions.BinaryOperator.BinaryOperatorID;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.ConstantFP;
@@ -714,7 +715,7 @@ public class InductionVariable {
 		try{
 			if(type.isIntegerType()){
 				IntegerType intType = (IntegerType)type;
-				two = new ConstantInt(intType, new APInt(intType.getNumBits(), "2", intType.isSigned()));
+				two = new ConstantInt(intType, new APInt(intType.getNumBits(), ULong.valueOf(2), intType.isSigned()));
 			}
 			else{
 				two = new ConstantFP(type, new APFloat(APFloat.IEEEdouble,"2.0"));

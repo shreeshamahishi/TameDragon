@@ -242,7 +242,7 @@ public class APFloat {
 	}
 
 	public static APInt getNullValue(int numBits) { 
-		return new APInt(numBits, "0", false); 
+		return new APInt(numBits, "0", 10); 
 	}
 	
 	public boolean isZero() {

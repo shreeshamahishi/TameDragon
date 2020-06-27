@@ -23,6 +23,7 @@ import org.tamedragon.common.llvmir.instructions.CmpInst.Predicate;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionCreationException;
 import org.tamedragon.common.llvmir.instructions.exceptions.InstructionUpdateException;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.APFloat;
 import org.tamedragon.common.llvmir.types.ArrayType;
 import org.tamedragon.common.llvmir.types.BasicBlock;
@@ -84,7 +85,7 @@ public class OtherInstructionsTest {
 		try{
 			ConstantInt ci0 = null;
 			try {
-				ci0 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, "0", false));
+				ci0 = new ConstantInt(Type.getInt32Type(compilationContext, true), new APInt(32, ULong.valueOf(0), false));
 			} catch (InstantiationException e) {}
 			assertNotNull(ci0);
 			BasicBlock bb0 = new BasicBlock(createSampleFunction());
@@ -104,7 +105,7 @@ public class OtherInstructionsTest {
 		try{
 			ConstantInt ci0 = null;
 			try {
-				ci0 = new ConstantInt(Type.getInt8Type(compilationContext, true), new APInt(8, "3", true));
+				ci0 = new ConstantInt(Type.getInt8Type(compilationContext, true), new APInt(8, ULong.valueOf(3), true));
 			} catch (InstantiationException e) {}
 			assertNotNull(ci0);
 			
@@ -167,7 +168,7 @@ public class OtherInstructionsTest {
 		Predicate predicate = Predicate.ICMP_EQ;
 		Value lhs = new Value(Type.getInt32Type(compilationContext, true));
 		lhs.setName("x");
-		APInt apInt = new APInt(32, "4", true);
+		APInt apInt = new APInt(32, ULong.valueOf(4), true);
 		ConstantInt constRhs = null;
 		try {
 			constRhs = new ConstantInt(Type.getInt32Type(compilationContext, true), apInt);
@@ -265,7 +266,7 @@ public class OtherInstructionsTest {
 		Predicate predicate = Predicate.FCMP_FALSE;
 		Value lhs = new Value(Type.getInt32Type(compilationContext, true));
 		lhs.setName("x");
-		APInt apInt = new APInt(32, "4", true);
+		APInt apInt = new APInt(32, ULong.valueOf(4), true);
 		String name = "%result";
 		String errMsg = "";
 		ConstantInt constRhs = null;

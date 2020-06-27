@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.tamedragon.common.Pair;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.CompilationContext;
 import org.tamedragon.common.llvmir.types.ConstantInt;
 import org.tamedragon.common.llvmir.types.IntegerType;
@@ -206,6 +208,7 @@ public class StorageLocationTests {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void runCombinations4() throws Exception {
 
@@ -291,7 +294,7 @@ public class StorageLocationTests {
 	private ScaledStorageLocation createStorageLocation(StorageLocation base, int constOffset, int factor, Value value) 
 	throws InstantiationException {
 
-		ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), "" + factor, integerType.isSigned()));
+		ConstantInt constInt = new ConstantInt(integerType, new APInt(integerType.getNumBits(), ULong.valueOf("" + factor), integerType.isSigned()));
 		List<Pair<ConstantInt, Value>> expr1 = new ArrayList<Pair<ConstantInt,Value>>();
 		expr1.add(new Pair<ConstantInt, Value>(constInt, value));
 		ScaledStorageLocation sl = new ScaledStorageLocation(base, expr1, constOffset);
