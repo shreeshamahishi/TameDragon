@@ -46,9 +46,7 @@ public class LLVMIRComparisionUtils {
 				}
 
 				line = line.trim();
-				if(line.length() == 0) {
-					System.out.println("WAIT HERE");
-				}
+				
 				String instrInOptimizedAsm = instrsAfterOpt.get(count).trim();
 
 				// Switch instruction comes as one string so we have to split it, by new line

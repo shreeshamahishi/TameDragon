@@ -21,13 +21,13 @@ define i32 @fun(i32 %x) nounwind {
 ; <label>:8                                                     		; preds = %0
   %9 = bitcast %struct.Student* %c to i8*
   %10 = bitcast %struct.Student* %a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %9, i8* %10, i64 12, i32 8, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %9, i8* %10, i64 12, i32 8, i1 0)
   br label %14
 
 ; <label>:11                                                     		; preds = %0
   %12 = bitcast %struct.Student* %c to i8*
   %13 = bitcast %struct.Student* %b to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %12, i8* %13, i64 12, i32 8, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %12, i8* %13, i64 12, i32 8, i1 0)
   br label %14
 
 ; <label>:14                                                		; preds = %8, %11

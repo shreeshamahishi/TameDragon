@@ -434,7 +434,7 @@ public class TerminatorInstrsTest {
 		elseBB.setName("elseBB");
 		Value condition = new Value(Type.getInt1Type(compilationContext, false));
 		try {
-			condition = ConstantInt.create(Type.getInt1Type(compilationContext, false), 32, false);
+			condition = ConstantInt.create(Type.getInt1Type(compilationContext, false), 1, false);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			assertTrue(false);

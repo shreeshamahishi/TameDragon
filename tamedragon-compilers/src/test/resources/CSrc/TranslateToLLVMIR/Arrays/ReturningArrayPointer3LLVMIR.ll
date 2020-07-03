@@ -30,7 +30,7 @@ define i32 @foo(i32 %a, i32 %b) nounwind {
 
 ; <label>:15                                                           		; preds = %3
   %16 = getelementptr inbounds [3 x [3 x float]], [3 x [3 x float]]* %arr, i32 0, i32 0
-  %17 = getelementptr inbounds [3 x float], [3 x float]* %16, i32 1
+  %17 = getelementptr inbounds [3 x float], [3 x float]* %16, i64 1
   %18 = getelementptr inbounds [3 x float], [3 x float]* %17, i32 0, i32 0
   %19 = ptrtoint float* %18 to i32
   ret i32 %19

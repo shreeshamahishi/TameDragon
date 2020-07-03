@@ -715,7 +715,6 @@ public class InductionVariable {
 		try{
 			if(type.isIntegerType()){
 				IntegerType intType = (IntegerType)type;
-				two = new ConstantInt(intType, new APInt(intType.getNumBits(), ULong.valueOf(2), intType.isSigned()));
 			}
 			else{
 				two = new ConstantFP(type, new APFloat(APFloat.IEEEdouble,"2.0"));

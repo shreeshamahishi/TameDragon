@@ -9,7 +9,7 @@ define i32 @foo(i32 %a, i32 %b) nounwind {
   %4 = getelementptr inbounds [3 x i32], [3 x i32]* %3, i32 0, i32 0
   store i32* %4, i32** %d, align 8
   %5 = load i32*, i32** %d, align 8
-  %6 = getelementptr inbounds i32, i32* %5, i32 2
+  %6 = getelementptr inbounds i32, i32* %5, i64 2
   %7 = load i32, i32* %6, align 4
   ret i32 %7
 }

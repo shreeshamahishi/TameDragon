@@ -119,8 +119,7 @@ public class IndVarExpression {
 
 	}
 
-	private void updateExpressionWithConstantLiteral(BinaryOperatorID binOp,
-			Value newValue, boolean isPostFix) throws Exception{
+	private void updateExpressionWithConstantLiteral(BinaryOperatorID binOp, Value newValue, boolean isPostFix) throws Exception{
 
 		Constant newConstValue = (Constant) newValue;
 		boolean folded = false;

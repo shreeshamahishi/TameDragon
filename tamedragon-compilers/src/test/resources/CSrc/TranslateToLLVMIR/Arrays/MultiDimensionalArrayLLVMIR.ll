@@ -9,7 +9,7 @@ define i32 @main() nounwind {
   store i32 0, i32* %1, align 4
   %2 = bitcast [2 x [2 x i32]]* %arr to i8*
   %3 = bitcast [2 x [2 x i32]]* @main.arr to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 16, i32 4, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 16, i32 4, i1 0)
   %4 = getelementptr inbounds [2 x [2 x i32]], [2 x [2 x i32]]* %arr, i32 0, i32 0
   %5 = getelementptr inbounds [2 x i32], [2 x i32]* %4, i32 0, i32 0
   %6 = getelementptr inbounds [16 x i8], [16 x i8]* @.str, i32 0, i32 0

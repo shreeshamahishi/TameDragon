@@ -13,7 +13,7 @@ define i32 @foo(i32 %a, i32 %b) nounwind {
   br label %8
 
 ; <label>:8        		; preds = %0, %5
-  %9 = phi i1 [ false, %0 ], [ %7, %5 ]
+  %9 = phi i1 [ 0, %0 ], [ %7, %5 ]
   br i1 %9, label %10, label %14
 
 ; <label>:10      		; preds = %8

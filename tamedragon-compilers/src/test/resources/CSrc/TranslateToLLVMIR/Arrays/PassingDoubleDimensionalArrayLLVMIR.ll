@@ -66,7 +66,7 @@ define i32 @main() nounwind {
   store i32 0, i32* %1, align 4
   %2 = bitcast [3 x [3 x i32]]* %a to i8*
   %3 = bitcast [3 x [3 x i32]]* @main.a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 36, i32 4, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 36, i32 4, i1 0)
   %4 = getelementptr inbounds [3 x [3 x i32]], [3 x [3 x i32]]* %a, i32 0, i32 0
   call void @boo([3 x i32]* %4)
   %5 = load i32, i32* %1, align 4

@@ -4,7 +4,7 @@ define i32 @foo(i32 %m) nounwind {
   %a = alloca [3 x i32], align 4
   %1 = bitcast [3 x i32]* %a to i8*
   %2 = bitcast [3 x i32]* @foo.a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %1, i8* %2, i64 12, i32 4, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %1, i8* %2, i64 12, i32 4, i1 0)
   %3 = getelementptr inbounds [3 x i32], [3 x i32]* %a, i32 0, i32 0
   %4 = load i32, i32* %3, align 4
   %5 = load i32, i32* %3, align 4

@@ -12,7 +12,7 @@ define i32 @fun(i32 %x) nounwind {
   store double 5.090000e+01, double* %3, align 8
   %4 = bitcast %struct.Student* %b to i8*
   %5 = bitcast %struct.Student* %a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %4, i8* %5, i64 12, i32 8, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %4, i8* %5, i64 12, i32 8, i1 0)
   %6 = load i32, i32* %1, align 4
   %7 = icmp eq i32 %6, 10
   br i1 %7, label %8, label %11
@@ -20,13 +20,13 @@ define i32 @fun(i32 %x) nounwind {
 ; <label>:8                                                     		; preds = %0
   %9 = bitcast %struct.Student* %c to i8*
   %10 = bitcast %struct.Student* %a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %9, i8* %10, i64 12, i32 8, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %9, i8* %10, i64 12, i32 8, i1 0)
   br label %14
 
 ; <label>:11                                                     		; preds = %0
   %12 = bitcast %struct.Student* %c to i8*
   %13 = bitcast %struct.Student* %b to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %12, i8* %13, i64 12, i32 8, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %12, i8* %13, i64 12, i32 8, i1 0)
   br label %14
 
 ; <label>:14                                                		; preds = %8, %11

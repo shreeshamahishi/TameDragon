@@ -2,22 +2,16 @@ package org.tamedragon.common.llvmir.math;
 
 import java.math.BigInteger;
 
-import org.antlr.grammar.v3.CodeGenTreeWalker.setBlock_return;
-
-
 public class ULong extends UNumber implements Comparable<ULong> {
+
+	private static final long serialVersionUID = -179884336682326300L;
 
 	public static final String ERROR_INT_CONST_TOO_LARGE = "Integer constant too large";
 
-	/**
-	 * A constant holding the minimum negative value an <code>unsigned long</code> can
-	 * have, 0.
-	 */
-	public static final BigInteger MIN_NEGATIVE_VALUE =  new BigInteger("-18446744073709551615");
+	private static final int UNSIGNED_LONG_NUM_BITS = 64;
 
 	/**
-	 * A constant holding the minimum value an <code>unsigned long</code> can
-	 * have, 0.
+	 * A constant holding the minimum value an <code>unsigned long</code> can have, 0.
 	 */
 	public static final BigInteger MIN_VALUE = BigInteger.ZERO;
 
@@ -27,17 +21,9 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	 */
 	public static final BigInteger MAX_VALUE = new BigInteger("18446744073709551615");
 
-	/**
-	 * A constant holding the maximum value + 1 an <code>signed long</code> can
-	 * have, 2<sup>63</sup>.
-	 */
 	public static final BigInteger MAX_VALUE_LONG = new BigInteger("9223372036854775808");
 
-	/**
-	 * A constant holding the minimum value an <code>unsigned long</code> can
-	 * have as ULong, 0.
-	 */
-	public static final ULong MIN = valueOf(MIN_VALUE.longValue());
+	public static final BigInteger MAX_VALUE_INT = new BigInteger("2147483648");
 
 	/**
 	 * A constant holding the maximum value + 1 an <code>signed long</code> can
@@ -45,59 +31,35 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	 */
 	public static final ULong MAX = valueOf(MAX_VALUE);
 
-	/**
-	 * The value modeling the content of this <code>unsigned long</code>
-	 */
 	private long value;
-
-	/**
-	 * The value modeling the content of this <code>unsigned long</code>
-	 */
 	private BigInteger unsignedBigInt;
 
-
-	/**
-	 * Create an <code>unsigned long</code> by masking it with
-	 * <code>0xFFFFFFFFFFFFFFFF</code> i.e. <code>(long) -1</code> becomes
-	 * <code>(uint) 18446744073709551615</code>
-	 */
 	private ULong(long value) {
 		setValues(value);
 	}
 
-	/**
-	 * Create an <code>unsigned long</code>
-	 *
-	 * @throws NumberFormatException If <code>value</code> is not in the range
-	 *             of an <code>unsigned long</code>
-	 */
 	private ULong(BigInteger bigIntValue) throws NumberFormatException {
 		setWithBigIntValue(bigIntValue);
 	}
 
-	/**
-	 * Create an <code>unsigned long</code>
-	 *
-	 * @throws NumberFormatException If <code>value</code> does not contain a
-	 *             parsable <code>unsigned long</code>.
-	 */
 	private ULong(String valStr) throws NumberFormatException {
-
-		if(valStr == null || valStr.length() == 0){
-			throw new IllegalArgumentException("Invalid value string for arbitrary precision integer");
-		}
-
-
 		BigInteger bigIntValue = new BigInteger(valStr);
 		setWithBigIntValue(bigIntValue);
+	}
 
+	public static ULong valueOf(long value) {
+		return new ULong(value);
+	}
+
+	public static ULong valueOf(BigInteger value) throws NumberFormatException {
+		return new ULong(value);
+	}
+
+	public static ULong valueOf(String value) throws NumberFormatException {
+		return new ULong(value);
 	}
 
 	private void setWithBigIntValue(BigInteger bigIntValue) {
-		//if(bigIntValue.compareTo(MIN_NEGATIVE_VALUE) < 0 || bigIntValue.compareTo(MAX_VALUE) > 0) {
-		//	throw new NumberFormatException(ERROR_INT_CONST_TOO_LARGE);
-		//}
-
 		long val = bigIntValue.longValue();
 		setValues(val);
 	}
@@ -107,42 +69,13 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		if (value >= 0) {
 			unsignedBigInt = BigInteger.valueOf(value);
 		}
-		else {
+		else {   // Negative value
 			long wrap = value & Long.MAX_VALUE;
 			unsignedBigInt = BigInteger.valueOf(wrap).add(MAX_VALUE_LONG);
 		}
 	}
-	
+
 	public ULong clone() {
-		return new ULong(value);
-	}
-
-	/**
-	 * Create an <code>unsigned long</code>
-	 *
-	 * @throws NumberFormatException If <code>value</code> does not contain a
-	 *             parsable <code>unsigned long</code>.
-	 */
-	public static ULong valueOf(String value) throws NumberFormatException {
-		return new ULong(value);
-	}
-
-	/**
-	 * Create an <code>unsigned long</code> by masking it with
-	 * <code>0xFFFFFFFFFFFFFFFF</code> i.e. <code>(long) -1</code> becomes
-	 * <code>(uint) 18446744073709551615</code>
-	 */
-	public static ULong valueOf(long value) {
-		return new ULong(value);
-	}
-
-	/**
-	 * Create an <code>unsigned long</code>
-	 *
-	 * @throws NumberFormatException If <code>value</code> is not in the range
-	 *             of an <code>unsigned long</code>
-	 */
-	public static ULong valueOf(BigInteger value) throws NumberFormatException {
 		return new ULong(value);
 	}
 
@@ -190,10 +123,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 
 	@Override
 	public int hashCode() {
-		/* [java-8] */
-		if (true) return Long.hashCode(value);
-		/* [/java-8] */
-		return Long.valueOf(value).hashCode();
+		return unsignedBigInt.hashCode();
 	}
 
 	@Override
@@ -205,8 +135,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	@Override
-	public int compareTo(ULong o) {
-		return compare(value, o.value);
+	public int compareTo(ULong other) {
+		return compare(value, other.value);
 	}
 
 	// Operations - additions
@@ -268,7 +198,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(result);
 	}
 
-	// Operations - subtractions in place versions
+	// Operations - multiplications in place versions
 	public ULong mulInPlace(final ULong otherVal){
 		BigInteger result = unsignedBigInt.multiply(otherVal.getUnsignedBigInt());
 		setWithBigIntValue(result);
@@ -287,13 +217,27 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return valueOf(res);
 	}
 
-	public ULong modulo(final ULong val) {
-		BigInteger res = unsignedBigInt.mod(val.getUnsignedBigInt());
+	public ULong div(long val) {
+		BigInteger res = unsignedBigInt.divide(BigInteger.valueOf(val));
 		return valueOf(res);
 	}
 
-	public ULong div(long val) {
-		BigInteger res = unsignedBigInt.divide(BigInteger.valueOf(val));
+	// Operations - division in place versions
+	public ULong divInPlace(final ULong otherVal){
+		BigInteger result = unsignedBigInt.divide(otherVal.getUnsignedBigInt());
+		setWithBigIntValue(result);
+		return this;
+	}
+
+	public ULong divInPlace(long otherVal) {
+		BigInteger result = unsignedBigInt.divide(BigInteger.valueOf(otherVal));
+		setWithBigIntValue(result);
+		return this;
+	}
+
+	// Operations - modulo
+	public ULong modulo(final ULong val) {
+		BigInteger res = unsignedBigInt.mod(val.getUnsignedBigInt());
 		return valueOf(res);
 	}
 
@@ -302,52 +246,93 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return valueOf(res);
 	}
 
-	public ULong subtract(final int val) {
-		return subtract((long) val);
+	// Operations - modulo in place versions
+	public ULong moduloInPlace(final ULong otherVal){
+		BigInteger result = unsignedBigInt.mod(otherVal.getUnsignedBigInt());
+		setWithBigIntValue(result);
+		return this;
 	}
 
+	public ULong moduloInPlace(long otherVal) {
+		BigInteger result = unsignedBigInt.mod(BigInteger.valueOf(otherVal));
+		setWithBigIntValue(result);
+		return this;
+	}
+
+	// Left shift
 	public ULong leftShift(int bits) {
+		bits = normalizeBitsForShifting(bits);
 		BigInteger sl = unsignedBigInt.shiftLeft(bits);
 		return ULong.valueOf(sl);
 	}
 
+	// Left shift in place
+	public ULong leftShiftInPlace(int bits) {
+		bits = normalizeBitsForShifting(bits);
+		BigInteger sl = unsignedBigInt.shiftLeft(bits);
+		setWithBigIntValue(sl);
+		return this;
+	}
+
+	// Right shift
 	public ULong rightShift(int bits) {
+		bits = normalizeBitsForShifting(bits);
 		BigInteger sr = unsignedBigInt.shiftRight(bits);
 		return ULong.valueOf(sr);
 	}
 
+	// Right shift in place
 	public ULong rightShiftInPlace(int bits) {
+		bits = normalizeBitsForShifting(bits);
 		setWithBigIntValue(unsignedBigInt.shiftRight(bits));
 		return this;
 	}
 
+	// Operations - Xor
 	public ULong xor(ULong other) {
 		return ULong.valueOf(unsignedBigInt.xor(other.getUnsignedBigInt()));
 	}
 
+	// Operations - Xor in place
 	public ULong xorInPlace(ULong other) {
 		setWithBigIntValue(unsignedBigInt.xor(other.getUnsignedBigInt()));
 		return this;
 	}
 
+	// Operations - And
 	public ULong and(ULong other) {
 		return ULong.valueOf(unsignedBigInt.and(other.getUnsignedBigInt()));
 	}
 
+	// Operations - And in place
 	public ULong andInPlace(ULong other) {
 		setWithBigIntValue(unsignedBigInt.and(other.getUnsignedBigInt()));
 		return this;
 	}
 
+	// Operations - Or
 	public ULong or(ULong other) {
 		return ULong.valueOf(unsignedBigInt.or(other.getUnsignedBigInt()));
 	}
 
+	// Operations - Or in place
 	public ULong orInPlace(ULong other) {
 		setWithBigIntValue(unsignedBigInt.or(other.getUnsignedBigInt()));
 		return this;
 	}
 
+	// Complement
+	public ULong complement() {
+		return ULong.valueOf(unsignedBigInt.not());
+	}
+
+	// Complement in place
+	public ULong complementInPlace() {
+		setWithBigIntValue(unsignedBigInt.not());
+		return this;
+	}
+
+	// Comparison operators - lesser than
 	public boolean isLesserThan(int other) {
 		if(value < other) {
 			return true;
@@ -362,6 +347,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
+	// Comparison operators - lesser than or equal to
 	public boolean isLesserThanOrEqualTo(int other) {
 		if(value == other || value < other) {
 			return true;
@@ -376,6 +362,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
+	// Comparison operators - greater than
 	public boolean isGreaterThan(int rHS) {
 		if(value > rHS) {
 			return true;
@@ -390,6 +377,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
+	// Comparison operators - greater than or equal to
 	public boolean isGreaterThanOrEqualTo(int rHS) {
 		if(value == rHS || value > rHS) {
 			return true;
@@ -404,8 +392,22 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
-	public ULong complement() {
-		ULong complement = xor(MAX);
-		return complement;
+	public ULong subtract(final int val) {
+		return subtract((long) val);
 	}
+
+	private int normalizeBitsForShifting(int bits) {
+		if(bits < 0) {
+			long wrap = bits & Integer.MAX_VALUE;
+			bits = BigInteger.valueOf(wrap).add(MAX_VALUE_LONG).intValue();
+		}
+
+		if(bits >= UNSIGNED_LONG_NUM_BITS) {
+			bits = bits % UNSIGNED_LONG_NUM_BITS;
+		}
+
+		return bits;
+	}
+
+
 }

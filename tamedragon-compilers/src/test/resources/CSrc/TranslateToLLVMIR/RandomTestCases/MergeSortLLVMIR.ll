@@ -38,7 +38,7 @@ define void @merge(i32* %left, i32* %right, i32* %result, i32 %nl, i32 %nr) noun
   br label %12
 
 ; <label>:12         		; preds = %6, %9
-  %13 = phi i1 [ false, %6 ], [ %11, %9 ]
+  %13 = phi i1 [ 0, %6 ], [ %11, %9 ]
   br i1 %13, label %14, label %53
 
 ; <label>:14                        		; preds = %12
@@ -165,10 +165,10 @@ define i32 @main() nounwind {
   store i32 0, i32* %1, align 4
   %2 = bitcast [3 x i32]* %a to i8*
   %3 = bitcast [3 x i32]* @main.a to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 12, i32 4, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %2, i8* %3, i64 12, i32 4, i1 0)
   %4 = bitcast [3 x i32]* %b to i8*
   %5 = bitcast [3 x i32]* @main.b to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %4, i8* %5, i64 12, i32 4, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %4, i8* %5, i64 12, i32 4, i1 0)
   %6 = getelementptr inbounds [33 x i8], [33 x i8]* @.str, i32 0, i32 0
   %7 = call i32 (i8*, ...)* @printf(i8* %6)
   %8 = getelementptr inbounds [34 x i8], [34 x i8]* @.str1, i32 0, i32 0

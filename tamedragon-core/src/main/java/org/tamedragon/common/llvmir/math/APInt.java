@@ -135,7 +135,13 @@ public class APInt {
 	}
 
 	public APInt clone() {
-		APInt newAPInt = new APInt(numBits, unsignedVals.clone(), false);
+		
+		ULong[] newVals = new ULong[unsignedVals.length];
+		for(int i = 0; i < newVals.length; i++) {
+			newVals[i] = unsignedVals[i].clone();
+		}
+		
+		APInt newAPInt = new APInt(numBits, newVals.clone(), false);
 		return new APSInt(newAPInt, false);
 	}
 
@@ -579,7 +585,7 @@ public class APInt {
 
 	public APInt add(final ULong RHS) {
 		if (isSingleWord()) {
-			unsignedVals[0].addInPlace(RHS);
+			unsignedVals[0] = unsignedVals[0].add(RHS);
 		}
 		else {
 			tcAddPart(unsignedVals, RHS, getNumWords());
@@ -594,7 +600,7 @@ public class APInt {
 
 	public APInt subtract(final ULong RHS) {
 		if (isSingleWord()) {
-			unsignedVals[0].subtractInPlace(RHS);
+			unsignedVals[0] = unsignedVals[0].subtract(RHS);
 		}
 		else {
 			// TODO Implement this
@@ -605,12 +611,12 @@ public class APInt {
 
 
 	public APInt mul(APInt other) {
-		return mul(other.unsignedVals[0]);
+		return mul(other.unsignedVals[0]).clone();
 	}
 
 	public APInt mul(final ULong RHS) {
 		if (isSingleWord()) {
-			unsignedVals[0].mulInPlace(RHS);
+			unsignedVals[0] = unsignedVals[0].mul(RHS);
 		}
 		else {
 			// TODO Implement this
@@ -664,7 +670,7 @@ public class APInt {
 				unsignedVals[0] = ULong.valueOf(0);
 			}
 			else {
-				unsignedVals[0].leftShift(ShiftAmt);
+				unsignedVals[0] = unsignedVals[0].leftShift(ShiftAmt);
 			}
 			return clearUnusedBits();
 		}
