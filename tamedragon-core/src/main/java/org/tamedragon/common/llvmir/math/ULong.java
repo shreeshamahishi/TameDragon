@@ -134,6 +134,10 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return false;
 	}
 
+	public boolean equals(long other) {
+		return value == other;
+	}
+
 	@Override
 	public int compareTo(ULong other) {
 		return compare(value, other.value);
@@ -150,19 +154,6 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(result);
 	}
 
-	// Operations - additions in place versions
-	public ULong addInPlace(final ULong otherVal){
-		BigInteger result = unsignedBigInt.add(otherVal.getUnsignedBigInt());
-		setWithBigIntValue(result);
-		return this;
-	}
-
-	public ULong addInPlace(long otherVal) {
-		BigInteger result = unsignedBigInt.add(BigInteger.valueOf(otherVal));
-		setWithBigIntValue(result);
-		return this;
-	}
-
 	// Operations - subtractions
 	public ULong subtract(final ULong otherVal){
 		BigInteger result = unsignedBigInt.subtract(otherVal.getUnsignedBigInt());
@@ -174,19 +165,6 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(result);
 	}
 
-	// Operations - subtractions in place versions
-	public ULong subtractInPlace(final ULong otherVal){
-		BigInteger result = unsignedBigInt.subtract(otherVal.getUnsignedBigInt());
-		setWithBigIntValue(result);
-		return this;
-	}
-
-	public ULong subtractInPlace(long otherVal) {
-		BigInteger result = unsignedBigInt.subtract(BigInteger.valueOf(otherVal));
-		setWithBigIntValue(result);
-		return this;
-	}
-
 	// Operations - multiplications
 	public ULong mul(final ULong otherVal){
 		BigInteger result = unsignedBigInt.multiply(otherVal.getUnsignedBigInt());
@@ -194,21 +172,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	public ULong mul(long otherVal) {
-		BigInteger result = unsignedBigInt.multiply(BigInteger.valueOf(otherVal));
-		return ULong.valueOf(result);
-	}
-
-	// Operations - multiplications in place versions
-	public ULong mulInPlace(final ULong otherVal){
-		BigInteger result = unsignedBigInt.multiply(otherVal.getUnsignedBigInt());
-		setWithBigIntValue(result);
-		return this;
-	}
-
-	public ULong mulInPlace(long otherVal) {
-		BigInteger result = unsignedBigInt.multiply(BigInteger.valueOf(otherVal));
-		setWithBigIntValue(result);
-		return this;
+		return mul(ULong.valueOf(otherVal));
 	}
 
 	// Operations - divisions
@@ -218,21 +182,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	public ULong div(long val) {
-		BigInteger res = unsignedBigInt.divide(BigInteger.valueOf(val));
-		return valueOf(res);
-	}
-
-	// Operations - division in place versions
-	public ULong divInPlace(final ULong otherVal){
-		BigInteger result = unsignedBigInt.divide(otherVal.getUnsignedBigInt());
-		setWithBigIntValue(result);
-		return this;
-	}
-
-	public ULong divInPlace(long otherVal) {
-		BigInteger result = unsignedBigInt.divide(BigInteger.valueOf(otherVal));
-		setWithBigIntValue(result);
-		return this;
+		return div(ULong.valueOf(val));
 	}
 
 	// Operations - modulo
@@ -242,21 +192,7 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	public ULong modulo(long val) {
-		BigInteger res = unsignedBigInt.mod(BigInteger.valueOf(val));
-		return valueOf(res);
-	}
-
-	// Operations - modulo in place versions
-	public ULong moduloInPlace(final ULong otherVal){
-		BigInteger result = unsignedBigInt.mod(otherVal.getUnsignedBigInt());
-		setWithBigIntValue(result);
-		return this;
-	}
-
-	public ULong moduloInPlace(long otherVal) {
-		BigInteger result = unsignedBigInt.mod(BigInteger.valueOf(otherVal));
-		setWithBigIntValue(result);
-		return this;
+		return modulo(ULong.valueOf(val));
 	}
 
 	// Left shift
@@ -266,14 +202,6 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(sl);
 	}
 
-	// Left shift in place
-	public ULong leftShiftInPlace(int bits) {
-		bits = normalizeBitsForShifting(bits);
-		BigInteger sl = unsignedBigInt.shiftLeft(bits);
-		setWithBigIntValue(sl);
-		return this;
-	}
-
 	// Right shift
 	public ULong rightShift(int bits) {
 		bits = normalizeBitsForShifting(bits);
@@ -281,44 +209,38 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(sr);
 	}
 
-	// Right shift in place
+	/*// Right shift in place
 	public ULong rightShiftInPlace(int bits) {
 		bits = normalizeBitsForShifting(bits);
 		setWithBigIntValue(unsignedBigInt.shiftRight(bits));
 		return this;
-	}
+	}*/
 
 	// Operations - Xor
 	public ULong xor(ULong other) {
 		return ULong.valueOf(unsignedBigInt.xor(other.getUnsignedBigInt()));
 	}
-
-	// Operations - Xor in place
-	public ULong xorInPlace(ULong other) {
-		setWithBigIntValue(unsignedBigInt.xor(other.getUnsignedBigInt()));
-		return this;
+	
+	public ULong xor(long other) {
+		return xor(ULong.valueOf(other));
 	}
 
 	// Operations - And
 	public ULong and(ULong other) {
 		return ULong.valueOf(unsignedBigInt.and(other.getUnsignedBigInt()));
 	}
-
-	// Operations - And in place
-	public ULong andInPlace(ULong other) {
-		setWithBigIntValue(unsignedBigInt.and(other.getUnsignedBigInt()));
-		return this;
+	
+	public ULong and(long other) {
+		return and(ULong.valueOf(other));
 	}
 
 	// Operations - Or
 	public ULong or(ULong other) {
 		return ULong.valueOf(unsignedBigInt.or(other.getUnsignedBigInt()));
 	}
-
-	// Operations - Or in place
-	public ULong orInPlace(ULong other) {
-		setWithBigIntValue(unsignedBigInt.or(other.getUnsignedBigInt()));
-		return this;
+	
+	public ULong or(long other) {
+		return or(ULong.valueOf(other));
 	}
 
 	// Complement
@@ -326,18 +248,9 @@ public class ULong extends UNumber implements Comparable<ULong> {
 		return ULong.valueOf(unsignedBigInt.not());
 	}
 
-	// Complement in place
-	public ULong complementInPlace() {
-		setWithBigIntValue(unsignedBigInt.not());
-		return this;
-	}
-
 	// Comparison operators - lesser than
-	public boolean isLesserThan(int other) {
-		if(value < other) {
-			return true;
-		}
-		return false;
+	public boolean isLesserThan(long rhs) {
+		return isLesserThan(ULong.valueOf(rhs));
 	}
 
 	public boolean isLesserThan(ULong other) {
@@ -348,8 +261,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	// Comparison operators - lesser than or equal to
-	public boolean isLesserThanOrEqualTo(int other) {
-		if(value == other || value < other) {
+	public boolean isLesserThanOrEqualTo(long rhs) {
+		if(value == rhs || isLesserThan(ULong.valueOf(rhs))) {
 			return true;
 		}
 		return false;
@@ -363,11 +276,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	// Comparison operators - greater than
-	public boolean isGreaterThan(int rHS) {
-		if(value > rHS) {
-			return true;
-		}
-		return false;
+	public boolean isGreaterThan(long rhs) {
+		return isGreaterThan(ULong.valueOf(rhs));
 	}
 
 	public boolean isGreaterThan(ULong other) {
@@ -378,8 +288,8 @@ public class ULong extends UNumber implements Comparable<ULong> {
 	}
 
 	// Comparison operators - greater than or equal to
-	public boolean isGreaterThanOrEqualTo(int rHS) {
-		if(value == rHS || value > rHS) {
+	public boolean isGreaterThanOrEqualTo(int rhs) {
+		if(value == rhs || isGreaterThan(rhs)) {
 			return true;
 		}
 		return false;

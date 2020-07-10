@@ -310,9 +310,9 @@ public class APSInt extends APInt {
 		return new APSInt(((APInt)(this)).orWith(RHS), IsUnsigned);
 	}
 
-	public APSInt not(){
+	/*public APSInt not(){
 		return new APSInt(((APInt)(this)).not(), IsUnsigned);
-	}
+	}*/
 
 	/* getMaxValue - Return the APSInt representing the maximum integer value
 	 *  with the given bit width and signedness.

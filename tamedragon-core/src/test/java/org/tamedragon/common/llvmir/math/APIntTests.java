@@ -3,6 +3,9 @@ package org.tamedragon.common.llvmir.math;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.junit.Test;
 
 public class APIntTests {
@@ -14,7 +17,160 @@ public class APIntTests {
 	}
 
 	@Test
+	public void testAPIntSingleWordInitByteSizesAndULongAndSignFlag() {
+
+		// 1-byte 0
+		APInt temp = new APInt(1, ULong.valueOf("0"), false);
+		assertTrue(temp.toString().equals("0"));
+		assertTrue(temp.toString(10, false, false).equals("0"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("0"));
+
+		// 1-byte 1
+		temp = new APInt(1, ULong.valueOf("1"), false);
+		assertTrue(temp.toString().equals("-1"));
+		assertTrue(temp.toString(10, false, false).equals("1"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("1"));
+
+		// 1-byte beyond upper bound
+		temp = new APInt(1, ULong.valueOf("8"), false);
+		assertTrue(temp.toString().equals("0"));
+		assertTrue(temp.toString(10, false, false).equals("0"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("0"));
+
+		// 1-byte negative
+		temp = new APInt(1, ULong.valueOf("-13"), false);
+		assertTrue(temp.toString().equals("-1"));
+		assertTrue(temp.toString(10, false, false).equals("1"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("1"));
+
+		// Within range positive number
+		temp = new APInt(8, ULong.valueOf("100"), false);
+		assertTrue(temp.toString().equals("100"));
+		assertTrue(temp.toString(10, false, false).equals("100"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("100"));
+
+		// Negative number 
+		temp = new APInt(8, ULong.valueOf("-9"), false);
+		assertTrue(temp.toString().equals("-9"));
+		assertTrue(temp.toString(10, false, false).equals("247"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("247"));
+
+		// Positive number outside range
+		temp = new APInt(8, ULong.valueOf("325"), false);
+		assertTrue(temp.toString().equals("69"));
+		assertTrue(temp.toString(10, false, false).equals("69"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("69"));
+
+		// Non-byte type bit width (5) in range
+		temp = new APInt(5, ULong.valueOf("30"), false);
+		assertTrue(temp.toString().equals("-2"));
+		assertTrue(temp.toString(10, false, false).equals("30"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("30"));
+
+		// Non-byte type bit width (5) at upper bound
+		temp = new APInt(5, ULong.valueOf("31"), false);
+		assertTrue(temp.toString().equals("-1"));
+		assertTrue(temp.toString(10, false, false).equals("31"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("31"));
+
+		// Arbitrary bit width (5) beyond upper bound
+		temp = new APInt(5, ULong.valueOf("32"), false);
+		assertTrue(temp.toString().equals("0"));
+		assertTrue(temp.toString(10, false, false).equals("0"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("0"));
+
+		// 64 bit long max value
+		temp = new APInt(64, ULong.valueOf("9223372036854775807"), false);
+		assertTrue(temp.toString().equals("9223372036854775807"));
+		assertTrue(temp.toString(10, false, false).equals("9223372036854775807"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("9223372036854775807"));
+
+		// 64 bit long beyond max value
+		temp = new APInt(64, ULong.valueOf("9223372036854775812"), false);
+		assertTrue(temp.toString().equals("-9223372036854775804"));
+		assertTrue(temp.toString(10, false, false).equals("9223372036854775812"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("9223372036854775812"));
+
+		// 64 bit long 0
+		temp = new APInt(64, ULong.valueOf("0"), false);
+		assertTrue(temp.toString().equals("0"));
+		assertTrue(temp.toString(10, false, false).equals("0"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("0"));
+
+		// 64 bit long negative value
+		temp = new APInt(64, ULong.valueOf("-78"), false);
+		assertTrue(temp.toString().equals("-78"));
+		assertTrue(temp.toString(10, false, false).equals("18446744073709551538"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("18446744073709551538"));
+
+		// 64 bit unsigned max value
+		temp = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		assertTrue(temp.toString().equals("-1"));
+		assertTrue(temp.toString(10, false, false).equals("18446744073709551615"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("18446744073709551615"));
+
+		// 64 bit unsigned beyond max value
+		temp = new APInt(64, ULong.valueOf("18446744073709551623"), false);
+		assertTrue(temp.toString().equals("7"));
+		assertTrue(temp.toString(10, false, false).equals("7"));
+		assertTrue(temp.getUnsignedVals()[0].toString().equals("7"));
+	}
+	
+	@Test
+	public void testAdditionOperationsOnSingleWordAPInt() {
+		
+		BigDecimal bd0 = new BigDecimal("24.00");
+		BigDecimal bd1 = new BigDecimal("24.50");
+		BigDecimal res1 = bd0.add(bd1);
+		System.out.println(res1);
+		
+		// Something in range
+		APInt temp1 = new APInt(8, ULong.valueOf(3), false);
+		APInt temp2 = new APInt(8, ULong.valueOf(21), false);
+		APInt res = temp1.add(temp2);
+		assertTrue(res.toString().equals("24"));
+		
+	}
+	
+	@Test
 	public void testAPIntConstructionWithStringAndRadix10AndByteSizes() {
+		
+		BigDecimal bd0 = new BigDecimal(24.00);
+		bd0.setScale(2, RoundingMode.HALF_UP);
+		BigDecimal bd1 = new BigDecimal(24.51);
+		bd1.setScale(2, RoundingMode.HALF_UP);
+		BigDecimal bd2 = new BigDecimal(24.5000002);
+		BigDecimal bd3 = new BigDecimal(24.5000003);
+		
+		BigDecimal fbo = new BigDecimal(48.51);
+		
+		
+		BigDecimal res = bd0.add(bd1);
+		res.setScale(2, RoundingMode.HALF_UP);
+		System.out.println(res);
+		
+		if(fbo.equals(res)) {
+			System.out.println("Equals	 ");
+		}
+		else {
+			System.out.println("NOt Equals	 ");
+		}
+		
+		res.setScale(2, RoundingMode.HALF_UP);
+		System.out.println(res);
+		
+		
+		
+		System.out.println("BD0 scale " + bd0.scale());
+		System.out.println("BD1 scale " + bd1.scale());
+		System.out.println("BD2 scale " + bd2.scale());
+		System.out.println("BD3 scale " + bd3.scale());
+		
+		bd0.setScale(5);
+		
+		System.out.println("Equals returns: " + bd1.equals(bd2));
+		System.out.println("compareTo returns: " + bd1.compareTo(bd2));
+		
 
 		// Within range positive number
 		APInt temp = new APInt(8, "100", 10);
