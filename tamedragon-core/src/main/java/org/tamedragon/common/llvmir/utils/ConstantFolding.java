@@ -260,7 +260,7 @@ public class ConstantFolding {
 				case AND:
 					return new ConstantInt((IntegerType)CI1.getType(), C1V.andWith(C2V));
 				case OR:
-					return new ConstantInt((IntegerType)CI1.getType(), C1V.orWith(C2V));
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.or(C2V));
 				case XOR:
 					return new ConstantInt((IntegerType)CI1.getType(), C1V.xorWith(C2V));
 				case SHL: 

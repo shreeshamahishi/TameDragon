@@ -164,7 +164,9 @@ public class APSInt extends APInt {
 	}
 
 	public APSInt lshr(int Amt){
-		return IsUnsigned ? new APSInt(lshr(Amt), true) : new APSInt(ashr(ULong.valueOf(Amt)), false);
+		// TODO Implement this
+		return null;
+		//return IsUnsigned ? new APSInt(lshr(Amt), true) : new APSInt(ashr(ULong.valueOf(Amt)), false);
 	}
 
 	public boolean ult(APSInt RHS){
@@ -307,7 +309,8 @@ public class APSInt extends APInt {
 		if(IsUnsigned == RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		return new APSInt(((APInt)(this)).orWith(RHS), IsUnsigned);
+		
+		return new APSInt(((APInt)(this)).or(RHS), IsUnsigned);
 	}
 
 	/*public APSInt not(){
