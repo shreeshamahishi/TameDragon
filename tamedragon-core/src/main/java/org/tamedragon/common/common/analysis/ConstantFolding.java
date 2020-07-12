@@ -6,6 +6,7 @@ import org.tamedragon.common.llvmir.instructions.CmpInst;
 import org.tamedragon.common.llvmir.instructions.Instruction.InstructionID;
 import org.tamedragon.common.llvmir.irdata.DataLayout;
 import org.tamedragon.common.llvmir.math.APInt;
+import org.tamedragon.common.llvmir.math.APIntUtils;
 import org.tamedragon.common.llvmir.math.ULong;
 import org.tamedragon.common.llvmir.types.Constant;
 import org.tamedragon.common.llvmir.types.ConstantExpr;
@@ -106,7 +107,7 @@ public class ConstantFolding {
 						//int DstWidth = CI2.getType().getBitWidth();
 						int dstWidth = 24;
 						int srcWidth = CE1.getOperand(0).getType().getPrimitiveSizeInBits();
-						APInt possiblySetBits = APInt.getLowBitsSet(dstWidth, srcWidth);
+						APInt possiblySetBits = APIntUtils.getLowBitsSet(dstWidth, srcWidth);
 						// TODO Fix this
 						//if ((possiblySetBits  & CI2.getApInt().getVal()) == PossiblySetBits) {
 						//	return C1;

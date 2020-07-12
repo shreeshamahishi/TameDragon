@@ -321,14 +321,14 @@ public class APSInt extends APInt {
 	 *  with the given bit width and signedness.
 	 */
 	public static APSInt getMaxValue(int numBits, boolean Unsigned) {
-		return new APSInt(Unsigned ? getMaxValue(numBits) : APInt.getSignedMaxValue(numBits), Unsigned);
+		return new APSInt(Unsigned ? APIntUtils.getMaxValue(numBits) : APIntUtils.getSignedMaxValue(numBits), Unsigned);
 	}
 
 	/* getMinValue - Return the APSInt representing the minimum integer value
 	 *  with the given bit width and signedness.
 	 */
 	public static APSInt getMinValue(int numBits, boolean Unsigned) {
-		return new APSInt(Unsigned ? getMinValue(numBits) : getSignedMinValue(numBits), Unsigned);
+		return new APSInt(Unsigned ? APIntUtils.getMinValue(numBits) : APIntUtils.getSignedMinValue(numBits), Unsigned);
 	}
 
 	/* Determine if two APSInts have the same value, zero- or

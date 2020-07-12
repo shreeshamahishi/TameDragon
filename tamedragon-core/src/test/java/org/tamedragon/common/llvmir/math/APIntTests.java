@@ -261,14 +261,14 @@ public class APIntTests {
 		// Multiplications
 		apInt = new APInt(128, "18446744073709551615", 10);
 		ULong multiplier = ULong.valueOf(2);
-		int overflow = APInt.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
+		int overflow = APIntUtils.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
 		assertTrue(overflow == 0);
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf("18446744073709551614")));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(1)));
 
 		apInt = new APInt(128, "18446744073709551615", 10);
 		multiplier = ULong.valueOf(3);
-		overflow = APInt.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
+		overflow = APIntUtils.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
 		assertTrue(overflow == 0);
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf("18446744073709551613")));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(2)));
@@ -276,7 +276,7 @@ public class APIntTests {
 		// Multiplications with overflow
 		apInt = new APInt(128, "18446744073709551619", 10);
 		multiplier = ULong.valueOf("18446744073709551615");
-		overflow = APInt.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
+		overflow = APIntUtils.tcMultiplyPart(apInt.unsignedVals, apInt.unsignedVals, multiplier, ULong.valueOf(0), 2, 2, false);
 		assertTrue(overflow == 1);
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf("18446744073709551613")));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(1)));
@@ -284,14 +284,14 @@ public class APIntTests {
 		// Additions
 		apInt = new APInt(128, "18446744073709551615", 10);
 		ULong addVal = ULong.valueOf(56);
-		ULong carry = APInt.tcAddPart(apInt.unsignedVals, addVal, 2);
+		ULong carry = APIntUtils.tcAddPart(apInt.unsignedVals, addVal, 2);
 		assertTrue(carry.equals(ULong.valueOf(0)));
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf(55)));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(1)));
 
 		apInt = new APInt(128, "18446744073709551632", 10);
 		addVal = ULong.valueOf(47);
-		carry = APInt.tcAddPart(apInt.unsignedVals, addVal, 2);
+		carry = APIntUtils.tcAddPart(apInt.unsignedVals, addVal, 2);
 		assertTrue(carry.equals(ULong.valueOf(0)));
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf(63)));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(1)));

@@ -16,12 +16,12 @@ import java.util.Arrays;
 public class APInt {
 
 
-	private static final int AP_INT_BITS_PER_WORD = 64;
-	private static BigInteger WORDTYPE_MAX = ULong.MAX_VALUE;
+	public static final int AP_INT_BITS_PER_WORD = 64;
+	protected static BigInteger WORDTYPE_MAX = ULong.MAX_VALUE;
 
 	protected int numBits;
 	protected ULong[] unsignedVals;
-	
+
 	protected Boolean opOverflowFlag;
 
 	public APInt() {
@@ -465,59 +465,6 @@ public class APInt {
 	}
 
 	// ****************************************************************** GENERATORS **********************************************************************
-	/* Gets maximum unsigned value of APInt for specific bit width.
-	 */
-	public static APInt getMaxValue(int numBits) {
-		return getAllOnesValue(numBits);
-	}
-
-	/*Gets maximum signed value of APInt for a specific bit width.
-	 */
-	public static APInt getSignedMaxValue(int numBits) {
-		APInt api = getAllOnesValue(numBits);
-		api.clearBit(numBits - 1);
-		return api;
-	}
-
-	/* 
-	 * Gets minimum unsigned value of APInt for a specific bit width.
-	 */
-	public static APInt getMinValue(int numBits) { 
-		return new APInt(numBits, new ULong[] {ULong.valueOf("0")}, false); 
-	}
-
-	/*
-	 * Gets minimum signed value of APInt for a specific bit width.
-	 */
-	public static APInt getSignedMinValue(int numBits) {
-		APInt api = new APInt(numBits, new ULong[] {ULong.valueOf("0")}, false);
-		api.setBit(numBits - 1);
-		return api;
-	}
-
-	/* 
-	 * Get the SignMask for a specific bit width.
-	 * This is just a wrapper function of getSignedMinValue(), and it helps code
-	 * readability when we want to get a SignMask.
-	 */
-	public static APInt getSignMask(int numBits) {
-		return getSignedMinValue(numBits);
-	}
-
-	/* Get the all-ones value.
-	 * Returns the all-ones value for an APInt of the specified bit-width.
-	 */
-	public static APInt getAllOnesValue(int numBits) {
-		return new APInt(numBits, new ULong[] { ULong.valueOf(WORDTYPE_MAX)}, true);
-	}	
-
-	/*
-	 * Returns the '0' value for an APInt of the specified bit-width.
-	 */
-	public static APInt getNullValue(int numBits) {
-		return new APInt(numBits, ULong.valueOf("0"), false);
-	}
-
 
 	/* Compute an APInt containing numBits highbits from this APInt.
 	 *
@@ -538,124 +485,9 @@ public class APInt {
 	 * Returns the low "numBits" bits of this APInt.
 	 */
 	public APInt getLoBits(int numBits) {
-		APInt result = getLowBitsSet(this.numBits, numBits);
+		APInt result = APIntUtils.getLowBitsSet(this.numBits, numBits);
 		result = result.andWith(this);
 		return result;
-	}
-
-	/*
-	 * Return an APInt with exactly one bit set in the result.
-	 */
-	public static APInt getOneBitSet(int numBits, int bitIndex) {
-		APInt result = new APInt(numBits, ULong.valueOf(0), false);
-		result.setBit(bitIndex);
-		return result;
-	}
-
-	/* Get a value with a block of bits set.
-	 *
-	 * Constructs an APInt value that has a contiguous range of bits set. The
-	 * bits from loBit (inclusive) to hiBit (exclusive) will be set. All other
-	 * bits will be zero. For example, with parameters(32, 0, 16) you would get
-	 * 0x0000FFFF. Please call getBitsSetWithWrap if loBit may be greater than
-	 * hiBit.
-	 *
-	 * numBits the intended bit width of the result
-	 * loBit the index of the lowest bit set.
-	 * hiBit the index of the highest bit set.
-	 *
-	 * Returns An APInt value with the requested bits set.
-	 */
-	public static APInt getBitsSet(int numBits, int loBit, int hiBit) {
-		if(loBit > hiBit) {
-			throw new IllegalArgumentException("loBit greater than hiBit");
-		}
-
-		APInt Res = new APInt(numBits, ULong.valueOf(0), false);
-		Res.setBits(loBit, hiBit);
-		return Res;
-	}
-
-	/* Wrap version of getBitsSet.
-	 * If \p hiBit is no less than \p loBit, this is same with getBitsSet.
-	 * If \p hiBit is less than \p loBit, the set bits "wrap". For example, with
-	 * parameters (32, 28, 4), you would get 0xF000000F.
-	 */
-	public static APInt getBitsSetWithWrap(int numBits, int loBit, int hiBit) {
-		APInt Res = new APInt(numBits, ULong.valueOf(0), false);
-		Res.setBitsWithWrap(loBit, hiBit);
-		return Res;
-	}
-
-	/* Get a value with upper bits starting at loBit set.
-	 *
-	 * Constructs an APInt value that has a contiguous range of bits set. The
-	 * bits from loBit (inclusive) to numBits (exclusive) will be set. All other
-	 * bits will be zero. For example, with parameters(32, 12) you would get
-	 * 0xFFFFF000.
-	 *
-	 * numBits the intended bit width of the result
-	 * loBit the index of the lowest bit to set.
-	 *
-	 * Returns An APInt value with the requested bits set.
-	 */
-	public static APInt getBitsSetFrom(int numBits, int loBit) {
-		APInt Res = new APInt(numBits, ULong.valueOf(0), false);
-		Res.setBitsFrom(loBit);
-		return Res;
-	}
-
-	/* Get a value with high bits set
-	 *
-	 * Constructs an APInt value that has the top hiBitsSet bits set.
-	 *
-	 * numBits the bitwidth of the result
-	 * hiBitsSet the number of high-order bits set in the result.
-	 */
-	public static APInt getHighBitsSet(int numBits, int hiBitsSet) {
-		APInt Res = new APInt(numBits, ULong.valueOf(0), false);
-		Res.setHighBits(hiBitsSet);
-		return Res;
-	}
-
-	/* Get a value with low bits set
-	 * Constructs an APInt value that has the bottom loBitsSet bits set.
-	 *
-	 * numBits the bitwidth of the result
-	 * loBitsSet the number of low-order bits set in the result.
-	 */
-	public static APInt getLowBitsSet(int numBits, int loBitsSet) {
-		APInt Res = new APInt(numBits, ULong.valueOf(0), false);
-		Res.setLowBits(loBitsSet);
-		return Res;
-	}
-
-	/*
-	 * Return a value containing V broadcasted over NewLen bits.
-	 */
-	public static APInt getSplat(int NewLen,  APInt V) {
-		if(NewLen < V.getNumBits()) {
-			throw new IllegalArgumentException("Can't splat to smaller bit width!");
-		}
-
-		APInt Val = V.zextOrSelf(NewLen);
-		for (int I = V.getNumBits(); I < NewLen; I <<= 1)
-			Val =  Val.or(Val.shiftLeft(I));
-
-		return Val;
-	}
-
-	/* Determine if two APInts have the same value, after zero-extending
-	 * one of them (if needed!) to ensure that the bit-widths match.
-	 */
-	public static boolean isSameValue(APInt I1,  APInt I2) {
-		if (I1.getNumBits() == I2.getNumBits())
-			return I1 == I2;
-
-		if (I1.getNumBits() > I2.getNumBits())
-			return I1 == I2.zext(I1.getNumBits());
-
-		return I1.zext(I2.getNumBits()) == I2;
 	}
 
 	// ****************************************************************** UNARY OPERATORS **********************************************************************
@@ -672,7 +504,7 @@ public class APInt {
 			incremented.unsignedVals[0] = incremented.unsignedVals[0].add(1);
 		}
 		else {
-			tcIncrement(incremented.unsignedVals, getNumWords());
+			APIntUtils.tcIncrement(incremented.unsignedVals, getNumWords());
 		}
 
 		return incremented.clearUnusedBits();
@@ -689,7 +521,7 @@ public class APInt {
 			decremented.unsignedVals[0] = decremented.unsignedVals[0].subtract(1);
 		}
 		else {
-			tcDecrement(decremented.unsignedVals, getNumWords());
+			APIntUtils.tcDecrement(decremented.unsignedVals, getNumWords());
 		}
 		return clearUnusedBits();
 	}
@@ -871,7 +703,7 @@ public class APInt {
 		} 
 		else {
 			int NumWords = getNumWords();
-			tcMultiplyPart(unsignedVals, unsignedVals, RHS, ULong.valueOf(0), NumWords, NumWords, false);
+			APIntUtils.tcMultiplyPart(unsignedVals, unsignedVals, RHS, ULong.valueOf(0), NumWords, NumWords, false);
 		}
 		return clearUnusedBits();
 	}
@@ -889,7 +721,7 @@ public class APInt {
 			unsignedVals[0] = unsignedVals[0].add(RHS.getUnsignedVals()[0]);
 		}
 		else {
-			tcAdd(unsignedVals, RHS.getUnsignedVals(), ULong.valueOf(0), getNumWords());
+			APIntUtils.tcAdd(unsignedVals, RHS.getUnsignedVals(), ULong.valueOf(0), getNumWords());
 		}
 
 		return clearUnusedBits();
@@ -900,7 +732,7 @@ public class APInt {
 			unsignedVals[0] = unsignedVals[0].add(RHS);
 		}
 		else {
-			tcAddPart(unsignedVals, RHS, getNumWords());
+			APIntUtils.tcAddPart(unsignedVals, RHS, getNumWords());
 		}
 
 		return clearUnusedBits();
@@ -917,7 +749,7 @@ public class APInt {
 		if (isSingleWord())
 			unsignedVals[0] = unsignedVals[0].subtract(RHS.unsignedVals[0]);
 		else
-			tcSubtract(unsignedVals, RHS.unsignedVals, ULong.valueOf(0), getNumWords());
+			APIntUtils.tcSubtract(unsignedVals, RHS.unsignedVals, ULong.valueOf(0), getNumWords());
 		return clearUnusedBits();
 	}
 
@@ -926,7 +758,7 @@ public class APInt {
 			unsignedVals[0] = unsignedVals[0].subtract(RHS);
 		}
 		else {
-			tcSubtractPart(unsignedVals, RHS, getNumWords());
+			APIntUtils.tcSubtractPart(unsignedVals, RHS, getNumWords());
 		}
 
 		return clearUnusedBits();
@@ -986,7 +818,7 @@ public class APInt {
 		}
 		else {
 			int numWords = getNumWords();
-			tcMultiplyPart(unsignedVals, unsignedVals, RHS, ULong.valueOf(0), numWords, numWords, false);
+			APIntUtils.tcMultiplyPart(unsignedVals, unsignedVals, RHS, ULong.valueOf(0), numWords, numWords, false);
 		}
 
 		return clearUnusedBits();
@@ -1296,7 +1128,7 @@ public class APInt {
 		}
 		if (RHS.isNegative())
 			return this.urem(RHS.mul(ULong.valueOf(-1)));
-		
+
 		return this.urem(RHS);
 	}
 
@@ -1308,7 +1140,7 @@ public class APInt {
 		}
 		if (RHS < 0)
 			return this.udiv(ULong.valueOf(RHS * -1)).getUnsignedVals()[0].longValue();
-			
+
 		return this.udiv(ULong.valueOf(RHS)).getUnsignedVals()[0].longValue();
 	}
 
@@ -1322,82 +1154,82 @@ public class APInt {
 		if(LHS.numBits != RHS.numBits){
 			throw new IllegalArgumentException("Bit widths must be the same");
 		}
-		
-	  int numBits = LHS.numBits;
-	  
-	  APInt quotient, remainderApInt;
-	  
-	  // First, deal with the easy case
-	  if (LHS.isSingleWord()) {
-	    if(RHS.unsignedVals[0].equals(0)){
-			throw new IllegalArgumentException("Divide by zero?");
+
+		int numBits = LHS.numBits;
+
+		APInt quotient, remainderApInt;
+
+		// First, deal with the easy case
+		if (LHS.isSingleWord()) {
+			if(RHS.unsignedVals[0].equals(0)){
+				throw new IllegalArgumentException("Divide by zero?");
+			}
+
+			ULong QuotVal = LHS.unsignedVals[0].div(RHS.unsignedVals[0]);
+			ULong RemVal = LHS.unsignedVals[0].modulo(RHS.unsignedVals[0]);
+			quotient = new APInt(numBits, QuotVal, false);
+			remainderApInt = new APInt(numBits, RemVal, false);
+			return new QuotientRemainderPair(quotient, remainderApInt);
 		}
-	    
-	    ULong QuotVal = LHS.unsignedVals[0].div(RHS.unsignedVals[0]);
-	    ULong RemVal = LHS.unsignedVals[0].modulo(RHS.unsignedVals[0]);
-	    quotient = new APInt(numBits, QuotVal, false);
-	    remainderApInt = new APInt(numBits, RemVal, false);
-	    return new QuotientRemainderPair(quotient, remainderApInt);
-	  }
 
-	  // Get some size facts about the dividend and divisor
-	  int lhsWords = LHS.getNumWords(LHS.getActiveBits());
-	  int rhsBits = RHS.getActiveBits();
-	  int rhsWords = RHS.getNumWords(rhsBits);
-	  if(rhsWords <= 0) {
-		  throw new IllegalArgumentException("Performing divrem operation by zero ???");
-	  }
+		// Get some size facts about the dividend and divisor
+		int lhsWords = LHS.getNumWords(LHS.getActiveBits());
+		int rhsBits = RHS.getActiveBits();
+		int rhsWords = RHS.getNumWords(rhsBits);
+		if(rhsWords <= 0) {
+			throw new IllegalArgumentException("Performing divrem operation by zero ???");
+		}
 
-	  // Check the degenerate cases
-	  if (lhsWords == 0) {
-		  quotient = new APInt(numBits, ULong.valueOf(0), false);  // 0 / Y ===> 0
-		  remainderApInt = new APInt(numBits, ULong.valueOf(0), false);  // 0 % Y ===> 0
-		  return new QuotientRemainderPair(quotient, remainderApInt);
-	  }
+		// Check the degenerate cases
+		if (lhsWords == 0) {
+			quotient = new APInt(numBits, ULong.valueOf(0), false);  // 0 / Y ===> 0
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false);  // 0 % Y ===> 0
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
 
-	  if (rhsBits == 1) {
-		  quotient = LHS;                 // X / 1 ===> X
-		  remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % 1 ===> 0
-	  }
+		if (rhsBits == 1) {
+			quotient = LHS;                 // X / 1 ===> X
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % 1 ===> 0
+		}
 
-	  if (lhsWords < rhsWords || LHS.ult(RHS)) {
-		  remainderApInt = LHS;                                   // X % Y ===> X, iff X < Y
-		  quotient = new APInt(numBits, ULong.valueOf(0), false); // X / Y ===> 0, iff X < Y
-		  return new QuotientRemainderPair(quotient, remainderApInt);
-	  }
+		if (lhsWords < rhsWords || LHS.ult(RHS)) {
+			remainderApInt = LHS;                                   // X % Y ===> X, iff X < Y
+			quotient = new APInt(numBits, ULong.valueOf(0), false); // X / Y ===> 0, iff X < Y
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
 
-	  if (LHS == RHS) {
-		  quotient = new APInt(numBits, ULong.valueOf(1), false);  // X / X ===> 1
-		  remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % X ===> 0;
-		  return new QuotientRemainderPair(quotient, remainderApInt);
-	  }
+		if (LHS == RHS) {
+			quotient = new APInt(numBits, ULong.valueOf(1), false);  // X / X ===> 1
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % X ===> 0;
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
 
-	  if (lhsWords == 1) { // rhsWords is 1 if lhsWords is 1.
-	    // There is only one word to consider so use the native versions.
-	    ULong lhsValue = LHS.unsignedVals[0];
-	    ULong rhsValue = RHS.unsignedVals[0];
-	    quotient = new APInt(numBits, lhsValue.div(rhsValue), false);
-	    remainderApInt = new APInt(numBits, lhsValue.modulo(rhsValue), false);
-	    return new QuotientRemainderPair(quotient, remainderApInt);
-	  }
+		if (lhsWords == 1) { // rhsWords is 1 if lhsWords is 1.
+			// There is only one word to consider so use the native versions.
+			ULong lhsValue = LHS.unsignedVals[0];
+			ULong rhsValue = RHS.unsignedVals[0];
+			quotient = new APInt(numBits, lhsValue.div(rhsValue), false);
+			remainderApInt = new APInt(numBits, lhsValue.modulo(rhsValue), false);
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
 
-	  // Okay, lets do it the long way
-	  QuotientRemainderPair qrp =  divideWithBigInts(LHS.unsignedVals, lhsWords, RHS.unsignedVals, rhsWords);
-	  
-	  // Clear the rest of the Quotient and Remainder.
-	  setWordValues(qrp.getQuotient().unsignedVals, 0, lhsWords);
-	  setWordValues(qrp.getRemainderApInt().unsignedVals, 0, lhsWords);
-	  
-	  return qrp;
+		// Okay, lets do it the long way
+		QuotientRemainderPair qrp =  divideWithBigInts(LHS.unsignedVals, lhsWords, RHS.unsignedVals, rhsWords);
+
+		// Clear the rest of the Quotient and Remainder.
+		setWordValues(qrp.getQuotient().unsignedVals, 0, lhsWords);
+		setWordValues(qrp.getRemainderApInt().unsignedVals, 0, lhsWords);
+
+		return qrp;
 	}
-	
+
 	public static void setWordValues(ULong vals[], long value, int offSet) {
 		for(int i = offSet; i < vals.length; i++) {
 			vals[i] = ULong.valueOf(value);
 		}
-		
+
 	}
-	
+
 	public static QuotientRemainderPair udivrem(APInt LHS, ULong RHS) {
 		if(RHS.equals(ULong.valueOf(0))) {
 			throw new IllegalArgumentException("Divide by zero?");
@@ -1476,7 +1308,7 @@ public class APInt {
 		setWordValues(qrPair.getQuotient().unsignedVals, 0, lhsWords);
 		return qrPair;
 	}
-	
+
 	public static QuotientRemainderPair sdivrem(APInt LHS, APInt RHS) {
 
 		QuotientRemainderPair qr = null;
@@ -1534,14 +1366,14 @@ public class APInt {
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt uadd_ov(APInt RHS){
 		APInt Res = this.add(RHS);
 		boolean overflow = Res.ult(RHS);
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt ssub_ov(APInt RHS){ 
 		APInt Res = this.subtract(RHS);
 		boolean overflow = isNonNegative() != RHS.isNonNegative() &&
@@ -1549,14 +1381,14 @@ public class APInt {
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt usub_ov(APInt RHS){ 
 		APInt Res = this.subtract(RHS);
 		boolean overflow = Res.ugt(this);
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt sdiv_ov(APInt RHS){ 
 		// MININT/-1  -->  overflow.
 		boolean overflow = isMinSignedValue() && RHS.isAllOnesValue();
@@ -1564,7 +1396,7 @@ public class APInt {
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt smul_ov(APInt RHS){ 
 		APInt Res = this.mul(RHS);
 		boolean overflow;
@@ -1576,7 +1408,7 @@ public class APInt {
 		Res.setOpOverflowFlag(overflow);
 		return Res;
 	}
-	
+
 	public APInt umul_ov(APInt RHS){
 		if (countLeadingZeros() + RHS.countLeadingZeros() + 2 <= numBits) {
 			APInt Res = this.mul(RHS);
@@ -1593,12 +1425,12 @@ public class APInt {
 			if (Res.ult(RHS))
 				overflow = true;
 		}
-		
+
 		Res.setOpOverflowFlag(overflow);
-		
+
 		return Res;
 	}
-	
+
 	public APInt sshl_ov(APInt ShAmt){ 
 		boolean overflow = ShAmt.uge(ULong.valueOf(getNumBits()));
 		if (overflow) {
@@ -1617,7 +1449,7 @@ public class APInt {
 
 		return res;
 	}
-	
+
 	public APInt ushl_ov(APInt ShAmt){ 
 		boolean overflow = ShAmt.uge(ULong.valueOf(getNumBits()));
 		if (overflow) {
@@ -1626,11 +1458,11 @@ public class APInt {
 			return res;
 		}
 
-		  overflow = ShAmt.ugt(ULong.valueOf(countLeadingZeros()));
+		overflow = ShAmt.ugt(ULong.valueOf(countLeadingZeros()));
 
-		  APInt res = this.leftShift(ShAmt);
-		  res.setOpOverflowFlag(overflow);
-		  return res;
+		APInt res = this.leftShift(ShAmt);
+		res.setOpOverflowFlag(overflow);
+		return res;
 	}
 
 
@@ -1640,7 +1472,7 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return isNegative() ? getSignedMinValue(numBits) : getSignedMaxValue(numBits);
+		return isNegative() ? APIntUtils.getSignedMinValue(numBits) : APIntUtils.getSignedMaxValue(numBits);
 	}
 
 	public APInt uadd_sat(APInt RHS) {
@@ -1648,7 +1480,7 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return getMaxValue(numBits);
+		return APIntUtils.getMaxValue(numBits);
 	}
 
 	public APInt ssub_sat(APInt RHS) {
@@ -1656,14 +1488,14 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return isNegative() ? getSignedMinValue(numBits) : getSignedMaxValue(numBits);
+		return isNegative() ? APIntUtils.getSignedMinValue(numBits) : APIntUtils.getSignedMaxValue(numBits);
 	}
 
 	public APInt usub_sat(APInt RHS) {
 		APInt Res = usub_ov(RHS);
 		if (!Res.getOpOverflowFlag())
 			return Res;
-		
+
 		return new APInt(numBits, ULong.valueOf(0), false);
 	}
 
@@ -1675,7 +1507,7 @@ public class APInt {
 		// The result is negative if one and only one of inputs is negative.
 		boolean ResIsNegative = isNegative() ^ RHS.isNegative();
 
-		return ResIsNegative ? getSignedMinValue(numBits) : getSignedMaxValue(numBits);
+		return ResIsNegative ? APIntUtils.getSignedMinValue(numBits) : APIntUtils.getSignedMaxValue(numBits);
 	}
 
 	public APInt umul_sat(APInt RHS) {
@@ -1683,7 +1515,7 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return getMaxValue(numBits);
+		return APIntUtils.getMaxValue(numBits);
 	}
 
 	public APInt sshl_sat(APInt RHS) {
@@ -1691,7 +1523,7 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return isNegative() ? getSignedMinValue(numBits) : getSignedMaxValue(numBits);
+		return isNegative() ? APIntUtils.getSignedMinValue(numBits) : APIntUtils.getSignedMaxValue(numBits);
 	}
 
 	public APInt ushl_sat(APInt RHS) {
@@ -1699,7 +1531,7 @@ public class APInt {
 		if (!Res.getOpOverflowFlag())
 			return Res;
 
-		return getMaxValue(numBits);
+		return APIntUtils.getMaxValue(numBits);
 	}
 
 	/* Array-indexing support.
@@ -1714,6 +1546,450 @@ public class APInt {
 		return !(maskBit(bitPosition).and(getWord(bitPosition)).equals(0));
 	}
 
+	// ****************************************************************** COMPARISON OPERATORS ************************************************************
+
+	/* Equality check.
+	 * Compares this APInt with RHS for the validity of the equality
+	 * relationship.
+	 */
+	public boolean equals(APInt RHS) {
+		if(numBits != RHS.getNumBits()) {
+			throw new IllegalArgumentException("Comparison requires equal bit widths");
+		}
+
+		if (isSingleWord()) {
+			return unsignedVals[0].equals(RHS.getUnsignedVals()[0]);
+		}
+
+		return equalSlowCase(RHS);
+	}
+
+
+	/* Equality comparison.
+	 *
+	 * Compares this APInt with a ULong for the validity of the equality
+	 * relationship.
+	 * Returns true if this == val
+	 */
+	public boolean equals(ULong val) {
+		return (isSingleWord() || getActiveBits() <= 64) && getZExtValueNew().equals(val);
+	}
+
+	/* Inequality comparison.
+	 * Compares this APInt with RHS for the validity of the inequality
+	 * relationship.
+	 *
+	 * Returns true if this != Val
+	 */
+	public boolean notEquals(APInt RHS) { return !equals(RHS); }
+
+	/* Inequality comparison.
+	 * Compares this APInt with a ULong for the validity of the inequality
+	 * relationship.
+	 *
+	 * Returns true if this != Val
+	 */
+	public boolean notEquals(ULong Val) { return !equals(Val); }
+
+	/* Unsigned less than comparison
+	 *
+	 * Regards both *this and RHS as unsigned quantities and compares them for
+	 * the validity of the less-than relationship.
+	 * Returns true if *this < RHS when both are considered unsigned.
+	 */
+	public boolean ult(APInt RHS) { return compare(RHS) < 0; }
+
+	/* Unsigned less than comparison
+	 *
+	 * Regards both *this as an unsigned quantity and compares it with RHS for
+	 * the validity of the less-than relationship.
+	 * Returns true if *this < RHS when considered unsigned.
+	 */
+	public boolean ult(ULong RHS) {
+		// Only need to check active bits if not a single word.
+		return (isSingleWord() || getActiveBits() <= 64) && getZExtValueNew().isLesserThan(RHS);
+	}
+
+	/* Signed less than comparison
+	 *
+	 * Regards both *this and RHS as signed quantities and compares them for
+	 * validity of the less-than relationship.
+	 *
+	 * \returns true if *this < RHS when both are considered signed.
+	 */
+	public boolean slt(APInt RHS){ return compareSigned(RHS) < 0; }
+
+	/*  Signed less than comparison
+	 *
+	 * Regards both *this as a signed quantity and compares it with RHS for
+	 * the validity of the less-than relationship.
+	 *
+	 * \returns true if *this < RHS when considered signed.
+	 */
+	boolean slt(long RHS){
+		return (!isSingleWord() && getMinSignedBits() > 64) ? isNegative()
+				: getSExtValue() < RHS;
+	}
+
+	/*  Unsigned less or equal comparison
+	 *
+	 * Regards both *this and RHS as unsigned quantities and compares them for
+	 * validity of the less-or-equal relationship.
+	 *
+	 * \returns true if *this <= RHS when both are considered unsigned.
+	 */
+	public boolean ule(APInt RHS){ return compare(RHS) <= 0; }
+
+	/*  Unsigned less or equal comparison
+	 *
+	 * Regards both *this as an unsigned quantity and compares it with RHS for
+	 * the validity of the less-or-equal relationship.
+	 *
+	 * \returns true if *this <= RHS when considered unsigned.
+	 */
+	boolean ule(ULong RHS){ return !ugt(RHS); }
+
+	/*  Signed less or equal comparison
+	 *
+	 * Regards both *this and RHS as signed quantities and compares them for
+	 * validity of the less-or-equal relationship.
+	 *
+	 * \returns true if *this <= RHS when both are considered signed.
+	 */
+	public boolean sle(APInt RHS){ return compareSigned(RHS) <= 0; }
+
+	/*  Signed less or equal comparison
+	 *
+	 * Regards both *this as a signed quantity and compares it with RHS for the
+	 * validity of the less-or-equal relationship.
+	 *
+	 * \returns true if *this <= RHS when considered signed.
+	 */
+	public boolean sle(long RHS){ return !sgt(RHS); }
+
+	/*  Unsigned greater than comparison
+	 *
+	 * Regards both *this and RHS as unsigned quantities and compares them for
+	 * the validity of the greater-than relationship.
+	 *
+	 * \returns true if *this > RHS when both are considered unsigned.
+	 */
+	public boolean ugt(APInt RHS){ return !ule(RHS); }
+
+	/*  Unsigned greater than comparison
+	 *
+	 * Regards both *this as an unsigned quantity and compares it with RHS for
+	 * the validity of the greater-than relationship.
+	 *
+	 * \returns true if *this > RHS when considered unsigned.
+	 */
+	public boolean ugt(ULong RHS){
+		// Only need to check active bits if not a single word.
+		return (!isSingleWord() && getActiveBits() > 64) || getZExtValueNew().isGreaterThan(RHS);
+	}
+
+	/*  Signed greater than comparison
+	 *
+	 * Regards both *this and RHS as signed quantities and compares them for the
+	 * validity of the greater-than relationship.
+	 *
+	 * \returns true if *this > RHS when both are considered signed.
+	 */
+	public boolean sgt(APInt RHS){ return !sle(RHS); }
+
+	/*  Signed greater than comparison
+	 *
+	 * Regards both *this as a signed quantity and compares it with RHS for
+	 * the validity of the greater-than relationship.
+	 *
+	 * \returns true if *this > RHS when considered signed.
+	 */
+	public boolean sgt(long RHS){
+		return (!isSingleWord() && getMinSignedBits() > 64) ? !isNegative()
+				: getSExtValue() > RHS;
+	}
+
+	/*  Unsigned greater or equal comparison
+	 *
+	 * Regards both *this and RHS as unsigned quantities and compares them for
+	 * validity of the greater-or-equal relationship.
+	 *
+	 * \returns true if *this >= RHS when both are considered unsigned.
+	 */
+	public boolean uge(APInt RHS){ return !ult(RHS); }
+
+	/*  Unsigned greater or equal comparison
+	 *
+	 * Regards both *this as an unsigned quantity and compares it with RHS for
+	 * the validity of the greater-or-equal relationship.
+	 *
+	 * \returns true if *this >= RHS when considered unsigned.
+	 */
+	public boolean uge(ULong RHS){ return !ult(RHS); }
+
+	/*  Signed greater or equal comparison
+	 *
+	 * Regards both *this and RHS as signed quantities and compares them for
+	 * validity of the greater-or-equal relationship.
+	 *
+	 * Returns true if *this >= RHS when both are considered signed.
+	 */
+	public boolean sge(APInt RHS){ return !slt(RHS); }
+
+	/*  Signed greater or equal comparison
+	 *
+	 * Regards both *this as a signed quantity and compares it with RHS for
+	 * the validity of the greater-or-equal relationship.
+	 *
+	 * Returns true if *this >= RHS when considered signed.
+	 */
+	public boolean sge(long RHS){ return !slt(RHS); }
+
+	/*
+	 *  This operation tests if there are any pairs of corresponding bits
+	 * between this APInt and RHS that are both set.
+	 */
+	public boolean intersects(APInt RHS) {
+		if(numBits != RHS.numBits) {
+			throw new IllegalArgumentException("Bit widths must be the same");
+		}
+		if (isSingleWord()) {
+			return !(unsignedVals[0].and(RHS.unsignedVals[0]).equals(0));
+		}
+
+		return intersectsSlowCase(RHS);
+	}
+
+	/*
+	 * This operation checks that all bits set in this APInt are also set in RHS.
+	 */
+	public boolean isSubsetOf(APInt RHS){
+		if(numBits != RHS.numBits) {
+			throw new IllegalArgumentException("Bit widths must be the same");
+		}
+
+		if (isSingleWord())
+			return unsignedVals[0].and(RHS.unsignedVals[0].complement()).equals(0);
+		return isSubsetOfSlowCase(RHS);
+	}
+
+	/**
+	 * Slow case for intersects
+	 */
+	public boolean intersectsSlowCase(APInt RHS) {
+		for (int i = 0, e = getNumWords(); i != e; ++i)
+			if (!(unsignedVals[i].and(RHS.unsignedVals[i])).equals(0))
+				return true;
+
+		return false;
+	}
+
+	/**
+	 * Slow case for isSubsetOf
+	 */
+	public boolean isSubsetOfSlowCase(APInt RHS) {
+		for (int i = 0, e = getNumWords(); i != e; ++i)
+			if (!(unsignedVals[i].and(RHS.unsignedVals[i].complement()).equals(0)))
+				return false;
+
+		return true;
+	}
+
+	// ****************************************************************** RESIZING OPERATORS *******************************************************************
+	/* Truncate to new width.
+	 *
+	 * Truncate the APInt to a specified width. It is an error to specify a width
+	 *  that is greater than or equal to the current width.
+	 */
+	public APInt trunc(int width) {
+		if(width >= numBits) {
+			throw new IllegalArgumentException("Invalid APInt Truncate request");
+		}
+		if(width <= 0) {
+			throw new IllegalArgumentException("Can't truncate to 0 bits");
+		}
+
+		APInt result = null;
+		if (width <= AP_INT_BITS_PER_WORD) {
+			result = new APInt(width, unsignedVals, false);
+			return result;
+		}
+
+		// TODO Implement this
+		/*APInt Result(getMemory(getNumWords(width)), width);
+
+		// Copy full words.
+		unsigned i;
+		for (i = 0; i != width / APINT_BITS_PER_WORD; i++)
+			Result.U.pVal[i] = U.pVal[i];
+
+		// Truncate and copy any partial word.
+		unsigned bits = (0 - width) % APINT_BITS_PER_WORD;
+		if (bits != 0)
+			Result.U.pVal[i] = U.pVal[i] << bits >> bits;
+
+		return Result;
+		 */
+		return result;
+	}
+
+	/* Truncate to new width with unsigned saturation.
+	 * If the APInt, treated as unsigned integer, can be losslessly truncated to
+	 * the new bitwidth, then return truncated APInt. Else, return max value.
+	 */
+	public APInt truncUSat(int width) {
+		if(width >= numBits) {
+			throw new IllegalArgumentException("Invalid APInt Truncate request");
+		}
+		if(width <= 0) {
+			throw new IllegalArgumentException("Can't truncate to 0 bits");
+		}
+
+		// Can we just losslessly truncate it?
+		if (isIntN(width))
+			return trunc(width);
+		// If not, then just return the new limit.
+		return APIntUtils.getMaxValue(width);
+	}
+
+	/* Truncate to new width with signed saturation.
+	 * If this APInt, treated as signed integer, can be losslessly truncated to
+	 * the new bitwidth, then return truncated APInt. Else, return either
+	 * signed min value if the APInt was negative, or signed max value.
+	 */
+	public APInt truncSSat(int width) {
+		if(width >= numBits) {
+			throw new IllegalArgumentException("Invalid APInt Truncate request");
+		}
+		if(width <= 0) {
+			throw new IllegalArgumentException("Can't truncate to 0 bits");
+		}
+
+		// Can we just losslessly truncate it?
+		if (isSignedIntN(width))
+			return trunc(width);
+		// If not, then just return the new limits.
+		return isNegative() ? APIntUtils.getSignedMinValue(width) : APIntUtils.getSignedMaxValue(width);
+	}
+
+	/* Sign extend to a new width.
+	 *
+	 * This operation sign extends the APInt to a new width. If the high order
+	 * bit is set, the fill on the left will be done with 1 bits, otherwise zero.
+	 * It is an error to specify a width that is less than or equal to the
+	 * current width.
+	 */
+	public APInt sext(int width){
+		if(width < numBits) {
+			throw new IllegalArgumentException("Invalid APInt SignExtend request");
+		}
+
+		if (width <= AP_INT_BITS_PER_WORD) {
+			long signExtended = MathUtils.signExtend64(unsignedVals[0], numBits);
+			return new APInt(width, new ULong[] {ULong.valueOf(signExtended)}, false);
+		}
+
+		// TODO Implement this
+		/*
+			  APInt Result(getMemory(getNumWords(Width)), Width);
+
+			  // Copy words.
+			  std::memcpy(Result.U.pVal, getRawData(), getNumWords() * APINT_WORD_SIZE);
+
+			  // Sign extend the last word since there may be unused bits in the input.
+			  Result.U.pVal[getNumWords() - 1] =
+			      SignExtend64(Result.U.pVal[getNumWords() - 1],
+			                   ((BitWidth - 1) % APINT_BITS_PER_WORD) + 1);
+
+			  // Fill with sign bits.
+			  std::memset(Result.U.pVal + getNumWords(), isNegative() ? -1 : 0,
+			              (Result.getNumWords() - getNumWords()) * APINT_WORD_SIZE);
+			  Result.clearUnusedBits();
+			  return Result;
+		 */
+		return null;
+	}
+
+	/* Zero extend to a new width.
+	 * 
+	 *  This operation zero extends the APInt to a new width. The high order bits
+	 *  are filled with 0 bits.  It is an error to specify a width that is less
+	 * than or equal to the current width.
+	 */
+	public APInt zext(int width){
+		if(width < numBits) {
+			throw new IllegalArgumentException("Invalid APInt ZeroExtend request");
+		}
+
+		if (width <= AP_INT_BITS_PER_WORD) {
+			return new APInt(width, unsignedVals, false);
+		}
+
+		// TODO Implement this
+		/*
+					  APInt Result(getMemory(getNumWords(width)), width);
+
+					  // Copy words.
+					  std::memcpy(Result.U.pVal, getRawData(), getNumWords() * APINT_WORD_SIZE);
+
+					  // Zero remaining words.
+					  std::memset(Result.U.pVal + getNumWords(), 0,
+					              (Result.getNumWords() - getNumWords()) * APINT_WORD_SIZE);
+
+					  return Result;
+		 */
+		return null;
+	}
+
+	/* Sign extend or truncate to width
+
+	 * Make this APInt have the bit width given by width. The value is sign
+	 * extended, truncated, or left alone to make it that width.
+	 */
+	public APInt sextOrTrunc(int width){
+		if (numBits < width)
+			return sext(width);
+		if (numBits > width)
+			return trunc(width);
+		return this;
+	}
+
+	/* Zero extend or truncate to width
+	 *
+	 * Make this APInt have the bit width given by width. The value is zero
+	 * extended, truncated, or left alone to make it that width.
+	 */
+	public APInt zextOrTrunc(int width){
+		if (numBits < width)
+			return zext(width);
+		if (numBits > width)
+			return trunc(width);
+		return this;
+	}
+
+	/* Sign extend or truncate to width
+	 * Make this APInt have the bit width given by \p width. The value is sign
+	 * extended, or left alone to make it that width.
+	 */
+	public APInt sextOrSelf(int width) {
+		if (numBits < width) {
+			return sext(width);
+		}
+
+		return this;
+	}
+
+	/* Zero extend or truncate to width
+	 * Make this APInt have the bit width given by \p width. The value is zero
+	 * extended, or left alone to make it that width.
+	 */
+	public APInt zextOrSelf(int width) {
+		if (numBits < width) {
+			return zext(width);
+		}
+
+		return this;
+	}
 
 	// ****************************************************************** BIT MANIPULATION OPERATORS ************************************************************
 
@@ -1767,7 +2043,7 @@ public class APInt {
 			throw new IllegalArgumentException("More bits than bitwidth");
 		}
 
-		APInt Keep = getHighBitsSet(numBits, numBits - loBits);
+		APInt Keep = APIntUtils.getHighBitsSet(numBits, numBits - loBits);
 		this.andAssign(Keep);
 	}
 
@@ -2151,7 +2427,7 @@ public class APInt {
 			unsignedVals[0] = unsignedVals[0].add(RHS);
 		}
 		else {
-			tcAddPart(unsignedVals, RHS, getNumWords());
+			APIntUtils.tcAddPart(unsignedVals, RHS, getNumWords());
 		}
 
 		return clearUnusedBits();
@@ -2210,122 +2486,6 @@ public class APInt {
 
 	public APInt shiftLeft(int numBits) {
 		return null;
-	}
-
-	/* Zero extend to a new width.
-	 * 
-	 *  This operation zero extends the APInt to a new width. The high order bits
-	 *  are filled with 0 bits.  It is an error to specify a width that is less
-	 * than or equal to the current width.
-	 */
-	public APInt zext(int width){
-		if(width < numBits) {
-			throw new IllegalArgumentException("Invalid APInt ZeroExtend request");
-		}
-
-		if (width <= AP_INT_BITS_PER_WORD) {
-			return new APInt(width, unsignedVals, false);
-		}
-
-		// TODO Implement this
-		/*
-		  APInt Result(getMemory(getNumWords(width)), width);
-
-		  // Copy words.
-		  std::memcpy(Result.U.pVal, getRawData(), getNumWords() * APINT_WORD_SIZE);
-
-		  // Zero remaining words.
-		  std::memset(Result.U.pVal + getNumWords(), 0,
-		              (Result.getNumWords() - getNumWords()) * APINT_WORD_SIZE);
-
-		  return Result;
-		 */
-		return null;
-	}
-
-	/* Sign extend to a new width.
-	 *
-	 * This operation sign extends the APInt to a new width. If the high order
-	 * bit is set, the fill on the left will be done with 1 bits, otherwise zero.
-	 * It is an error to specify a width that is less than or equal to the
-	 * current width.
-	 */
-	public APInt sext(int width){
-		if(width < numBits) {
-			throw new IllegalArgumentException("Invalid APInt SignExtend request");
-		}
-
-		if (width <= AP_INT_BITS_PER_WORD) {
-			long signExtended = MathUtils.signExtend64(unsignedVals[0], numBits);
-			return new APInt(width, new ULong[] {ULong.valueOf(signExtended)}, false);
-		}
-
-		// TODO Implement this
-		/*
-		  APInt Result(getMemory(getNumWords(Width)), Width);
-
-		  // Copy words.
-		  std::memcpy(Result.U.pVal, getRawData(), getNumWords() * APINT_WORD_SIZE);
-
-		  // Sign extend the last word since there may be unused bits in the input.
-		  Result.U.pVal[getNumWords() - 1] =
-		      SignExtend64(Result.U.pVal[getNumWords() - 1],
-		                   ((BitWidth - 1) % APINT_BITS_PER_WORD) + 1);
-
-		  // Fill with sign bits.
-		  std::memset(Result.U.pVal + getNumWords(), isNegative() ? -1 : 0,
-		              (Result.getNumWords() - getNumWords()) * APINT_WORD_SIZE);
-		  Result.clearUnusedBits();
-		  return Result;
-		 */
-		return null;
-	}
-
-	/* Sign extend or truncate to width
-
-	 * Make this APInt have the bit width given by width. The value is sign
-	 * extended, truncated, or left alone to make it that width.
-	 */
-	public APInt sextOrTrunc(int width){
-		if (numBits < width)
-			return sext(width);
-		if (numBits > width)
-			return trunc(width);
-		return this;
-	}
-
-	/* Zero extend or truncate to width
-	 *
-	 * Make this APInt have the bit width given by width. The value is zero
-	 * extended, truncated, or left alone to make it that width.
-	 */
-	public APInt zextOrTrunc(int width){
-		if (numBits < width)
-			return zext(width);
-		if (numBits > width)
-			return trunc(width);
-		return this;
-	}
-
-	/*Unsigned less than comparison
-	  ///
-	  /// Regards both *this and RHS as unsigned quantities and compares them for
-	  /// the validity of the less-than relationship.
-	  ///
-	  /// \returns true if *this < RHS when both are considered unsigned.
-	 */
-	public boolean ult(APInt RHS) { return compare(RHS) < 0; }
-
-	/* Unsigned less than comparison
-	  ///
-	  /// Regards both *this as an unsigned quantity and compares it with RHS for
-	  /// the validity of the less-than relationship.
-	  ///
-	  /// \returns true if *this < RHS when considered unsigned.
-	 */
-	public boolean ult(ULong RHS) {
-		// Only need to check active bits if not a single word.
-		return (isSingleWord() || getActiveBits() <= 64) && getZExtValueNew().isLesserThan(RHS);
 	}
 
 	/* Determine if this APInt just has one word to store value.
@@ -2419,23 +2579,6 @@ public class APInt {
 		this.unsignedVals = unsignedVals;
 	}
 
-
-	/* Equality check.
-	 * Compares this APInt with RHS for the validity of the equality
-	 * relationship.
-	 */
-	public boolean equals(APInt RHS) {
-		if(numBits != RHS.getNumBits()) {
-			throw new IllegalArgumentException("Comparison requires equal bit widths");
-		}
-
-		if (isSingleWord()) {
-			return unsignedVals[0].equals(RHS.getUnsignedVals()[0]);
-		}
-
-		return equalSlowCase(RHS);
-	}
-
 	public boolean equalSlowCase(APInt RHS) {
 		for(int i = 0; i < getNumWords(); i++) {
 			ULong val = unsignedVals[i];
@@ -2447,32 +2590,6 @@ public class APInt {
 
 		return true;
 	}
-
-	/* Equality comparison.
-	 *
-	 * Compares this APInt with a ULong for the validity of the equality
-	 * relationship.
-	 * Returns true if this == val
-	 */
-	public boolean equals(ULong val) {
-		return (isSingleWord() || getActiveBits() <= 64) && getZExtValueNew().equals(val);
-	}
-
-	/* Inequality comparison.
-	 * Compares this APInt with RHS for the validity of the inequality
-	 * relationship.
-	 *
-	 * Returns true if this != Val
-	 */
-	public boolean notEquals(APInt RHS) { return !equals(RHS); }
-
-	/* Inequality comparison.
-	 * Compares this APInt with a ULong for the validity of the inequality
-	 * relationship.
-	 *
-	 * Returns true if this != Val
-	 */
-	public boolean notEquals(ULong Val) { return !equals(Val); }
 
 	/* Signed comparison. Returns -1, 0, or 1 if this APInt is less than, equal
 	 * to, or greater than RHS.
@@ -2499,9 +2616,7 @@ public class APInt {
 		// Otherwise we can just use an unsigned comparison, because even negative
 		// numbers compare correctly this way if both have the same signed-ness.
 
-		// TODO Implement this
-		//return tcCompare(U.pVal, RHS.U.pVal, getNumWords());
-		return -1;
+		return APIntUtils.tcCompare(unsignedVals, RHS.unsignedVals, getNumWords());
 	}
 
 	protected int compare(APInt RHS) {
@@ -2513,146 +2628,8 @@ public class APInt {
 				(unsignedVals[0].isGreaterThan(RHS.unsignedVals[0]) ? -1 : 1);
 		}
 
-		// TODO Implement this
-		// return tcCompare(U.pVal, RHS.U.pVal, getNumWords());
-		return -1;
+		return APIntUtils.tcCompare(unsignedVals, RHS.unsignedVals, getNumWords());
 	}
-
-	/* Signed less than comparison
-	 *
-	 * Regards both *this and RHS as signed quantities and compares them for
-	 * validity of the less-than relationship.
-	 *
-	 * \returns true if *this < RHS when both are considered signed.
-	 */
-	public boolean slt(APInt RHS){ return compareSigned(RHS) < 0; }
-
-	/*  Signed less than comparison
-	 *
-	 * Regards both *this as a signed quantity and compares it with RHS for
-	 * the validity of the less-than relationship.
-	 *
-	 * \returns true if *this < RHS when considered signed.
-	 */
-	boolean slt(long RHS){
-		return (!isSingleWord() && getMinSignedBits() > 64) ? isNegative()
-				: getSExtValue() < RHS;
-	}
-
-	/*  Unsigned less or equal comparison
-	 *
-	 * Regards both *this and RHS as unsigned quantities and compares them for
-	 * validity of the less-or-equal relationship.
-	 *
-	 * \returns true if *this <= RHS when both are considered unsigned.
-	 */
-	public boolean ule(APInt RHS){ return compare(RHS) <= 0; }
-
-	/*  Unsigned less or equal comparison
-	 *
-	 * Regards both *this as an unsigned quantity and compares it with RHS for
-	 * the validity of the less-or-equal relationship.
-	 *
-	 * \returns true if *this <= RHS when considered unsigned.
-	 */
-	boolean ule(ULong RHS){ return !ugt(RHS); }
-
-	/*  Signed less or equal comparison
-	 *
-	 * Regards both *this and RHS as signed quantities and compares them for
-	 * validity of the less-or-equal relationship.
-	 *
-	 * \returns true if *this <= RHS when both are considered signed.
-	 */
-	public boolean sle(APInt RHS){ return compareSigned(RHS) <= 0; }
-
-	/*  Signed less or equal comparison
-	 *
-	 * Regards both *this as a signed quantity and compares it with RHS for the
-	 * validity of the less-or-equal relationship.
-	 *
-	 * \returns true if *this <= RHS when considered signed.
-	 */
-	public boolean sle(long RHS){ return !sgt(RHS); }
-
-	/*  Unsigned greater than comparison
-	 *
-	 * Regards both *this and RHS as unsigned quantities and compares them for
-	 * the validity of the greater-than relationship.
-	 *
-	 * \returns true if *this > RHS when both are considered unsigned.
-	 */
-	public boolean ugt(APInt RHS){ return !ule(RHS); }
-
-	/*  Unsigned greater than comparison
-	 *
-	 * Regards both *this as an unsigned quantity and compares it with RHS for
-	 * the validity of the greater-than relationship.
-	 *
-	 * \returns true if *this > RHS when considered unsigned.
-	 */
-	public boolean ugt(ULong RHS){
-		// Only need to check active bits if not a single word.
-		return (!isSingleWord() && getActiveBits() > 64) || getZExtValueNew().isGreaterThan(RHS);
-	}
-
-	/*  Signed greater than comparison
-	 *
-	 * Regards both *this and RHS as signed quantities and compares them for the
-	 * validity of the greater-than relationship.
-	 *
-	 * \returns true if *this > RHS when both are considered signed.
-	 */
-	public boolean sgt(APInt RHS){ return !sle(RHS); }
-
-	/*  Signed greater than comparison
-	 *
-	 * Regards both *this as a signed quantity and compares it with RHS for
-	 * the validity of the greater-than relationship.
-	 *
-	 * \returns true if *this > RHS when considered signed.
-	 */
-	public boolean sgt(long RHS){
-		return (!isSingleWord() && getMinSignedBits() > 64) ? !isNegative()
-				: getSExtValue() > RHS;
-	}
-
-	/*  Unsigned greater or equal comparison
-	 *
-	 * Regards both *this and RHS as unsigned quantities and compares them for
-	 * validity of the greater-or-equal relationship.
-	 *
-	 * \returns true if *this >= RHS when both are considered unsigned.
-	 */
-	public boolean uge(APInt RHS){ return !ult(RHS); }
-
-	/*  Unsigned greater or equal comparison
-	 *
-	 * Regards both *this as an unsigned quantity and compares it with RHS for
-	 * the validity of the greater-or-equal relationship.
-	 *
-	 * \returns true if *this >= RHS when considered unsigned.
-	 */
-	public boolean uge(ULong RHS){ return !ult(RHS); }
-
-	/*  Signed greater or equal comparison
-	 *
-	 * Regards both *this and RHS as signed quantities and compares them for
-	 * validity of the greater-or-equal relationship.
-	 *
-	 * \returns true if *this >= RHS when both are considered signed.
-	 */
-	public boolean sge(APInt RHS){ return !slt(RHS); }
-
-	/*  Signed greater or equal comparison
-	 *
-	 * Regards both *this as a signed quantity and compares it with RHS for
-	 * the validity of the greater-or-equal relationship.
-	 *
-	 * \returns true if *this >= RHS when considered signed.
-	 */
-	public boolean sge(long RHS){ return !slt(RHS); }
-
 
 	/* Get zero extended value
 	 *
@@ -2701,44 +2678,6 @@ public class APInt {
 		// TODO Implement this
 		// return &U.pVal[0];
 		return null;
-	}
-
-
-	/* Truncate to new width.
-	 *
-	 * Truncate the APInt to a specified width. It is an error to specify a width
-	 *  that is greater than or equal to the current width.
-	 */
-	public APInt trunc(int width) {
-		if(width >= numBits) {
-			throw new IllegalArgumentException("Invalid APInt Truncate request");
-		}
-		if(width <= 0) {
-			throw new IllegalArgumentException("Can't truncate to 0 bits");
-		}
-
-		APInt result = null;
-		if (width <= AP_INT_BITS_PER_WORD) {
-			result = new APInt(width, unsignedVals, false);
-			return result;
-		}
-
-		// TODO Implement this
-		/*APInt Result(getMemory(getNumWords(width)), width);
-
-		// Copy full words.
-		unsigned i;
-		for (i = 0; i != width / APINT_BITS_PER_WORD; i++)
-			Result.U.pVal[i] = U.pVal[i];
-
-		// Truncate and copy any partial word.
-		unsigned bits = (0 - width) % APINT_BITS_PER_WORD;
-		if (bits != 0)
-			Result.U.pVal[i] = U.pVal[i] << bits >> bits;
-
-		return Result;
-		 */
-		return result;
 	}
 
 	/* Arithmetic right-shift this APInt by ShiftAmt in place.
@@ -2792,193 +2731,7 @@ public class APInt {
 		return -1;
 	}
 
-	/*
-	 * DST += RHS + CARRY where CARRY is zero or one.  Returns the carry flag.
-	 */
 
-	protected static ULong tcAdd(ULong[] dst, ULong[] rhs, ULong carry, int numWords) {
-		if(carry.isGreaterThan(1)) {
-			throw new IllegalArgumentException("Carry can only be 0 or 1");
-		}
-
-		for (int i = 0; i < numWords; i++) {
-			ULong l = dst[i];
-			if (carry.isGreaterThan(0)) {
-				dst[i] = dst[i].add(rhs[i]).add(1);
-				carry = dst[i].isLesserThanOrEqualTo(1) ? ULong.valueOf(1) : ULong.valueOf(0);
-			} else {
-				dst[i] = dst[i].add(rhs[i]);
-				carry = dst[i].isLesserThan(1) ? ULong.valueOf(1) : ULong.valueOf(0);
-			}
-		}
-
-		return carry;
-	}
-
-	/// DST -= RHS + CARRY where CARRY is zero or one. Returns the carry flag.
-	protected static ULong tcSubtract(ULong[] dst, ULong[] rhs, ULong carry, int parts) {
-		if(carry.isGreaterThan(1)) {
-			throw new IllegalArgumentException("Carry can only be 0 or 1");
-		}
-
-		for (int i = 0; i < parts; i++) {
-			ULong l = dst[i];
-			if (carry.equals(ULong.valueOf(1))) {
-				dst[i] = dst[i].subtract(rhs[i].add(1));
-				carry = dst[i].isGreaterThanOrEqualTo(1) ? ULong.valueOf(1) : ULong.valueOf(0);
-			} else {
-				dst[i] = dst[i].subtract(rhs[i]);
-				carry = dst[i].isGreaterThan(1) ? ULong.valueOf(1) : ULong.valueOf(0);
-			}
-		}
-
-		return carry;
-	}
-
-	/*  DST += RHS.  Returns the carry flag.
-	 *  This function adds a single "word" integer, src, to the multiple
-	 * "word" integer array, dst[]. dst[] is modified to reflect the addition and
-	 * 1 is returned if there is a carry out, otherwise 0 is returned.
-	 *  @returns the carry of the addition.
-	 */
-	public static ULong tcAddPart(ULong[] dst, ULong src, int parts) {
-		for (int i = 0; i < parts; ++i) {
-			dst[i] = dst[i].add(src);
-			if (dst[i].isGreaterThanOrEqualTo(src))
-				return ULong.valueOf(0); // No need to carry so exit early.
-			src = ULong.valueOf(1); // Carry one to next digit.
-		}
-
-		return ULong.valueOf(1);
-	}
-
-	/* DST -= RHS.  Returns the carry flag.
-	 * This function subtracts a single "word" (64-bit word), src, from
-	 * the multi-word integer array, dst[], propagating the borrowed 1 value until
-	 * no further borrowing is needed or it runs out of "words" in dst.  The result
-	 * is 1 if "borrowing" exhausted the digits in dst, or 0 if dst was not
-	 * exhausted. In other words, if src > dst then this function returns 1,
-	 * otherwise 0.
-	 * Returns the borrow out of the subtraction
-	 */
-	public static ULong tcSubtractPart(ULong[] dst, ULong src, int parts) {
-		for (int i = 0; i < parts; ++i) {
-			ULong Dst = dst[i];
-			dst[i] = dst[i].subtract(src);
-			if (src.isLesserThanOrEqualTo(Dst)) {
-				return ULong.valueOf(0); // No need to borrow so exit early.
-			}
-
-			src = ULong.valueOf(1);    // We have to "borrow 1" from next "word"
-		}
-
-		return ULong.valueOf(1);
-	}
-
-
-	/* DST += SRC * MULTIPLIER + PART   if add is true
-	 * DST  = SRC * MULTIPLIER + PART   if add is false
-	 *
-	 * Requires 0 <= DSTPARTS <= SRCPARTS + 1.  If DST overlaps SRC they must
-	 * start at the same point, i.e. DST == SRC.
-	 *
-	 * If DSTPARTS == SRC_PARTS + 1 no overflow occurs and zero is returned.
-	 * Otherwise DST is filled with the least significant DSTPARTS parts of the
-	 * result, and if all of the omitted higher parts were zero return zero,
-	 * otherwise overflow occurred and return one.
-	 */
-	public static int tcMultiplyPart(ULong[] dst, ULong[] src,
-			ULong multiplier, ULong carry, int srcParts, int dstParts, boolean add) {
-		/* Otherwise our writes of DST kill our later reads of SRC.  */
-		/*if(dst.isGreaterThan(src) || dst < src + srcParts) {
-
-		}
-		assert(dstParts <= srcParts + 1);
-		 */
-
-		/* N loops; minimum of dstParts and srcParts.  */
-		int n = dstParts < srcParts ? dstParts : srcParts;
-
-		for (int i = 0; i < n; i++) {
-			ULong low, mid, high, srcPart;
-
-			/* [ LOW, HIGH ] = MULTIPLIER * SRC[i] + DST[i] + CARRY.
-
-		         This cannot overflow, because
-
-		         (n - 1) * (n - 1) + 2 (n - 1) = (n - 1) * (n + 1)
-
-		         which is less than n^2.  */
-
-			srcPart = src[i];
-
-			if (multiplier.longValue() == 0 || srcPart.longValue() == 0) {
-				low = carry;
-				high = ULong.valueOf(0);
-			} else {
-				low = lowHalf(srcPart).mul(lowHalf(multiplier));
-				high = highHalf(srcPart).mul(highHalf(multiplier));
-
-				mid = lowHalf(srcPart).mul(highHalf(multiplier));
-				high = high.add(highHalf(mid));
-				mid = mid.leftShift(AP_INT_BITS_PER_WORD / 2);
-				if (low.add(mid).isLesserThan(low)) {
-					high = high.add(ULong.valueOf(1));
-				}
-				low = low.add(mid);
-
-				mid = highHalf(srcPart).mul(lowHalf(multiplier));
-				high = high.add(highHalf(mid));
-				mid = mid.leftShift(AP_INT_BITS_PER_WORD / 2);
-				if (low.add(mid).isLesserThan(low)) {
-					high = high.add(ULong.valueOf(1));
-				}
-				low = low.add(mid);
-
-				/* Now add carry.  */
-				if (low.add(carry).isLesserThan(low)) {
-					high = high.add(ULong.valueOf(1));
-				}
-				low = low.add(carry);
-			}
-
-			if (add) { /* And now DST[i], and store the new low part there.  */
-				if (low.add(dst[i]).isLesserThan(low)) {
-					high = high.add(ULong.valueOf(1));
-				}
-				dst[i] = dst[i].add(low);
-			} else
-				dst[i] = low;
-
-			carry = high;
-		}
-
-		if (srcParts < dstParts) {
-			/* Full multiplication, there is no overflow.  */
-			assert(srcParts + 1 == dstParts);
-			dst[srcParts] = carry;
-			return 0;
-		}
-
-		/* We overflowed if there is carry.  */
-		if (carry.isGreaterThan(ULong.valueOf(0))) {
-			return 1;
-		}
-
-		/* We would overflow if any significant unwritten parts would be
-		     non-zero.  This is true if any remaining src parts are non-zero
-		     and the multiplier is non-zero.  */
-		if (multiplier.isGreaterThan(ULong.valueOf(0))) {
-			for (int i = dstParts; i < srcParts; i++) {
-				if (src[i].isGreaterThan(ULong.valueOf(0))) {
-					return 1;
-				}
-			}
-		}
-
-		/* We fitted in the narrow destination.  */
-		return 0;
-	}
 
 
 	/* Determine which word a bit is in.
@@ -3005,7 +2758,7 @@ public class APInt {
 		// Adjust for unused bits in the most significant word (they are zero).
 		int Mod = numBits % AP_INT_BITS_PER_WORD;
 		Count -= Mod > 0 ? AP_INT_BITS_PER_WORD - Mod : 0;
-		return Count;
+			return Count;
 	}
 
 	/* Slow case for countLeadingZeros */
@@ -3085,26 +2838,6 @@ public class APInt {
 		return this;
 	}
 
-	/* Returns the integer part with the least significant BITS set.
-	   BITS cannot be zero.  */
-	private static ULong lowBitMask(int bits) {
-		if(bits == 0 || bits > AP_INT_BITS_PER_WORD) {
-			throw new IllegalArgumentException("Invalid number of bits");
-		}
-
-		return ULong.valueOf(0).complement().rightShift(AP_INT_BITS_PER_WORD - bits);
-	}
-
-	/* Returns the value of the lower half of PART.  */
-	private static ULong lowHalf(ULong part) {
-		return part.and(lowBitMask(AP_INT_BITS_PER_WORD / 2));
-	}
-
-	/* Returns the value of the upper half of PART.  */
-	private static ULong highHalf(ULong part) {
-		return part.rightShift(AP_INT_BITS_PER_WORD / 2);
-	}
-
 	public int countTrailingOnesSlowCase() {
 		int Count = 0;
 		int i = 0;
@@ -3136,36 +2869,7 @@ public class APInt {
 	 * Logical right-shift function.
 	 */
 	public void lshrSlowCase(int ShiftAmt) {
-		tcShiftRight(unsignedVals, getNumWords(), ShiftAmt);
-	}
-
-	/// Shift a bignum right Count bits in-place. Shifted in bits are zero. There
-	/// are no restrictions on Count.
-	public void tcShiftRight(ULong[] Dst, int Words, int Count) {
-		// Don't bother performing a no-op shift.
-		if (Count <= 0)
-			return;
-
-		// WordShift is the inter-part shift; BitShift is the intra-part shift.
-		int WordShift = Count / AP_INT_BITS_PER_WORD < Words ? Count / AP_INT_BITS_PER_WORD : Count;
-		int BitShift = Count % AP_INT_BITS_PER_WORD;
-
-		int WordsToMove = Words - WordShift;
-		// Fastpath for moving by whole words.
-		if (BitShift == 0) {
-			// TODO Implement this
-			// std::memmove(Dst, Dst + WordShift, WordsToMove * APINT_WORD_SIZE);
-		} else {
-			for (int i = 0; i != WordsToMove; ++i) {
-				Dst[i] = Dst[i + WordShift].rightShift(BitShift);
-				if (i + 1 != WordsToMove)
-					Dst[i] = Dst[i].or(Dst[i + WordShift + 1].leftShift(AP_INT_BITS_PER_WORD - BitShift));
-			}
-		}
-
-		// Fill in the remainder with 0s.
-		// TODO Implement this
-		//std::memset(Dst + WordsToMove, 0, WordShift * APINT_WORD_SIZE);
+		APIntUtils.tcShiftRight(unsignedVals, getNumWords(), ShiftAmt);
 	}
 
 	/*
@@ -3238,18 +2942,6 @@ public class APInt {
 		}
 	}
 
-	/* Zero extend or truncate to width
-	 * Make this APInt have the bit width given by \p width. The value is zero
-	 * extended, or left alone to make it that width.
-	 */
-	public APInt zextOrSelf(int width) {
-		if (numBits < width) {
-			return zext(width);
-		}
-
-		return this;
-	}
-
 	/* Utility method to change the bit width of this APInt to new bit width,
 	 * allocating and/or deallocating as necessary. There is no guarantee on the
 	 * value of any bits upon return. Caller should populate the bits after.
@@ -3297,48 +2989,22 @@ public class APInt {
 	 *  Slow case for operator &=.
 	 */
 	public void AndAssignSlowCase(APInt RHS) {
-		tcAnd(unsignedVals, RHS.getUnsignedVals(), getNumWords());
+		APIntUtils.tcAnd(unsignedVals, RHS.getUnsignedVals(), getNumWords());
 	}
 
 	/*
 	 *  Slow case for operator |=.
 	 */
 	public void OrAssignSlowCase(APInt RHS) {
-		tcOr(unsignedVals, RHS.unsignedVals, getNumWords());
+		APIntUtils.tcOr(unsignedVals, RHS.unsignedVals, getNumWords());
 	}
 
 	/*
 	 *  Slow case for operator ^=.
 	 */
 	public void XorAssignSlowCase(APInt RHS) {
-		tcXOr(unsignedVals, RHS.unsignedVals, getNumWords());
+		APIntUtils.tcXOr(unsignedVals, RHS.unsignedVals, getNumWords());
 	}
-
-	/// The obvious AND, OR and XOR and complement operations.
-	protected static void tcAnd(ULong[] dst, ULong[] rhs, int parts) {
-		for (int i = 0; i < parts; i++) {
-			dst[i] = dst[i].and(rhs[i]);
-		}
-	}
-
-	protected static void tcOr(ULong[] dst, ULong[] rhs, int parts) {
-		for (int i = 0; i < parts; i++) {
-			dst[i] = dst[i].or(rhs[i]);
-		}
-	}
-
-	protected static void tcXOr(ULong[] dst, ULong[] rhs, int parts) {
-		for (int i = 0; i < parts; i++) {
-			dst[i] = dst[i].xor(rhs[i]);
-		}
-	}
-
-	protected static void tcComplement(ULong[] dst, int parts) {
-		for (int i = 0; i < parts; i++) {
-			dst[i] = dst[i].complement();
-		}
-	}
-
 
 	/// out-of-line slow case for setBits.
 	public void setBitsSlowCase(int loBit, int hiBit) {
@@ -3374,48 +3040,8 @@ public class APInt {
 
 	/// Slow case for shl
 	public void shlSlowCase(int ShiftAmt) {
-		tcShiftLeft(unsignedVals, getNumWords(), ShiftAmt);
+		APIntUtils.tcShiftLeft(unsignedVals, getNumWords(), ShiftAmt);
 		clearUnusedBits();
-	}
-
-	/// Increment a bignum in-place.  Return the carry flag.
-	public static ULong tcIncrement(ULong[] dst, int parts) {
-		return tcAddPart(dst, ULong.valueOf(1), parts);
-	}
-
-	/// Decrement a bignum in-place.  Return the borrow flag.
-	public static ULong tcDecrement(ULong[]  dst, int parts) {
-		return tcSubtractPart(dst, ULong.valueOf(1), parts);
-	}
-
-	public static void tcShiftLeft(ULong[] Dst, int Words, int Count) {
-
-		if (Count <= 0) { // Don't bother performing a no-op shift.
-			return;
-		}
-
-		// WordShift is the inter-part shift; BitShift is the intra-part shift.
-		int WordShift = Count / AP_INT_BITS_PER_WORD < Words ? Count / AP_INT_BITS_PER_WORD : Words;
-		int BitShift = Count % AP_INT_BITS_PER_WORD;
-
-		// Fastpath for moving by whole words.
-		if (BitShift == 0) {
-			for(int i = 0; i < (Words - WordShift); i++) {
-				Dst[WordShift + i] = Dst[i];
-			}
-		} 
-		else {
-			while (Words-- > WordShift) {
-				Dst[Words] = Dst[Words - WordShift].leftShift(BitShift);
-				if (Words > WordShift)
-					Dst[Words] = Dst[Words].or(Dst[Words - WordShift - 1].rightShift((AP_INT_BITS_PER_WORD - BitShift)));
-			}
-		}
-
-		// Fill in the remainder with 0s.
-		for(int i = 0; i < WordShift; i++) {
-			Dst[i] = ULong.valueOf(0);
-		}
 	}
 
 	/* 
@@ -3458,13 +3084,13 @@ public class APInt {
 	}
 
 
-	  /* Get the word corresponding to a bit position
+	/* Get the word corresponding to a bit position
 	  /// \returns the corresponding word for the specified bit position.
-	   */
+	 */
 	public ULong getWord(int bitPosition) {
-	    return isSingleWord() ? unsignedVals[0] : unsignedVals[whichWord(bitPosition)];
-	  }
-	
+		return isSingleWord() ? unsignedVals[0] : unsignedVals[whichWord(bitPosition)];
+	}
+
 	/*
 	private static final short CHAR_BIT = 8;
 	private long WordType;
@@ -3508,9 +3134,6 @@ public class APInt {
 
 	  /// out-of-line slow case for countLeadingOnes.
 	  unsigned countLeadingOnesSlowCase() const LLVM_READONLY;
-
-	  /// out-of-line slow case for intersects.
-	  bool intersectsSlowCase(APInt &RHS) const LLVM_READONLY;
 
 	  /// out-of-line slow case for isSubsetOf.
 	  bool isSubsetOfSlowCase(APInt &RHS) const LLVM_READONLY;
@@ -3578,44 +3201,6 @@ public class APInt {
 	  /// Used to insert APInt objects, or objects that contain APInt objects, into
 	  ///  FoldingSets.
 	  void Profile(FoldingSetNodeID &id) const;
-
-
-
-	  /// This operation tests if there are any pairs of corresponding bits
-	  /// between this APInt and RHS that are both set.
-	  bool intersects(APInt &RHS) const {
-	    assert(BitWidth == RHS.BitWidth && "Bit widths must be the same");
-	    if (isSingleWord())
-	      return (U.VAL & RHS.U.VAL) != 0;
-	    return intersectsSlowCase(RHS);
-	  }
-
-	  /// This operation checks that all bits set in this APInt are also set in RHS.
-	  bool isSubsetOf(APInt &RHS) const {
-	    assert(BitWidth == RHS.BitWidth && "Bit widths must be the same");
-	    if (isSingleWord())
-	      return (U.VAL & ~RHS.U.VAL) == 0;
-	    return isSubsetOfSlowCase(RHS);
-	  }
-
-	  /// Truncate to new width with unsigned saturation.
-	  ///
-	  /// If the APInt, treated as unsigned integer, can be losslessly truncated to
-	  /// the new bitwidth, then return truncated APInt. Else, return max value.
-	  APInt truncUSat(unsigned width) const;
-
-	  /// Truncate to new width with signed saturation.
-	  ///
-	  /// If this APInt, treated as signed integer, can be losslessly truncated to
-	  /// the new bitwidth, then return truncated APInt. Else, return either
-	  /// signed min value if the APInt was negative, or signed max value.
-	  APInt truncSSat(unsigned width) const;
-
-	  /// Sign extend or truncate to width
-	  ///
-	  /// Make this APInt have the bit width given by \p width. The value is sign
-	  /// extended, or left alone to make it that width.
-	  APInt sextOrSelf(unsigned width) const;
 
 	  /// @}
 	  /// \name Value Characterization Functions
@@ -3832,94 +3417,6 @@ public class APInt {
 	  struct mu;
 	  mu magicu(unsigned LeadingZeros = 0) const;
 
-	  /// @}
-	  /// \name Building-block Operations for APInt and APFloat
-	  /// @{
-
-	  // These building block operations operate on a representation of arbitrary
-	  // precision, two's-complement, bignum integer values. They should be
-	  // sufficient to implement APInt and APFloat bignum requirements. Inputs are
-	  // generally a pointer to the base of an array of integer parts, representing
-	  // an unsigned bignum, and a count of how many parts there are.
-
-	  /// Sets the least significant part of a bignum to the input value, and zeroes
-	  /// out higher parts.
-	  static void tcSet(WordType *, WordType, unsigned);
-
-	  /// Assign one bignum to another.
-	  static void tcAssign(WordType *, const WordType *, unsigned);
-
-	  /// Returns true if a bignum is zero, false otherwise.
-	  static bool tcIsZero(WordType *, unsigned);
-
-	  /// Extract the given bit of a bignum; returns 0 or 1.  Zero-based.
-	  static int tcExtractBit(WordType *, unsigned bit);
-
-	  /// Copy the bit vector of width srcBITS from SRC, starting at bit srcLSB, to
-	  /// DST, of dstCOUNT parts, such that the bit srcLSB becomes the least
-	  /// significant bit of DST.  All high bits above srcBITS in DST are
-	  /// zero-filled.
-	  static void tcExtract(WordType *, unsigned dstCount,
-	                        const WordType *, unsigned srcBits,
-	                        unsigned srcLSB);
-
-	  /// Set the given bit of a bignum.  Zero-based.
-	  static void tcSetBit(WordType *, unsigned bit);
-
-	  /// Clear the given bit of a bignum.  Zero-based.
-	  static void tcClearBit(WordType *, unsigned bit);
-
-	  /// Returns the bit number of the least or most significant set bit of a
-	  /// number.  If the input number has no bits set -1U is returned.
-	  static unsigned tcLSB(WordType *, unsigned n);
-	  static unsigned tcMSB(WordType *parts, unsigned n);
-
-	  /// Negate a bignum in-place.
-	  static void tcNegate(WordType *, unsigned);
-
-	  /// DST = LHS * RHS, where DST has the same width as the operands and is
-	  /// filled with the least significant parts of the result.  Returns one if
-	  /// overflow occurred, otherwise zero.  DST must be disjoint from both
-	  /// operands.
-	  static int tcMultiply(WordType *, const WordType *, const WordType *,
-	                        unsigned);
-
-	  /// DST = LHS * RHS, where DST has width the sum of the widths of the
-	  /// operands. No overflow occurs. DST must be disjoint from both operands.
-	  static void tcFullMultiply(WordType *, const WordType *,
-	                             const WordType *, unsigned, unsigned);
-
-	  /// If RHS is zero LHS and REMAINDER are left unchanged, return one.
-	  /// Otherwise set LHS to LHS / RHS with the fractional part discarded, set
-	  /// REMAINDER to the remainder, return zero.  i.e.
-	  ///
-	  ///  OLD_LHS = RHS * LHS + REMAINDER
-	  ///
-	  /// SCRATCH is a bignum of the same size as the operands and result for use by
-	  /// the routine; its contents need not be initialized and are destroyed.  LHS,
-	  /// REMAINDER and SCRATCH must be distinct.
-	  static int tcDivide(WordType *lhs, const WordType *rhs,
-	                      WordType *remainder, WordType *scratch,
-	                      unsigned parts);
-
-	  /// Shift a bignum left Count bits. Shifted in bits are zero. There are no
-	  /// restrictions on Count.
-	  static void tcShiftLeft(WordType *, unsigned Words, unsigned Count);
-
-	  /// Shift a bignum right Count bits.  Shifted in bits are zero.  There are no
-	  /// restrictions on Count.
-	  static void tcShiftRight(WordType *, unsigned Words, unsigned Count);
-
-	  /// Comparison (unsigned) of two bignums.
-	  static int tcCompare(WordType *, const WordType *, unsigned);
-
-	  /// Set the least significant BITS and clear the rest.
-	  static void tcSetLeastSignificantBits(WordType *, unsigned, unsigned bits);
-
-	  /// debug method
-	  void dump() const;
-
-	  /// @}
 	};
 
 	/// Magic data for optimising signed division by a constant.
