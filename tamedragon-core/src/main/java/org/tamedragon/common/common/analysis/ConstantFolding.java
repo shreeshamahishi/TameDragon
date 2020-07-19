@@ -207,11 +207,11 @@ public class ConstantFolding {
 					}
 					return ConstantInt.create(CI1.getContext(), C1V.srem(C2V));
 				case AND:
-					return ConstantInt.create(CI1.getContext(), C1V.andWith(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.and(C2V));
 				case OR:
 					return ConstantInt.create(CI1.getContext(), C1V.or(C2V));
 				case XOR:
-					return ConstantInt.create(CI1.getContext(), C1V.xorWith(C2V));
+					return ConstantInt.create(CI1.getContext(), C1V.xor(C2V));
 				case SHL:
 					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
 						return ConstantInt.create(CI1.getContext(), C1V.shl(C2V));

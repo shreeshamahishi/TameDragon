@@ -117,4 +117,67 @@ public class MathUtils {
 
 		return N == 0 ? ULong.valueOf(0): (ULong.valueOf(-1).rightShift(64 - N));
 	}
+
+	/// Return a byte-swapped representation of the 16-bit argument.
+	public static Short ByteSwap_16(short Value) {
+		//return sys::SwapByteOrder_16(Value);
+		return null;
+	}
+
+	/// Return a byte-swapped representation of the 32-bit argument.
+	public static Integer ByteSwap_32(int Value) {
+		//return sys::SwapByteOrder_32(Value);
+		// TODO Implement this later
+		return null;
+	}
+
+	/// Return a byte-swapped representation of the 64-bit argument.
+	public static ULong ByteSwap_64(ULong Value) {
+		//return sys::SwapByteOrder_64(Value);
+		// TODO Implement this later
+		return null;
+	}
+
+	public static <T> APInt reverseBits(T Val){
+		// TODO Implement this later
+		return null;
+	}
+
+	public static Double BitsToDouble(ULong word) {
+		// TODO Implement this later
+		//double D;
+		//memcpy(&D, &Bits, sizeof(Bits));
+		// return D;
+
+		return null;
+	}
+
+	/* This function takes a double and returns the bit equivalent 64-bit integer.
+	 * Note that copying doubles around changes the bits of NaNs on some hosts,
+	 * notably x86, so this routine cannot be used if these bits are needed.
+	 */
+	public static ULong DoubleToBits(double v) {
+		// TODO Implement this later
+		ULong Bits;
+		//static_assert(sizeof(uint64_t) == sizeof(double), "Unexpected type sizes");
+		//memcpy(&Bits, &Double, sizeof(Double));
+		//return Bits;
+
+		return null;
+	}
+
+	/* This function takes a float and returns the bit equivalent 32-bit integer.
+	 * Note that copying floats around changes the bits of NaNs on some hosts,
+	 * notably x86, so this routine cannot be used if these bits are needed.
+	 */
+	public static ULong FloatToBits(float Float) {
+		// TODO Implement this later
+		//uint32_t Bits;int
+		//static_assert(sizeof(uint32_t) == sizeof(float), "Unexpected type sizes");
+		//memcpy(&Bits, &Float, sizeof(Float));
+		// return Bits;
+
+		return null;
+	}
+
 }

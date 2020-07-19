@@ -1,5 +1,7 @@
 package org.tamedragon.common.llvmir.math;
 
+import java.math.BigInteger;
+
 public class APIntUtils {
 
 	//********************************************************* Value Generators *****************************************
@@ -622,7 +624,595 @@ public class APIntUtils {
 		if(bits == 0 || bits > APInt.AP_INT_BITS_PER_WORD) {
 			throw new IllegalArgumentException("Invalid number of bits");
 		}
-
 		return ULong.valueOf(0).complement().rightShift(APInt.AP_INT_BITS_PER_WORD - bits);
+	}
+	
+	/* Get the number of words.
+	 * *NOTE* Here one word's bitwidth equals to that of ULong.
+	 * Returns the number of words to hold the integer value with a given bit width.
+	 */
+	public static int getNumWords(int bitwidth) {
+		ULong numerator = ULong.valueOf(bitwidth).add(APInt.AP_INT_BITS_PER_WORD -1);
+		ULong ulongVal = numerator.div(APInt.AP_INT_BITS_PER_WORD);
+		return ulongVal.intValue();
+	}
+	
+	/* Get bits required for string value.
+	 * This method determines how many bits are required to hold the APInt
+	 * equivalent of the string given by str.
+	 */
+	public static int getBitsNeeded(String str, int radix) {
+		// TODO Implement this.
+		
+		 /* assert(!str.empty() && "Invalid string length");
+		  assert(
+		      (radix == 10 || radix == 8 || radix == 16 || radix == 2 || radix == 36) &&
+		      "Radix should be 2, 8, 10, 16, or 36!");
+
+		  size_t slen = str.size();
+
+		  // Each computation below needs to know if it's negative.
+		  StringRef::iterator p = str.begin();
+		  unsigned isNegative = *p == '-';
+		  if (*p == '-' || *p == '+') {
+		    p++;
+		    slen--;
+		    assert(slen && "String is only a sign, needs a value.");
+		  }
+
+		  // For radixes of power-of-two values, the bits required is accurately and
+		  // easily computed
+		  if (radix == 2)
+		    return slen + isNegative;
+		  if (radix == 8)
+		    return slen * 3 + isNegative;
+		  if (radix == 16)
+		    return slen * 4 + isNegative;
+
+		  // FIXME: base 36
+
+		  // This is grossly inefficient but accurate. We could probably do something
+		  // with a computation of roughly slen*64/20 and then adjust by the value of
+		  // the first few digits. But, I'm not sure how accurate that could be.
+
+		  // Compute a sufficient number of bits that is always large enough but might
+		  // be too large. This avoids the assertion in the constructor. This
+		  // calculation doesn't work appropriately for the numbers 0-9, so just use 4
+		  // bits in that case.
+		  unsigned sufficient = radix == 10 ? (slen == 1 ? 4 : slen * 64 / 18)
+		                                    : (slen == 1 ? 7 : slen * 16 / 3);
+
+		  // Convert to the actual binary value.
+		  APInt tmp(sufficient, StringRef(p, slen), radix);
+
+		  // Compute how many bits are required. If the log is infinite, assume we need
+		  // just bit. If the log is exact and value is negative, then the value is
+		  // MinSignedValue with (log + 1) bits.
+		  unsigned log = tmp.logBase2();
+		  if (log == (unsigned)-1) {
+		    return isNegative + 1;
+		  } else if (isNegative && tmp.isPowerOf2()) {
+		    return isNegative + log;
+		  } else {
+		    return isNegative + log + 1;
+		  }
+		  */
+		
+		return -1;
+	}
+	
+	/* Dual division/remainder interface.
+	 *
+	 * Sometimes it is convenient to divide two APInt values and obtain both the
+	 * quotient and remainder. This function does both operations in the same
+	 * computation making it a little more efficient.
+	 */
+	public static QuotientRemainderPair udivrem(APInt LHS, APInt RHS) {
+		if(LHS.numBits != RHS.numBits){
+			throw new IllegalArgumentException("Bit widths must be the same");
+		}
+
+		int numBits = LHS.numBits;
+
+		APInt quotient, remainderApInt;
+
+		// First, deal with the easy case
+		if (LHS.isSingleWord()) {
+			if(RHS.unsignedVals[0].equals(0)){
+				throw new IllegalArgumentException("Divide by zero?");
+			}
+
+			ULong QuotVal = LHS.unsignedVals[0].div(RHS.unsignedVals[0]);
+			ULong RemVal = LHS.unsignedVals[0].modulo(RHS.unsignedVals[0]);
+			quotient = new APInt(numBits, QuotVal, false);
+			remainderApInt = new APInt(numBits, RemVal, false);
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
+
+		// Get some size facts about the dividend and divisor
+		int lhsWords = LHS.getNumWords(LHS.getActiveBits());
+		int rhsBits = RHS.getActiveBits();
+		int rhsWords = RHS.getNumWords(rhsBits);
+		if(rhsWords <= 0) {
+			throw new IllegalArgumentException("Performing divrem operation by zero ???");
+		}
+
+		// Check the degenerate cases
+		if (lhsWords == 0) {
+			quotient = new APInt(numBits, ULong.valueOf(0), false);  // 0 / Y ===> 0
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false);  // 0 % Y ===> 0
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
+
+		if (rhsBits == 1) {
+			quotient = LHS;                 // X / 1 ===> X
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % 1 ===> 0
+		}
+
+		if (lhsWords < rhsWords || LHS.ult(RHS)) {
+			remainderApInt = LHS;                                   // X % Y ===> X, iff X < Y
+			quotient = new APInt(numBits, ULong.valueOf(0), false); // X / Y ===> 0, iff X < Y
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
+
+		if (LHS == RHS) {
+			quotient = new APInt(numBits, ULong.valueOf(1), false);  // X / X ===> 1
+			remainderApInt = new APInt(numBits, ULong.valueOf(0), false); // X % X ===> 0;
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
+
+		if (lhsWords == 1) { // rhsWords is 1 if lhsWords is 1.
+			// There is only one word to consider so use the native versions.
+			ULong lhsValue = LHS.unsignedVals[0];
+			ULong rhsValue = RHS.unsignedVals[0];
+			quotient = new APInt(numBits, lhsValue.div(rhsValue), false);
+			remainderApInt = new APInt(numBits, lhsValue.modulo(rhsValue), false);
+			return new QuotientRemainderPair(quotient, remainderApInt);
+		}
+
+		// Okay, lets do it the long way
+		QuotientRemainderPair qrp =  divideWithBigInts(LHS.unsignedVals, lhsWords, RHS.unsignedVals, rhsWords);
+
+		// Clear the rest of the Quotient and Remainder.
+		setWordValues(qrp.getQuotient().unsignedVals, 0, lhsWords, qrp.getQuotient().unsignedVals.length);
+		setWordValues(qrp.getRemainderApInt().unsignedVals, 0, lhsWords, qrp.getQuotient().unsignedVals.length);
+
+		return qrp;
+	}
+	
+	public static QuotientRemainderPair udivrem(APInt LHS, ULong RHS) {
+		if(RHS.equals(ULong.valueOf(0))) {
+			throw new IllegalArgumentException("Divide by zero?");
+		}
+
+		int BitWidth = LHS.getNumBits();
+
+		QuotientRemainderPair qrp = null;
+
+		// First, deal with the easy case
+		if (LHS.isSingleWord()) {
+			ULong QuotVal = LHS.getUnsignedVals()[0].div(RHS);
+			ULong Remainder = LHS.getUnsignedVals()[0].modulo(RHS);
+			APInt quotient = new APInt(BitWidth, new ULong[] {QuotVal}, false);
+
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+
+			return qrp;
+		}
+
+		// Get some size facts about the dividend and divisor
+		int lhsWords = LHS.getNumWords(LHS.getActiveBits());
+
+		// Check the degenerate cases
+		if (lhsWords == 0) {
+			APInt quotient = new APInt(BitWidth, new ULong[] {ULong.valueOf(0)}, false);    // 0 / Y ===> 0
+			ULong Remainder = ULong.valueOf(0);                                     // 0 % Y ===> 0
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+			return qrp;
+		}
+
+		if (RHS.equals(ULong.valueOf(1))) {
+			APInt quotient = LHS;                   // X / 1 ===> X
+			ULong Remainder = ULong.valueOf(0);                    // X % 1 ===> 0
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+			return qrp;
+		}
+
+		if (LHS.ult(RHS)) {
+			ULong Remainder = LHS.getZExtValue();      // X % Y ===> X, iff X < Y
+			APInt quotient = new APInt(BitWidth, new ULong[] {ULong.valueOf(0)}, false);             // X / Y ===> 0, iff X < Y
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+			return qrp;
+		}
+
+		if (LHS.equals(RHS)) {
+			APInt quotient  = new APInt(BitWidth, new ULong[] {ULong.valueOf(1)}, false);   // X / X ===> 1
+			ULong Remainder = ULong.valueOf(0);                               // X % X ===> 0;
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+			return qrp;
+		}
+
+		// Make sure there is enough space to hold the results.
+		// NOTE: This assumes that reallocate won't affect any bits if it doesn't
+		// change the size. This is necessary if Quotient is aliased with LHS.
+		APInt quotient = LHS.clone();
+		quotient.reallocate(BitWidth);
+
+		if (lhsWords == 1) { // rhsWords is 1 if lhsWords is 1.
+			// There is only one word to consider so use the native versions.
+			ULong lhsValue = LHS.getUnsignedVals()[0];
+			quotient = quotient.getAPInt(lhsValue.div(RHS));
+			ULong Remainder = lhsValue.modulo(RHS);
+
+			qrp = new QuotientRemainderPair(quotient, Remainder);
+
+			return qrp;
+		}
+
+		// Okay, lets do it the long way
+		ULong[] rhsVals = new ULong[1];
+		rhsVals[0] = RHS;
+		QuotientRemainderPair qrPair = APIntUtils.divideWithBigInts(LHS.getUnsignedVals(), lhsWords, rhsVals, 1);
+
+		// Clear the rest of the Quotient.
+		APIntUtils.setWordValues(qrPair.getQuotient().unsignedVals, 0, lhsWords, qrp.getQuotient().unsignedVals.length);
+		return qrPair;
+	}
+	
+	public static QuotientRemainderPair sdivrem(APInt LHS, long RHS) {
+		QuotientRemainderPair qr = null;
+		ULong remainder;
+		if (LHS.isNegative()) {
+			if (RHS < 0)
+				qr = udivrem(LHS.mul(ULong.valueOf(-1)), ULong.valueOf(RHS *-1));
+			else {
+				qr = udivrem(LHS.mul(ULong.valueOf(-1)), ULong.valueOf(RHS));
+				qr.getQuotient().negate();
+			}
+
+			remainder = qr.getRemainderULong().mul(-1);
+			qr.setRemainderULong(remainder);
+
+		} else if (RHS < 0) {
+			qr = udivrem(LHS, ULong.valueOf(RHS * -1));
+			qr.getQuotient().negate();
+		} else {
+			qr = udivrem(LHS, ULong.valueOf(RHS));
+		}
+
+		return qr;
+	}
+
+	public static QuotientRemainderPair sdivrem(APInt LHS, APInt RHS) {
+
+		QuotientRemainderPair qr = null;
+
+		if (LHS.isNegative()) {
+			if (RHS.isNegative())
+				qr = APIntUtils.udivrem(LHS.mul(ULong.valueOf(-1)), RHS.mul(ULong.valueOf(-1)));
+			else {
+				qr = APIntUtils.udivrem(LHS.mul(ULong.valueOf(-1)), RHS);
+				qr.getQuotient().negate();
+			}
+
+			qr.getRemainderApInt().negate();
+		} 
+		else if (RHS.isNegative()) {
+			qr = APIntUtils.udivrem(LHS, RHS.mul(ULong.valueOf(-1)));
+			qr.getQuotient().negate();
+		} 
+		else {
+			qr = APIntUtils.udivrem(LHS, RHS);
+		}
+
+		return qr;
+	}
+
+	protected static void setWordValues(ULong vals[], long value, int offSet, int length) {
+		for(int i = offSet; i < vals.length; i++) {
+			vals[i] = ULong.valueOf(value);
+			if(i > length) {
+				break;
+			}
+		}
+	}
+	
+	public static QuotientRemainderPair divideWithBigInts(ULong[] LHS, int lhsWords, ULong[] RHS, int rhsWords) {
+		BigInteger biLHS = getBigInteger(LHS, lhsWords);
+		BigInteger biRHS = getBigInteger(RHS, rhsWords);
+
+		BigInteger quotientBI = biLHS.divide(biRHS);
+		BigInteger remainderBI = biLHS.remainder(biRHS);
+
+		if(quotientBI.toString().equals("1")) {
+			System.out.println("WAIT HERE");
+		}
+
+		APInt resultAPI = new APInt(lhsWords * APInt.AP_INT_BITS_PER_WORD, quotientBI.toString(), 10);
+		//resultAPI.toString();
+		ULong remainder = ULong.valueOf(remainderBI);
+
+		return new QuotientRemainderPair(resultAPI, remainder);
+	}
+	
+	protected static BigInteger getBigInteger(ULong[] vals, int numWords) {
+		BigInteger bigInt = new BigInteger("0");
+
+		// Find the last significant index
+		int lastSignificantIndex = numWords;
+		for(int i = numWords -1; i >= 0; i--) {
+			if(vals[i].longValue() != 0) {
+				break;
+			}
+			lastSignificantIndex--;
+		}
+
+		for(int i = 0; i < lastSignificantIndex; i++) {
+			if(i == lastSignificantIndex -1) {
+				bigInt = bigInt.add(vals[i].getUnsignedBigInt());
+			}
+			else {
+				BigInteger valBI = vals[i].getUnsignedBigInt().add(ULong.MAX_VALUE);
+				bigInt = bigInt.add(valBI);
+			}
+		}
+		return bigInt;
+	}
+	
+	/* Converts a double to APInt bits.
+	 * The conversion does not do a translation from double to integer, it just
+	 * re-interprets the bits of the double.
+	 */
+	public static APInt doubleToBits(double V) {
+		return new APInt(64, MathUtils.DoubleToBits(V), false);
+	}
+
+	/* Converts a float to APInt bits.
+	 *
+	 * The conversion does not do a translation from float to integer, it just
+	 * re-interprets the bits of the float.
+	 */
+	public static APInt floatToBits(float V) {
+		return new APInt(32, MathUtils.FloatToBits(V), false);
+	}
+
+	/* Determine which word a bit is in.
+	 * Returns the word position for the specified bit position.
+	 */
+	public static int whichWord(int bitPosition) {
+		return bitPosition / APInt.AP_INT_BITS_PER_WORD;
+	}
+	
+	/* Get a single bit mask.
+	 *
+	 * Returns a ULong with only bit at "whichBit(bitPosition)" set
+	 * This method generates and returns a uint64_t (word) mask for a single
+	 * bit at a specific bit position. This is used to mask the bit in the
+	 * corresponding word.
+	 */
+	public static ULong maskBit(int bitPosition) {
+		return ULong.valueOf(1).leftShift(whichBit(bitPosition));
+	}
+
+	/* Determine which bit in a word a bit is in.
+	 * Return the bit position in a word for the specified bit position
+	 * in the APInt.
+	 */
+	protected static int whichBit(int bitPosition) {
+		return bitPosition % APInt.AP_INT_BITS_PER_WORD;
+	}
+	
+	/* 
+	 * A utility function that converts a character to a digit.
+	 */
+	public static int getDigit(char cdigit, int radix) {
+		int r = -1;
+
+		if (radix == 16 || radix == 36) {
+			r = cdigit - '0';
+			if (r <= 9)
+				return r;
+
+			r = cdigit - 'A';
+			if (r <= radix - 11)
+				return r + 10;
+
+			r = cdigit - 'a';
+			if (r <= radix - 11)
+				return r + 10;
+
+			radix = 10;
+		}
+
+		r = cdigit - '0';
+		if (r < radix) {
+			return r;
+		}
+
+		return -1;
+	}
+	
+	/*
+	 * Calculate the rotate amount modulo the bit width.
+	 */
+	public static int rotateModulo(int BitWidth, APInt rotateAmt) {
+		int rotBitWidth = rotateAmt.getNumBits();
+		APInt rot = rotateAmt;
+		if (rotBitWidth < BitWidth) {
+			// Extend the rotate APInt, so that the urem doesn't divide by 0.
+			// e.g. APInt(1, 32) would give APInt(1, 0).
+			rot = rotateAmt.zext(BitWidth);
+		}
+		rot = rot.urem(new APInt(rot.getNumBits(), ULong.valueOf(BitWidth), false));
+		return (int)rot.getLimitedValue(ULong.valueOf(BitWidth)).longValue();
+	}
+	
+	// ****************************************************************** APINT OPERATIONS
+	
+	/*
+	 *  Determine the smaller of two APInts considered to be signed.
+	 */
+	public static APInt smin(APInt A,  APInt B) {
+	  return A.slt(B) ? A : B;
+	}
+
+	/* 
+	 * Determine the larger of two APInts considered to be signed.
+	 */
+	public static APInt smax(APInt A,  APInt B) {
+	  return A.sgt(B) ? A : B;
+	}
+
+	/* 
+	 * Determine the smaller of two APInts considered to be signed.
+	 */
+	public static APInt umin(APInt A,  APInt B) {
+	  return A.ult(B) ? A : B;
+	}
+
+	/* 
+	 * Determine the larger of two APInts considered to be unsigned.
+	 */
+	public static APInt umax(APInt A,  APInt B) {
+	  return A.ugt(B) ? A : B;
+	}
+
+	/* Compute GCD of two unsigned APInt values.
+	*
+	* This function returns the greatest common divisor of the two APInt values
+	* using Stein's algorithm.
+	*
+	* Returns the greatest common divisor of A and B.
+	*/
+	public static APInt GreatestCommonDivisor(APInt A, APInt B) {
+		// TODO Implement this
+		return null;
+	}
+
+	/* 
+	 * Converts the given APInt to a double value.
+	* Treats the APInt as an unsigned value for conversion purposes.
+	*/
+	public static double RoundAPIntToDouble(APInt APIVal) {
+	  return APIVal.roundToDouble();
+	}
+
+	/* 
+	 * Converts the given APInt to a double value.
+	*
+	*
+	* Treats the APInt as a signed value for conversion purposes.
+	*/
+	public static double RoundSignedAPIntToDouble(APInt APIVal) {
+	  return APIVal.signedRoundToDouble();
+	}
+
+	/* 
+	 * Converts the given APInt to a float vlalue.
+	 */
+	public static float RoundAPIntToFloat(APInt APIVal) {
+	  return (float)RoundAPIntToDouble(APIVal);
+	}
+
+	/* Converts the given APInt to a float value.
+	*
+	* Treats the APInt as a signed value for conversion purposes.
+	*/
+	public static float RoundSignedAPIntToFloat(APInt APIVal) {
+	  return (float)APIVal.signedRoundToDouble();
+	}
+
+	/* Converts the given double value into a APInt.
+	*
+	* This function convert a double value to an APInt value.
+	*/
+	public static APInt RoundDoubleToAPInt(double Double, int width) {
+		// TODO Implement this
+		return null;
+	};
+
+	/* Converts a float value into a APInt.
+	*
+	* Converts a float value into an APInt value.
+	*/
+	public static APInt RoundFloatToAPInt(float Float, int width) {
+	  return RoundDoubleToAPInt((double)Float, width);
+	}
+
+	/* 
+	 * Return A unsign-divided by B, rounded by the given rounding mode.
+	 */
+	public static APInt RoundingUDiv(APInt A,  APInt B, APInt.Rounding RM) {
+		// TODO Implement this
+		return null;
+	}
+
+	/* 
+	 * Return A sign-divided by B, rounded by the given rounding mode.
+	 */
+	public static APInt RoundingSDiv(APInt A,  APInt B, APInt.Rounding RM) {
+		// TODO Implement this
+		return null;
+	}
+
+	/* Let q(n) = An^2 + Bn + C, and BW = bit width of the value range
+	* (e.g. 32 for i32).
+	* This function finds the smallest number n, such that
+	* (a) n >= 0 and q(n) = 0, or
+	* (b) n >= 1 and q(n-1) and q(n), when evaluated in the set of all
+	*     integers, belong to two different intervals [Rk, Rk+R),
+	*     where R = 2^BW, and k is an integer.
+	* The idea here is to find when q(n) "overflows" 2^BW, while at the
+	* same time "allowing" subtraction. In unsigned modulo arithmetic a
+	* subtraction (treated as addition of negated numbers) would always
+	* count as an overflow, but here we want to allow values to decrease
+	* and increase as long as they are within the same interval.
+	* Specifically, adding of two negative numbers should not cause an
+	* overflow (as long as the magnitude does not exceed the bit width).
+	* On the other hand, given a positive number, adding a negative
+	* number to it can give a negative result, which would cause the
+	* value to go from [-2^BW, 0) to [0, 2^BW). In that sense, zero is
+	* treated as a special case of an overflow.
+	*
+	* This function returns None if after finding k that minimizes the
+	* positive solution to q(n) = kR, both solutions are contained between
+	* two consecutive integers.
+	*
+	* There are cases where q(n) > T, and q(n+1) < T (assuming evaluation
+	* in arithmetic modulo 2^BW, and treating the values as signed) by the
+	* virtue of *signed* overflow. This function will *not* find such an n,
+	* however it may find a value of n satisfying the inequalities due to
+	* an *unsigned* overflow (if the values are treated as unsigned).
+	* To find a solution for a signed overflow, treat it as a problem of
+	* finding an unsigned overflow with a range with of BW-1.
+	*
+	* The returned value may have a different bit width from the input
+	* coefficients.
+	*/
+	public static APInt SolveQuadraticEquationWrap(APInt A, APInt B, APInt C, int RangeWidth){
+		// TODO Implement this
+		return null;
+	}
+
+	/* Compare two values, and if they are different, return the position of the
+	* most significant bit that is different in the values.
+	*/
+	public static Integer GetMostSignificantDifferentBit(APInt A, APInt B){
+		// TODO Implement this
+		return null;
+	}
+	
+	/* StoreIntToMemory - Fills the StoreBytes bytes of memory starting from Dst
+	* with the integer held in IntVal.
+	*/
+	public static void StoreIntToMemory(APInt IntVal, byte Dst, int StoreBytes){
+		// TODO Implement this
+	}
+
+	/* LoadIntFromMemory - Loads the integer stored in the LoadBytes bytes starting
+	* from Src into IntVal, which is assumed to be wide enough and to hold zero.
+	*/
+	public static void LoadIntFromMemory(APInt IntVal, byte Src, int LoadBytes){
+		// TODO Implement this
 	}
 }

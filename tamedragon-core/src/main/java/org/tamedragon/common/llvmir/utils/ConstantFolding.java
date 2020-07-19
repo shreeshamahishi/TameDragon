@@ -258,11 +258,11 @@ public class ConstantFolding {
 					return new ConstantInt((IntegerType)CI1.getType(), C1V.srem(C2V));
 
 				case AND:
-					return new ConstantInt((IntegerType)CI1.getType(), C1V.andWith(C2V));
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.and(C2V));
 				case OR:
 					return new ConstantInt((IntegerType)CI1.getType(), C1V.or(C2V));
 				case XOR:
-					return new ConstantInt((IntegerType)CI1.getType(), C1V.xorWith(C2V));
+					return new ConstantInt((IntegerType)CI1.getType(), C1V.xor(C2V));
 				case SHL: 
 					if (C2V.ult(ULong.valueOf(C1V.getNumBits()))) {
 						return new ConstantInt((IntegerType)CI1.getType(), C1V.shl(C2V));
@@ -368,9 +368,9 @@ public class ConstantFolding {
 			switch(operatorID) {
 			case ADD:
 			case SUB:
-				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().xorWith(((ConstantInt)C2).getApInt()));
+				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().xor(((ConstantInt)C2).getApInt()));
 			case MUL:
-				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().andWith(((ConstantInt)C2).getApInt()));
+				new ConstantInt((IntegerType)CI1.getType(), CI1.getApInt().and(((ConstantInt)C2).getApInt()));
 			case SHL:
 			case LSHR:
 			case ASHR:

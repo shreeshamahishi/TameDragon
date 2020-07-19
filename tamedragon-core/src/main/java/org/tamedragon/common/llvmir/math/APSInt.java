@@ -124,7 +124,7 @@ public class APSInt extends APInt {
 		if(getMinSignedBits() <= 64) {
 			throw new IllegalArgumentException("Too many bits for long");
 		}
-		return isSigned() ? getSExtValue() : getZExtValueNew().longValue();
+		return isSigned() ? getSExtValue() : getZExtValue().longValue();
 	}
 
 	public APSInt trunc(int width){
@@ -302,7 +302,7 @@ public class APSInt extends APInt {
 		if(IsUnsigned != RHS.IsUnsigned) {
 			throw new IllegalArgumentException("Signedness mismatch!");
 		}
-		return new APSInt(((APInt)(this)).andWith(RHS), IsUnsigned);
+		return new APSInt(((APInt)(this)).and(RHS), IsUnsigned);
 	}
 
 	public APSInt or(APSInt RHS){
