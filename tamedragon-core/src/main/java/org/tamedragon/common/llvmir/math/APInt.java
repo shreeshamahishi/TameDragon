@@ -119,8 +119,9 @@ public class APInt {
 			newVals[i] = unsignedVals[i].clone();
 		}
 
-		APInt newAPInt = new APInt(numBits, newVals.clone(), false);
-		return new APSInt(newAPInt, false);
+		APInt newAPInt = new APInt(numBits, newVals, false);
+		// return new APSInt(newAPInt, false);
+		return newAPInt;
 	}
 
 	private void fromString(int numbits, String str, int radix) {
@@ -744,7 +745,6 @@ public class APInt {
 		else {
 			APIntUtils.tcAdd(unsignedVals, RHS.getUnsignedVals(), ULong.valueOf(0), getNumWords());
 		}
-
 		return clearUnusedBits();
 	}
 
@@ -767,10 +767,13 @@ public class APInt {
 		if(numBits != RHS.numBits) {
 			throw new IllegalArgumentException("Bit widths must be the same");
 		}
-		if (isSingleWord())
+		
+		if (isSingleWord()) {
 			unsignedVals[0] = unsignedVals[0].subtract(RHS.unsignedVals[0]);
-		else
+		}
+		else {
 			APIntUtils.tcSubtract(unsignedVals, RHS.unsignedVals, ULong.valueOf(0), getNumWords());
+		}
 		return clearUnusedBits();
 	}
 
@@ -2959,7 +2962,7 @@ public class APInt {
 		return this;
 	}
 
-	/*Set a given bit to 0.
+	/*
 	 * Set the given bit to 0 whose position is given as "bitPosition".
 	 */
 	public void clearBit(int bitPosition) {
@@ -2987,14 +2990,8 @@ public class APInt {
 	}
 
 	public APInt add(final ULong RHS) {
-		if (isSingleWord()) {
-			unsignedVals[0] = unsignedVals[0].add(RHS);
-		}
-		else {
-			APIntUtils.tcAddPart(unsignedVals, RHS, getNumWords());
-		}
-
-		return clearUnusedBits();
+		APInt newVal = this.clone();
+		return newVal.addAssign(RHS);
 	}
 
 	public APInt subtract(final APInt other) {

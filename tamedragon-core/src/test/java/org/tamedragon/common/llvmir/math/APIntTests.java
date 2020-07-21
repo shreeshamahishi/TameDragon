@@ -115,62 +115,259 @@ public class APIntTests {
 		assertTrue(temp.toString(10, false, false).equals("7"));
 		assertTrue(temp.getUnsignedVals()[0].toString().equals("7"));
 	}
+
+	@Test
+	public void testSingleWordClearUnusedBits() {
+		APInt apInt = new APInt(7, ULong.valueOf("126"), false);
+		apInt.clearUnusedBits();
+		assertTrue(apInt.toString(10, false, false).equals("126"));
+
+		apInt = new APInt(7, ULong.valueOf("127"), false);
+		apInt.clearUnusedBits();
+		assertTrue(apInt.toString(10, false, false).equals("127"));
+
+		// Test indirectly through an overflow
+		apInt = new APInt(7, ULong.valueOf("126"), false);
+		APInt apInt2 = new APInt(7, ULong.valueOf("5"), false);
+		APInt result = apInt.add(apInt2);
+		assertTrue(result.toString(10, false, false).equals("3"));
+	}
+
+	@Test
+	public void testSingleWordAdditionOfAPInts() {
+		// Both in range and result also in range
+		APInt apInt1 = new APInt(32, ULong.valueOf("0"), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf("0"), false);
+		APInt result = apInt1.add(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result != apInt2);
+		assertTrue(apInt1 != apInt2);
+		assertTrue(result.toString().equals("0"));
+		assertTrue(apInt1.toString().equals("0"));
+		assertTrue(apInt2.toString().equals("0"));
+
+		apInt1 = new APInt(32, ULong.valueOf("42"), false);
+		apInt2 = new APInt(32, ULong.valueOf("54"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("96"));
+
+		// At upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709550001"), false);
+		apInt2 = new APInt(64, ULong.valueOf("1614"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("-1"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Both in range and result overflows
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709550001"), false);
+		apInt2 = new APInt(64, ULong.valueOf("1618"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("3"));
+		assertTrue(result.toString(10, false, false).equals("3"));
+
+		// One above upper range and the other in range
+		apInt1 = new APInt(32, ULong.valueOf("4294967299"), false);
+		apInt2 = new APInt(32, ULong.valueOf("109"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString(10, false, false).equals("112"));	
+
+		// Both above upper range
+		apInt1 = new APInt(8, ULong.valueOf("257"), false);
+		apInt2 = new APInt(8, ULong.valueOf("258"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("3"));
+		assertTrue(result.toString(10, false, false).equals("3"));
+
+		// Arbitrary bit width 5, no overflow
+		apInt1 = new APInt(5, ULong.valueOf("15"), false);
+		apInt2 = new APInt(5, ULong.valueOf("14"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("-3"));
+		assertTrue(result.toString(10, false, false).equals("29"));
+
+		// Arbitrary bit width 5, with overflow
+		apInt1 = new APInt(5, ULong.valueOf("15"), false);
+		apInt2 = new APInt(5, ULong.valueOf("18"), false);
+		result = apInt1.add(apInt2);
+		assertTrue(result.toString().equals("1"));
+		assertTrue(result.toString(10, false, false).equals("1"));
+	}
 	
 	@Test
-	public void testAdditionOperationsOnSingleWordAPInt() {
+	public void testSingleWordAdditionOfAPIntWithULong() {
+		// In range and result also in range
+		APInt apInt1 = new APInt(32, ULong.valueOf("0"), false);
+		APInt result = apInt1.add(ULong.valueOf(0));
+		assertTrue(result != apInt1);
+		assertTrue(result.toString().equals("0"));
+		assertTrue(result.toString(10, false, false).equals("0"));
 		
+		apInt1 = new APInt(32, ULong.valueOf("42"), false);
+		result = apInt1.add(ULong.valueOf(54));
+		assertTrue(result.toString().equals("96"));
+		assertTrue(result.toString(10, false, false).equals("96"));
+
+		// At upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709550001"), false);
+		result = apInt1.add(ULong.valueOf(1614));
+		assertTrue(result.toString().equals("-1"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Both in range and result overflows
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709550001"), false);
+		result = apInt1.add(ULong.valueOf(1618));
+		assertTrue(result.toString().equals("3"));
+		assertTrue(result.toString(10, false, false).equals("3"));
+
+		// One above upper range and the other in range
+		apInt1 = new APInt(32, ULong.valueOf("4294967299"), false);
+		result = apInt1.add(ULong.valueOf(109));
+		assertTrue(result.toString().equals("112"));
+		assertTrue(result.toString(10, false, false).equals("112"));	
+
+		// Both above upper range and the other in range
+		apInt1 = new APInt(8, ULong.valueOf("257"), false);
+		result = apInt1.add(ULong.valueOf(258));
+		assertTrue(result.toString().equals("3"));
+		assertTrue(result.toString(10, false, false).equals("3"));
+
+		// Arbitrary bit width 5, no overflow
+		apInt1 = new APInt(5, ULong.valueOf("15"), false);
+		result = apInt1.add(ULong.valueOf(14));
+		assertTrue(result.toString().equals("-3"));
+		assertTrue(result.toString(10, false, false).equals("29"));
+
+		// Arbitrary bit width 5, with overflow
+		apInt1 = new APInt(5, ULong.valueOf("15"), false);
+		result = apInt1.add(ULong.valueOf(18));
+		assertTrue(result.toString().equals("1"));
+		assertTrue(result.toString(10, false, false).equals("1"));
+	}
+	
+	@Test
+	public void testSingleWordSubtraction() {
+		// Both in range and result also in range
+		APInt apInt1 = new APInt(32, ULong.valueOf("0"), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf("0"), false);
+		APInt result = apInt1.subtract(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result != apInt2);
+		assertTrue(apInt1 != apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		apInt1 = new APInt(32, ULong.valueOf("54"), false);
+		apInt2 = new APInt(32, ULong.valueOf("42"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("12"));
+		assertTrue(result.toString(10, true, false).equals("12"));
+
+		// Both in range and result underflow
+		apInt1 = new APInt(32, ULong.valueOf("43"), false);
+		apInt2 = new APInt(32, ULong.valueOf("56"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("4294967283"));
+		assertTrue(result.toString(10, true, false).equals("-13"));
+
+		// Both operands at upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		// First operand at upper bound, second operand below upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("614"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551001"));
+		assertTrue(result.toString(10, true, false).equals("-615"));
+
+		// First operand beyond upper bound, second operand below upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551632"), false);
+		apInt2 = new APInt(64, ULong.valueOf("1618"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709550014"));
+		assertTrue(result.toString(10, true, false).equals("-1602"));
+
+		// First operand at upper bound, second operand above upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551633"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551598"));
+		assertTrue(result.toString(10, true, false).equals("-18"));
+
+		// Both operands beyond upper bound and first is greater than the second
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551645"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551633"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("12"));
+		assertTrue(result.toString(10, true, false).equals("12"));
+
+		// Both operands beyond upper bound and first is greater than the second
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551656"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551693"), false);
+		result = apInt1.subtract(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551579"));
+		assertTrue(result.toString(10, true, false).equals("-37"));
+	}
+
+	/*
+	@Test
+	public void testAdditionOperationsOnSingleWordAPInt() {
+
 		BigDecimal bd0 = new BigDecimal("24.00");
 		BigDecimal bd1 = new BigDecimal("24.50");
 		BigDecimal res1 = bd0.add(bd1);
 		System.out.println(res1);
-		
+
 		// Something in range
 		APInt temp1 = new APInt(8, ULong.valueOf(3), false);
 		APInt temp2 = new APInt(8, ULong.valueOf(21), false);
 		APInt res = temp1.add(temp2);
 		assertTrue(res.toString().equals("24"));
-		
+
 	}
-	
+
 	@Test
 	public void testAPIntConstructionWithStringAndRadix10AndByteSizes() {
-		
+
 		BigDecimal bd0 = new BigDecimal(24.00);
 		bd0.setScale(2, RoundingMode.HALF_UP);
 		BigDecimal bd1 = new BigDecimal(24.51);
 		bd1.setScale(2, RoundingMode.HALF_UP);
 		BigDecimal bd2 = new BigDecimal(24.5000002);
 		BigDecimal bd3 = new BigDecimal(24.5000003);
-		
+
 		BigDecimal fbo = new BigDecimal(48.51);
-		
-		
+
+
 		BigDecimal res = bd0.add(bd1);
 		res.setScale(2, RoundingMode.HALF_UP);
 		System.out.println(res);
-		
+
 		if(fbo.equals(res)) {
 			System.out.println("Equals	 ");
 		}
 		else {
 			System.out.println("NOt Equals	 ");
 		}
-		
+
 		res.setScale(2, RoundingMode.HALF_UP);
 		System.out.println(res);
-		
-		
-		
+
+
+
 		System.out.println("BD0 scale " + bd0.scale());
 		System.out.println("BD1 scale " + bd1.scale());
 		System.out.println("BD2 scale " + bd2.scale());
 		System.out.println("BD3 scale " + bd3.scale());
-		
+
 		bd0.setScale(5);
-		
+
 		System.out.println("Equals returns: " + bd1.equals(bd2));
 		System.out.println("compareTo returns: " + bd1.compareTo(bd2));
-		
+
 
 		// Within range positive number
 		APInt temp = new APInt(8, "100", 10);
@@ -296,4 +493,5 @@ public class APIntTests {
 		assertTrue(apInt.unsignedVals[0].equals(ULong.valueOf(63)));
 		assertTrue(apInt.unsignedVals[1].equals(ULong.valueOf(1)));
 	}
+	 */
 }
