@@ -192,7 +192,7 @@ public class APIntTests {
 		assertTrue(result.toString().equals("1"));
 		assertTrue(result.toString(10, false, false).equals("1"));
 	}
-	
+
 	@Test
 	public void testSingleWordAdditionOfAPIntWithULong() {
 		// In range and result also in range
@@ -201,7 +201,7 @@ public class APIntTests {
 		assertTrue(result != apInt1);
 		assertTrue(result.toString().equals("0"));
 		assertTrue(result.toString(10, false, false).equals("0"));
-		
+
 		apInt1 = new APInt(32, ULong.valueOf("42"), false);
 		result = apInt1.add(ULong.valueOf(54));
 		assertTrue(result.toString().equals("96"));
@@ -243,7 +243,7 @@ public class APIntTests {
 		assertTrue(result.toString().equals("1"));
 		assertTrue(result.toString(10, false, false).equals("1"));
 	}
-	
+
 	@Test
 	public void testSingleWordSubtraction() {
 		// Both in range and result also in range
@@ -310,6 +310,107 @@ public class APIntTests {
 		result = apInt1.subtract(apInt2);
 		assertTrue(result.toString(10, false, false).equals("18446744073709551579"));
 		assertTrue(result.toString(10, true, false).equals("-37"));
+	}
+
+	@Test
+	public void testSingleWordSubtractionOfULongFromAPInt() {
+		// Both in range and result also in range
+		APInt apInt1 = new APInt(32, ULong.valueOf("0"), false);
+		APInt result = apInt1.subtract(ULong.valueOf(0));
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		apInt1 = new APInt(32, ULong.valueOf("54"), false);
+		result = apInt1.subtract(ULong.valueOf("42"));
+		assertTrue(result.toString(10, false, false).equals("12"));
+		assertTrue(result.toString(10, true, false).equals("12"));
+
+		// Both in range and result underflow
+		apInt1 = new APInt(32, ULong.valueOf("43"), false);
+		result = apInt1.subtract(ULong.valueOf("56"));
+		assertTrue(result.toString(10, false, false).equals("4294967283"));
+		assertTrue(result.toString(10, true, false).equals("-13"));
+
+		// Both operands at upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.subtract(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		// First operand at upper bound, second operand below upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.subtract(ULong.valueOf("614"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551001"));
+		assertTrue(result.toString(10, true, false).equals("-615"));
+
+		// First operand beyond upper bound, second operand below upper bound
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551632"), false);
+		result = apInt1.subtract(ULong.valueOf("1618"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709550014"));
+		assertTrue(result.toString(10, true, false).equals("-1602"));
+	}
+
+	@Test
+	public void testSingleWordMultiplicationOfAPInts() {
+		// Both in range and result also in range
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.mul(apInt2);
+		
+		assertTrue(result != apInt1);
+		assertTrue(result != apInt2);
+		
+		assertTrue(result.toString().equals("0"));
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		apInt1 = new APInt(32, ULong.valueOf(54), false);
+		apInt2 = new APInt(32, ULong.valueOf(42), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("2268"));
+		assertTrue(result.toString(10, false, false).equals("2268"));
+
+		// Result at upper bound
+		apInt1 = new APInt(64, ULong.valueOf("3689348814741910323"), false);
+		apInt2 = new APInt(64, ULong.valueOf(5), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("-1"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Both in range and result overflows
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551613"), false);
+		apInt2 = new APInt(64, ULong.valueOf(12), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("-36"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551580"));
+
+		// One above upper range and the other in range
+		apInt1 = new APInt(32, ULong.valueOf("4294967299"), false);
+		apInt2 =  new APInt(32, ULong.valueOf(2), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("6"));
+		assertTrue(result.toString(10, false, false).equals("6"));
+
+		// Both above upper range
+		apInt1 =  new APInt(8, ULong.valueOf(257), false);
+		apInt2 =  new APInt(8, ULong.valueOf(258), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("2"));
+		assertTrue(result.toString(10, false, false).equals("2"));
+
+		// Arbitrary bit width 5, no overflow
+		apInt1 =  new APInt(5, ULong.valueOf(12), false);
+		apInt2 =  new APInt(5, ULong.valueOf(2), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("-8"));
+		assertTrue(result.toString(10, false, false).equals("24"));
+
+		// Arbitrary bit width 5, with overflow
+		apInt1 =  new APInt(5, ULong.valueOf(3), false);
+		apInt2 =  new APInt(5, ULong.valueOf(15), false);
+		result = apInt1.mul(apInt2);
+		assertTrue(result.toString().equals("13"));
+		assertTrue(result.toString(10, false, false).equals("13"));
 	}
 
 	/*

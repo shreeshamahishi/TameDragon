@@ -833,7 +833,22 @@ public class APInt {
 	 */
 
 	public APInt mul(APInt other) {
-		return mul(other.unsignedVals[0]).clone();
+		if(numBits != other.numBits) {
+			throw new IllegalArgumentException("Bit widths must be the same");
+		}
+
+		if (isSingleWord()) {
+			return new APInt(numBits, unsignedVals[0].mul(other.unsignedVals[0]), false);
+		}
+		
+		ULong[] unsignedValsNew = new ULong[getNumWords()];
+		
+		APInt Result = new APInt(unsignedValsNew, getNumBits());
+
+		APIntUtils.tcMultiply(Result.unsignedVals, unsignedVals, other.unsignedVals, getNumWords());
+
+		Result.clearUnusedBits();
+		return Result;
 	}
 
 	public APInt mul(final ULong RHS) {
@@ -3000,13 +3015,8 @@ public class APInt {
 	}
 
 	public APInt subtract(final ULong RHS) {
-		if (isSingleWord()) {
-			unsignedVals[0] = unsignedVals[0].subtract(RHS);
-		}
-		else {
-			APIntUtils.tcAddPart(unsignedVals, RHS, getNumWords());
-		}
-		return clearUnusedBits();
+		APInt newVal = this.clone();
+		return newVal.subtractAssign(RHS);
 	}
 
 	public APInt and(APInt other) {
