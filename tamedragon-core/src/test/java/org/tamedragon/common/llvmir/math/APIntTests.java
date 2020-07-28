@@ -357,10 +357,10 @@ public class APIntTests {
 		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
 		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
 		APInt result = apInt1.mul(apInt2);
-		
+
 		assertTrue(result != apInt1);
 		assertTrue(result != apInt2);
-		
+
 		assertTrue(result.toString().equals("0"));
 		assertTrue(result.toString(10, false, false).equals("0"));
 
@@ -413,6 +413,551 @@ public class APIntTests {
 		assertTrue(result.toString(10, false, false).equals("13"));
 	}
 
+	@Test
+	public void testSingleWordMultiplicationOfAPIntWithULong() {
+		// Both in range and result also in range
+		APInt apInt = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt.mul(ULong.valueOf(0));
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		apInt = new APInt(32, ULong.valueOf(54), false);
+		result = apInt.mul(ULong.valueOf(42));
+		assertTrue(result != apInt);
+		assertTrue(result.toString(10, false, false).equals("2268"));
+
+		// Result at upper bound
+		apInt = new APInt(64, ULong.valueOf("3689348814741910323"), false);
+		result = apInt.mul(ULong.valueOf(5));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Both in range and result overflows
+		apInt = new APInt(64, ULong.valueOf("18446744073709551613"), false);
+		result = apInt.mul(ULong.valueOf(12));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551580"));
+
+		// One above upper range and the other in range
+		apInt = new APInt(32, ULong.valueOf("4294967299"), false);
+		result = apInt.mul(ULong.valueOf(2));
+		assertTrue(result.toString(10, false, false).equals("6"));
+
+		// Arbitrary bit width 5, no overflow
+		apInt = new APInt(5, ULong.valueOf(12), false);
+		result = apInt.mul(ULong.valueOf(2));
+		assertTrue(result.toString(10, false, false).equals("24"));
+
+		// Arbitrary bit width 5, with overflow
+		apInt = new APInt(5, ULong.valueOf(3), false);
+		result = apInt.mul(ULong.valueOf(15));
+		assertTrue(result.toString(10, false, false).equals("13"));
+	}
+
+	@Test
+	public void testSingleWordUnsignedDivisionOfAPInts() {
+		// Division of zero by a non-zero number
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
+
+		APInt result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		apInt2 = new APInt(32, ULong.valueOf(0), false);
+		
+		try {
+			result = apInt1.udiv(apInt2);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Divide by zero?"));
+		}
+
+		// Exact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		apInt2 = new APInt(64, ULong.valueOf(9), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("5"));
+
+		// Inexact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(19), false);
+		apInt2 = new APInt(64, ULong.valueOf(4), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("4"));
+
+		// Both in range and denom > nume
+		apInt1 = new APInt(64, ULong.valueOf(5), false);
+		apInt2 = new APInt(64, ULong.valueOf(95), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Numerator at upper bound and denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf(5), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("3689348814741910323"));
+
+		// Both at boundary
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("1"));
+
+		// Numerator beyond upper bound, denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		apInt2 = new APInt(64, ULong.valueOf(2), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("1"));
+
+		// Denominator beyond upper bound, numerator in range
+		apInt1 = new APInt(64, ULong.valueOf(2), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("1"));
+
+		// Both beyond range, num > denom
+		apInt1 = new APInt(64, ULong.valueOf("184467440737095516192"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("16"));
+
+		// Both beyond range, denom > num
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		apInt2 = new APInt(64, ULong.valueOf("184467440737095516193"), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Arbitrary bit width 5, exact division
+		apInt1 =  new APInt(5, ULong.valueOf(12), false);
+		apInt2 = new APInt(5, ULong.valueOf(3), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("4"));
+
+		// Arbitrary bit width 5, inexact division
+		apInt1 = new APInt(5, ULong.valueOf(12), false);
+		apInt2 = new APInt(5, ULong.valueOf(5), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("2"));
+
+		// Arbitrary bit width 5, numerator 0
+		apInt1 =  new APInt(5, ULong.valueOf(0), false);
+		apInt2 = new APInt(5, ULong.valueOf(3), false);
+		result = apInt1.udiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+	}
+	
+	@Test
+	public void testSingleWordUnsignedDivisionOfAPIntWithULong() {
+		// Division of zero by a non-zero number
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.udiv(ULong.valueOf(10));
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		try {
+			result = apInt1.udiv(ULong.valueOf(0));
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Divide by zero?"));
+		}
+
+		// Exact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		result = apInt1.udiv(ULong.valueOf(9));
+		assertTrue(result.toString(10, false, false) .equals("5"));
+
+		// Inexact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(19), false);
+		result = apInt1.udiv(ULong.valueOf(4));
+		assertTrue(result.toString(10, false, false) .equals("4"));
+
+		// Both in range and denom > nume
+		apInt1 = new APInt(64, ULong.valueOf(5), false);
+		result = apInt1.udiv(ULong.valueOf(95));
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Numerator at upper bound and denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.udiv(ULong.valueOf(5));
+		assertTrue(result.toString(10, false, false) .equals("3689348814741910323"));
+
+		// Both at boundary
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.udiv(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString(10, false, false) .equals("1"));
+
+		// Numerator beyond upper bound, denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.udiv(ULong.valueOf(2));
+		assertTrue(result.toString(10, false, false) .equals("1"));
+
+		// Arbitrary bit width 5, exact division
+		apInt1 =  new APInt(5, ULong.valueOf(12), false);
+		result = apInt1.udiv(ULong.valueOf(3));
+		assertTrue(result.toString(10, false, false) .equals("4"));
+
+		// Arbitrary bit width 5, inexact division
+		apInt1 = new APInt(5, ULong.valueOf(12), false);
+		result = apInt1.udiv(ULong.valueOf(5));
+		assertTrue(result.toString(10, false, false) .equals("2"));
+
+		// Arbitrary bit width 5, numerator 0
+		apInt1 =  new APInt(5, ULong.valueOf(0), false);
+		result = apInt1.udiv(ULong.valueOf(3));
+		assertTrue(result.toString(10, false, false) .equals("0"));
+	}
+	
+	@Test
+	public void testSingleWordSignedDivisionOfAPInts() {
+		// Division of zero by a non-zero number, both positive
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
+
+		APInt result = apInt1.sdiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+		assertTrue(result.toString(10, true, false) .equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		apInt2 = new APInt(32, ULong.valueOf(0), false);
+		try {
+			result = apInt1.sdiv(apInt2);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Divide by zero?"));
+		}
+
+		// Both negative
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		apInt2 = new APInt(64, ULong.valueOf(-9), false);
+		result = apInt1.sdiv(apInt2);
+		assertTrue(result.toString(10, false, false).equals("5"));
+		assertTrue(result.toString(10, true, false).equals("5"));
+		
+		// Numerator negative, denominator positive
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		apInt2 = new APInt(64, ULong.valueOf(9), false);
+		result = apInt1.sdiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("18446744073709551611"));
+		assertTrue(result.toString(10, true, false) .equals("-5"));
+
+		// Numerator negative, denominator positive
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf(-5), false);
+		result = apInt1.sdiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+		assertTrue(result.toString(10, true, false) .equals("0"));
+		
+		// Both positive
+		apInt1 = new APInt(64, ULong.valueOf(121), false);
+		apInt2 = new APInt(64, ULong.valueOf(11), false);
+		result = apInt1.sdiv(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("11"));
+		assertTrue(result.toString(10, true, false) .equals("11"));
+	}
+	
+	@Test
+	public void testSingleWordSignedDivisionOfAPIntsWithLong() {
+		// Division of zero by a non-zero number, both positive
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.sdiv(10);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		try {
+			result = apInt1.sdiv(0);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Divide by zero?"));
+		}
+
+		// Both negative
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		result = apInt1.sdiv(-9);
+		assertTrue(result.toString(10, false, false) .equals("5"));
+		assertTrue(result.toString(10, true, false) .equals("5"));
+		
+		// Numerator negative, denominator positive
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		result = apInt1.sdiv(9);
+		assertTrue(result.toString(10, false, false) .equals("18446744073709551611"));
+		assertTrue(result.toString(10, true, false) .equals("-5"));
+
+		//  Denominator negative, numerator positive
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.sdiv(-5);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+		assertTrue(result.toString(10, true, false) .equals("0"));
+		
+		// Both positive
+		apInt1 = new APInt(64, ULong.valueOf(121), false);
+		result = apInt1.sdiv(11);
+		assertTrue(result.toString(10, false, false) .equals("11"));
+		assertTrue(result.toString(10, true, false) .equals("11"));
+	}
+	
+	@Test
+	public void testSingleWordUnsignedRemainderOfAPInts() {
+		// Division of zero by a non-zero number
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
+
+		APInt result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		apInt2 = new APInt(32, ULong.valueOf(0), false);
+		
+		try {
+			result = apInt1.urem(apInt2);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Remainder by zero?"));
+		}
+
+		// Exact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		apInt2 = new APInt(64, ULong.valueOf(9), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// Inexact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		apInt2 = new APInt(64, ULong.valueOf(4), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1"));
+
+		// Both in range and denom > nume
+		apInt1 = new APInt(64, ULong.valueOf(5), false);
+		apInt2 = new APInt(64, ULong.valueOf(95), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("5"));
+
+		// Numerator at upper bound and denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf(5), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Both at boundary
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// Numerator beyond upper bound, denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		apInt2 = new APInt(64, ULong.valueOf(2), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Denominator beyond upper bound, numerator in range
+		apInt1 = new APInt(64, ULong.valueOf(2), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Both beyond range, num > denom
+		apInt1 = new APInt(64, ULong.valueOf("184467440737095516192"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Both beyond range, denom > num
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		apInt2 = new APInt(64, ULong.valueOf("184467440737095516193"), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("2"));
+
+		// Arbitrary bit width 5, exact division
+		apInt1 =  new APInt(5, ULong.valueOf(12), false);
+		apInt2 = new APInt(5, ULong.valueOf(3), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+
+		// Arbitrary bit width 5, inexact division
+		apInt1 = new APInt(5, ULong.valueOf(12), false);
+		apInt2 = new APInt(5, ULong.valueOf(5), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("2"));
+
+		// Arbitrary bit width 5, numerator 0
+		apInt1 =  new APInt(5, ULong.valueOf(0), false);
+		apInt2 = new APInt(5, ULong.valueOf(3), false);
+		result = apInt1.urem(apInt2);
+		assertTrue(result.toString(10, false, false) .equals("0"));
+	}
+	
+	@Test
+	public void testSingleWordUnsignedRemainderOfAPIntWithULong() {
+		// Division of zero by a non-zero number
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+
+		ULong result = apInt1.urem(ULong.valueOf(10));
+		assertTrue(result.toString().equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		try {
+			result = apInt1.urem(ULong.valueOf(0));
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Remainder by zero?"));
+		}
+
+		// Exact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		result = apInt1.urem(ULong.valueOf(9));
+		assertTrue(result.toString().equals("0"));
+
+		// Inexact division with numerator below upper bound
+		apInt1 = new APInt(64, ULong.valueOf(45), false);
+		result = apInt1.urem(ULong.valueOf(4));
+		assertTrue(result.toString().equals("1"));
+
+		// Both in range and denom > nume
+		apInt1 = new APInt(64, ULong.valueOf(5), false);
+		result = apInt1.urem(ULong.valueOf(95));
+		assertTrue(result.toString() .equals("5"));
+
+		// Numerator at upper bound and denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.urem(ULong.valueOf(5));
+		assertTrue(result.toString() .equals("0"));
+
+		// Both at boundary
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.urem(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString().equals("0"));
+
+		// Numerator beyond upper bound, denom in range
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551618"), false);
+		result = apInt1.urem(ULong.valueOf(2));
+		assertTrue(result.toString() .equals("0"));
+
+		// Arbitrary bit width 5, exact division
+		apInt1 =  new APInt(5, ULong.valueOf(12), false);
+		result = apInt1.urem(ULong.valueOf(3));
+		assertTrue(result.toString().equals("0"));
+
+		// Arbitrary bit width 5, inexact division
+		apInt1 = new APInt(5, ULong.valueOf(12), false);
+		result = apInt1.urem(ULong.valueOf(5));
+		assertTrue(result.toString().equals("2"));
+
+		// Arbitrary bit width 5, numerator 0
+		apInt1 =  new APInt(5, ULong.valueOf(0), false);
+		result = apInt1.urem(ULong.valueOf(3));
+		assertTrue(result.toString().equals("0"));
+	}
+	
+	@Test
+	public void testSingleWordSignedRemainderOfAPInts() {
+		// Division of zero by a non-zero number, both positive
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
+
+		APInt result = apInt1.srem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		apInt2 = new APInt(32, ULong.valueOf(0), false);
+		try {
+			result = apInt1.srem(apInt2);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Remainder by zero?"));
+		}
+
+		// Both negative
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		apInt2 = new APInt(64, ULong.valueOf(-9), false);
+		result = apInt1.srem(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result != apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+		
+		// Inexact division, both negative
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		apInt2 = new APInt(64, ULong.valueOf(-4), false);
+		result = apInt1.srem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+		assertTrue(result.toString(10, true, false).equals("-1"));
+		
+		// Numerator negative, denominator positive
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		apInt2 = new APInt(64, ULong.valueOf(9), false);
+		result = apInt1.srem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+
+		// Denominator  negative,  numerator positive
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf(-5), false);
+		result = apInt1.srem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+		assertTrue(result.toString(10, true, false).equals("-1"));
+		
+		// Both positive
+		apInt1 = new APInt(64, ULong.valueOf(121), false);
+		apInt2 = new APInt(64, ULong.valueOf(11), false);
+		result = apInt1.srem(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result.toString(10, true, false).equals("0"));
+	}
+	
+	@Test
+	public void testSingleWordSignedRemainderOfAPIntsWithLong() {
+		// Division of zero by a non-zero number, both positive
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+
+		long result = apInt1.srem(10);
+		assertTrue(result == 0);
+
+		// Division of a number by zero
+		apInt1 = new APInt(32, ULong.valueOf(8), false);
+		try {
+			result = apInt1.srem(0);
+			assertTrue(false);
+		}
+		catch(Exception e) {
+			assertTrue(e.getMessage().equals("Remainder by zero?"));
+		}
+
+		// Both negative
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		result = apInt1.srem(-9);
+		assertTrue(result == 0);
+		
+		// Numerator negative, denominator positive
+		apInt1 = new APInt(64, ULong.valueOf(-45), false);
+		result = apInt1.srem(9);
+		assertTrue(result == 0);
+
+		// Denominator negative, numerator positive
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.srem(-5);
+		assertTrue(result == -1);
+		
+		// Both positive
+		apInt1 = new APInt(64, ULong.valueOf(121), false);
+		result = apInt1.srem(11);
+		assertTrue(result == 0);
+	}
+	
+	
 	/*
 	@Test
 	public void testAdditionOperationsOnSingleWordAPInt() {

@@ -852,15 +852,8 @@ public class APInt {
 	}
 
 	public APInt mul(final ULong RHS) {
-		if (isSingleWord()) {
-			unsignedVals[0] = unsignedVals[0].mul(RHS);
-		}
-		else {
-			int numWords = getNumWords();
-			APIntUtils.tcMultiplyPart(unsignedVals, unsignedVals, RHS, ULong.valueOf(0), numWords, numWords, false);
-		}
-
-		return clearUnusedBits();
+		APInt newVal = this.clone();
+		return newVal.mulAssign(RHS);
 	}
 
 	/* Left logical shift operator.
@@ -1108,7 +1101,7 @@ public class APInt {
 			if(RHS.unsignedVals[0].equals(0)) {
 				throw new IllegalArgumentException("Remainder by zero?");
 			}
-			return new APInt(numBits, RHS.unsignedVals[0].modulo(RHS.unsignedVals[0]), false);
+			return new APInt(numBits, unsignedVals[0].modulo(RHS.unsignedVals[0]), false);
 		}
 
 		// Get some facts about the LHS
@@ -1188,9 +1181,9 @@ public class APInt {
 			return (this.mul(ULong.valueOf(-1)).urem(ULong.valueOf(RHS))).mul(ULong.valueOf(-1)).longValue();
 		}
 		if (RHS < 0)
-			return this.udiv(ULong.valueOf(RHS * -1)).getUnsignedVals()[0].longValue();
+			return this.urem(ULong.valueOf(RHS * -1)).longValue();
 
-		return this.udiv(ULong.valueOf(RHS)).getUnsignedVals()[0].longValue();
+		return this.urem(ULong.valueOf(RHS)).longValue();
 	}
 
 	// Operations that return overflow indicators.
