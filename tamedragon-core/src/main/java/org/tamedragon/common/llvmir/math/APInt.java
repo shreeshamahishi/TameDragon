@@ -603,7 +603,7 @@ public class APInt {
 	 * Returns *this after ANDing with RHS.
 	 */
 	public APInt andAssign(APInt RHS) {
-		if(numBits == RHS.numBits) {
+		if(numBits != RHS.numBits) {
 			throw new IllegalArgumentException("Bit widths must be the same");
 		}
 		if (isSingleWord()) {
@@ -3017,13 +3017,27 @@ public class APInt {
 		return newVal.andAssign(other);
 	}
 	
-
+	public APInt and(ULong other) {
+		APInt newVal = this.clone();
+		return newVal.andAssign(other);
+	}
+	
 	public APInt or(APInt other) {
+		APInt newVal = this.clone();
+		return newVal.orAssign(other);
+	}
+	
+	public APInt or(ULong other) {
 		APInt newVal = this.clone();
 		return newVal.orAssign(other);
 	}
 
 	public APInt xor(APInt other) {
+		APInt newVal = this.clone();
+		return newVal.xorAssign(other);
+	}
+	
+	public APInt xor(ULong other) {
 		APInt newVal = this.clone();
 		return newVal.xorAssign(other);
 	}
@@ -3465,7 +3479,8 @@ public class APInt {
 	* Returns an APInt that is the bitwise complement of \p v.
 	*/
 	public APInt complement(APInt v) {
-	  v.flipAllBits();
-	  return v;
+	  APInt newVal = this.clone();
+	  newVal.flipAllBits();
+	  return newVal;
 	}
 }

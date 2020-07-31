@@ -458,12 +458,13 @@ public class APIntTests {
 		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
 
 		APInt result = apInt1.udiv(apInt2);
-		assertTrue(result.toString(10, false, false) .equals("0"));
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result != apInt1);
 
 		// Division of a number by zero
 		apInt1 = new APInt(32, ULong.valueOf(8), false);
 		apInt2 = new APInt(32, ULong.valueOf(0), false);
-		
+
 		try {
 			result = apInt1.udiv(apInt2);
 			assertTrue(false);
@@ -544,13 +545,14 @@ public class APIntTests {
 		result = apInt1.udiv(apInt2);
 		assertTrue(result.toString(10, false, false) .equals("0"));
 	}
-	
+
 	@Test
 	public void testSingleWordUnsignedDivisionOfAPIntWithULong() {
 		// Division of zero by a non-zero number
 		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
 		APInt result = apInt1.udiv(ULong.valueOf(10));
 		assertTrue(result.toString(10, false, false) .equals("0"));
+		assertTrue(result != apInt1);
 
 		// Division of a number by zero
 		apInt1 = new APInt(32, ULong.valueOf(8), false);
@@ -607,7 +609,7 @@ public class APIntTests {
 		result = apInt1.udiv(ULong.valueOf(3));
 		assertTrue(result.toString(10, false, false) .equals("0"));
 	}
-	
+
 	@Test
 	public void testSingleWordSignedDivisionOfAPInts() {
 		// Division of zero by a non-zero number, both positive
@@ -635,7 +637,8 @@ public class APIntTests {
 		result = apInt1.sdiv(apInt2);
 		assertTrue(result.toString(10, false, false).equals("5"));
 		assertTrue(result.toString(10, true, false).equals("5"));
-		
+		assertTrue(result != apInt1);
+
 		// Numerator negative, denominator positive
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		apInt2 = new APInt(64, ULong.valueOf(9), false);
@@ -649,7 +652,7 @@ public class APIntTests {
 		result = apInt1.sdiv(apInt2);
 		assertTrue(result.toString(10, false, false) .equals("0"));
 		assertTrue(result.toString(10, true, false) .equals("0"));
-		
+
 		// Both positive
 		apInt1 = new APInt(64, ULong.valueOf(121), false);
 		apInt2 = new APInt(64, ULong.valueOf(11), false);
@@ -657,7 +660,7 @@ public class APIntTests {
 		assertTrue(result.toString(10, false, false) .equals("11"));
 		assertTrue(result.toString(10, true, false) .equals("11"));
 	}
-	
+
 	@Test
 	public void testSingleWordSignedDivisionOfAPIntsWithLong() {
 		// Division of zero by a non-zero number, both positive
@@ -681,7 +684,8 @@ public class APIntTests {
 		result = apInt1.sdiv(-9);
 		assertTrue(result.toString(10, false, false) .equals("5"));
 		assertTrue(result.toString(10, true, false) .equals("5"));
-		
+		assertTrue(result != apInt1);
+
 		// Numerator negative, denominator positive
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		result = apInt1.sdiv(9);
@@ -693,14 +697,14 @@ public class APIntTests {
 		result = apInt1.sdiv(-5);
 		assertTrue(result.toString(10, false, false) .equals("0"));
 		assertTrue(result.toString(10, true, false) .equals("0"));
-		
+
 		// Both positive
 		apInt1 = new APInt(64, ULong.valueOf(121), false);
 		result = apInt1.sdiv(11);
 		assertTrue(result.toString(10, false, false) .equals("11"));
 		assertTrue(result.toString(10, true, false) .equals("11"));
 	}
-	
+
 	@Test
 	public void testSingleWordUnsignedRemainderOfAPInts() {
 		// Division of zero by a non-zero number
@@ -713,7 +717,7 @@ public class APIntTests {
 		// Division of a number by zero
 		apInt1 = new APInt(32, ULong.valueOf(8), false);
 		apInt2 = new APInt(32, ULong.valueOf(0), false);
-		
+
 		try {
 			result = apInt1.urem(apInt2);
 			assertTrue(false);
@@ -727,6 +731,7 @@ public class APIntTests {
 		apInt2 = new APInt(64, ULong.valueOf(9), false);
 		result = apInt1.urem(apInt2);
 		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result != apInt1);
 
 		// Inexact division with numerator below upper bound
 		apInt1 = new APInt(64, ULong.valueOf(45), false);
@@ -794,7 +799,7 @@ public class APIntTests {
 		result = apInt1.urem(apInt2);
 		assertTrue(result.toString(10, false, false) .equals("0"));
 	}
-	
+
 	@Test
 	public void testSingleWordUnsignedRemainderOfAPIntWithULong() {
 		// Division of zero by a non-zero number
@@ -858,7 +863,7 @@ public class APIntTests {
 		result = apInt1.urem(ULong.valueOf(3));
 		assertTrue(result.toString().equals("0"));
 	}
-	
+
 	@Test
 	public void testSingleWordSignedRemainderOfAPInts() {
 		// Division of zero by a non-zero number, both positive
@@ -888,14 +893,14 @@ public class APIntTests {
 		assertTrue(result != apInt2);
 		assertTrue(result.toString(10, false, false).equals("0"));
 		assertTrue(result.toString(10, true, false).equals("0"));
-		
+
 		// Inexact division, both negative
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		apInt2 = new APInt(64, ULong.valueOf(-4), false);
 		result = apInt1.srem(apInt2);
 		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
 		assertTrue(result.toString(10, true, false).equals("-1"));
-		
+
 		// Numerator negative, denominator positive
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		apInt2 = new APInt(64, ULong.valueOf(9), false);
@@ -909,7 +914,7 @@ public class APIntTests {
 		result = apInt1.srem(apInt2);
 		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
 		assertTrue(result.toString(10, true, false).equals("-1"));
-		
+
 		// Both positive
 		apInt1 = new APInt(64, ULong.valueOf(121), false);
 		apInt2 = new APInt(64, ULong.valueOf(11), false);
@@ -917,7 +922,7 @@ public class APIntTests {
 		assertTrue(result.toString(10, false, false).equals("0"));
 		assertTrue(result.toString(10, true, false).equals("0"));
 	}
-	
+
 	@Test
 	public void testSingleWordSignedRemainderOfAPIntsWithLong() {
 		// Division of zero by a non-zero number, both positive
@@ -940,7 +945,7 @@ public class APIntTests {
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		result = apInt1.srem(-9);
 		assertTrue(result == 0);
-		
+
 		// Numerator negative, denominator positive
 		apInt1 = new APInt(64, ULong.valueOf(-45), false);
 		result = apInt1.srem(9);
@@ -950,14 +955,306 @@ public class APIntTests {
 		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
 		result = apInt1.srem(-5);
 		assertTrue(result == -1);
-		
+
 		// Both positive
 		apInt1 = new APInt(64, ULong.valueOf(121), false);
 		result = apInt1.srem(11);
 		assertTrue(result == 0);
 	}
-	
-	
+
+	@Test
+	public void testSingleWordAndOperationOfAPInts() {
+		// And-ing with zero should result in zero
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(10), false);
+		APInt result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result != apInt1);
+
+		// And-ing with max value with itself is max
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one and should be zero
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// Odd number with one and should be one
+		apInt1 = new APInt(32, ULong.valueOf(99), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		apInt2 = new APInt(32, ULong.valueOf(658), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("2"));
+
+		apInt1 = new APInt(32, ULong.valueOf(658), false);
+		apInt2 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("2"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		apInt2 = new APInt(11, ULong.valueOf(843), false);
+		result = apInt1.and(apInt2);
+		assertTrue(result.toString(10, false, false).equals("323"));
+	}
+
+	@Test
+	public void testSingleWordAndOperationOfAPIntsWithULong() {
+		// And-ing with zero should result in zero
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.and(ULong.valueOf(10));
+		assertTrue(result.toString(10, false, false).equals("0"));
+		assertTrue(result != apInt1);
+
+		// And-ing with max value with itself is max
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.and(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one and should be zero
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		result = apInt1.and(ULong.valueOf(1));
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// Odd number with one and should be one
+		apInt1 = new APInt(32, ULong.valueOf(99), false);
+		result = apInt1.and(ULong.valueOf(1));
+		assertTrue(result.toString(10, false, false).equals("1"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.and(ULong.valueOf(658));
+		assertTrue(result.toString(10, false, false).equals("2"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		result = apInt1.and(ULong.valueOf(843));
+		assertTrue(result.toString(10, false, false).equals("323"));
+	}
+
+	@Test
+	public void testSingleWordOrOperationOfAPInts() {
+		// Or-ing with zero should result in same number
+		APInt apInt1 = new APInt(32, ULong.valueOf(43), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("43"));
+		assertTrue(result != apInt1);
+
+		// Or-ing with max value with itself will result in same number
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one should one more
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("15"));
+
+		// Odd number with one and should be same number
+		apInt1 = new APInt(32, ULong.valueOf(98), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("99"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		apInt2 = new APInt(32, ULong.valueOf(658), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("759"));
+
+		apInt1 = new APInt(32, ULong.valueOf(658), false);
+		apInt2 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("759"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		apInt2 = new APInt(11, ULong.valueOf(843), false);
+		result = apInt1.or(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1871"));
+	}
+
+	@Test
+	public void testSingleWordOrOperationOfAPIntsWithULong() {
+		// Or-ing with zero should result in same number
+		APInt apInt1 = new APInt(32, ULong.valueOf(43), false);
+		APInt result = apInt1.or(ULong.valueOf(0));
+		assertTrue(result.toString(10, false, false).equals("43"));
+		assertTrue(result != apInt1);
+
+		// Or-ing with max value with itself will result in same number
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.or(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one should one more
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		result = apInt1.or(ULong.valueOf(1));
+		assertTrue(result.toString(10, false, false).equals("15"));
+
+		// Odd number with one and should be same number
+		apInt1 = new APInt(32, ULong.valueOf(98), false);
+		result = apInt1.or(ULong.valueOf(1));
+		assertTrue(result.toString(10, false, false).equals("99"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.or(ULong.valueOf(658));
+		assertTrue(result.toString(10, false, false).equals("759"));
+
+		apInt1 = new APInt(32, ULong.valueOf(658), false);
+		result = apInt1.or(ULong.valueOf(103));
+		assertTrue(result.toString(10, false, false).equals("759"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		result = apInt1.or(ULong.valueOf(843));
+		assertTrue(result.toString(10, false, false).equals("1871"));
+	}
+
+	@Test
+	public void testSingleWordXOrOperationOfAPInts() {
+		// xor-ing with zero should result in same number
+		APInt apInt1 = new APInt(32, ULong.valueOf(43), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("43"));
+		assertTrue(result != apInt1);
+
+		// xor-ing with max value with itself will result in 0
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// xor-ing with max value with 0 will result in max value
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		apInt2 = new APInt(64, ULong.valueOf("0"), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one should one more
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("15"));
+
+		// Odd number with one and should be same number
+		apInt1 = new APInt(32, ULong.valueOf(98), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("99"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		apInt2 = new APInt(32, ULong.valueOf(658), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("757"));
+
+		apInt1 = new APInt(32, ULong.valueOf(658), false);
+		apInt2 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("757"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		apInt2 = new APInt(11, ULong.valueOf(843), false);
+		result = apInt1.xor(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1548"));
+	}
+
+	@Test
+	public void testSingleWordXOrOperationOfAPIntsWithULong() {
+		// xor-ing with zero should result in same number
+		APInt apInt1 = new APInt(32, ULong.valueOf(43), false);
+		APInt result = apInt1.xor(ULong.valueOf(0));
+		assertTrue(result.toString(10, false, false).equals("43"));
+		assertTrue(result != apInt1);
+
+		// xor-ing with max value with itself will result in 0
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.xor(ULong.valueOf("18446744073709551615"));
+		assertTrue(result.toString(10, false, false).equals("0"));
+
+		// xor-ing with max value with 0 will result in max value
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.xor(ULong.valueOf("0"));
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+
+		// Even number with one should one more
+		apInt1 = new APInt(32, ULong.valueOf(14), false);
+		result = apInt1.xor(ULong.valueOf("1"));
+		assertTrue(result.toString(10, false, false).equals("15"));
+
+		// Odd number with one and should be same number
+		apInt1 = new APInt(32, ULong.valueOf(98), false);
+		result = apInt1.xor(ULong.valueOf("1"));
+		assertTrue(result.toString(10, false, false).equals("99"));
+
+		// A random check - and also commutativity
+		apInt1 = new APInt(32, ULong.valueOf(103), false);
+		result = apInt1.xor(ULong.valueOf(658));
+		assertTrue(result.toString(10, false, false).equals("757"));
+
+		apInt1 = new APInt(32, ULong.valueOf(658), false);
+		result = apInt1.xor(ULong.valueOf(103));
+		assertTrue(result.toString(10, false, false).equals("757"));
+
+		// With arbitrary integer size
+		apInt1 = new APInt(11, ULong.valueOf(1351), false);
+		result = apInt1.xor(ULong.valueOf(843));
+		assertTrue(result.toString(10, false, false).equals("1548"));
+	}
+
+	@Test
+	public void testSingleWordComplementAndFlipAllBits() {
+		// Flipping zero must result in MAX
+		APInt apInt1 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.complement(apInt1);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("4294967295"));
+
+		apInt1 = new APInt(64, ULong.valueOf(0), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+		
+		apInt1 = new APInt(7, ULong.valueOf(0), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("127"));
+		
+		apInt1 = new APInt(32, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		apInt1 = new APInt(64, ULong.valueOf(12345), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("18446744073709539270"));
+		
+		apInt1 = new APInt(64, ULong.valueOf("18446744073709551619"), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551612"));
+		
+		apInt1 = new APInt(64, ULong.valueOf("-256"), false);
+		result = apInt1.complement(apInt1);
+		assertTrue(result.toString(10, false, false).equals("255"));
+	}
+
 	/*
 	@Test
 	public void testAdditionOperationsOnSingleWordAPInt() {
