@@ -819,9 +819,9 @@ public class APInt {
 	 *
 	 * Returns this after shifting left by ShiftAmt
 	 */
-	public APInt leftShiftAssign(final APInt ShiftAmt){
+	public APInt leftShiftAssign(final APInt shiftAmount){
 		// It's undefined behavior in C to shift by numBits or greater.
-		this.assign(ShiftAmt.getLimitedValue(ULong.valueOf(numBits)));
+		this.leftShiftAssign(shiftAmount.getLimitedValue(ULong.valueOf(numBits)).intValue());
 		return this;
 	}
 
@@ -859,14 +859,14 @@ public class APInt {
 	/* Left logical shift operator.
 	 * Shifts this APInt left by Bits and returns the result.
 	 */
-	APInt leftShift(int Bits) {
+	public APInt leftShift(int Bits) {
 		return shl(Bits); 
 	}
 
 	/* Left logical shift operator.
 	 * Shifts this APInt left by \p Bits and returns the result.
 	 */
-	APInt leftShift(APInt Bits) { 
+	public APInt leftShift(APInt Bits) { 
 		return shl(Bits); 
 	}
 
@@ -3067,10 +3067,6 @@ public class APInt {
 			return unsignedVals[0].equals(ULong.valueOf(0));
 		}
 		return countLeadingZerosSlowCase() == numBits;
-	}
-
-	public APInt shiftLeft(int numBits) {
-		return null;
 	}
 
 	/* Determine if this APInt just has one word to store value.

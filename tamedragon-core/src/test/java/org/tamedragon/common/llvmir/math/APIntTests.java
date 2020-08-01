@@ -1254,6 +1254,104 @@ public class APIntTests {
 		result = apInt1.complement(apInt1);
 		assertTrue(result.toString(10, false, false).equals("255"));
 	}
+	
+	@Test
+	public void testSingleWordLeftShiftWithAPInts() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.leftShift(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+		
+		// Shifting zero, arbitrary number of times should make no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		apInt2 = new APInt(32, ULong.valueOf(7), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting 1 time should double it
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("46"));
+		
+		// Shifting 2 times should quadruple it
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(2), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("92"));
+		
+		// Shifting equal to bit width should zero it
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		apInt2 = new APInt(32, ULong.valueOf(64), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		apInt1 = new APInt(5, ULong.valueOf(17), false);
+		apInt2 = new APInt(32, ULong.valueOf(5), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));		
+		
+		// Shifting 1 to bit width -1 will be max width / 2
+		apInt1 = new APInt(7, ULong.valueOf(1), false);
+		apInt2 = new APInt(32, ULong.valueOf(6), false);
+		result = apInt1.leftShift(apInt2);
+		assertTrue(result.toString(10, false, false).equals("64"));				
+	}
+	
+	@Test
+	public void testSingleWordLeftShiftWithAPIntsWithInt() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt result = apInt1.leftShift(0);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+		
+		// Shifting zero, arbitrary number of times should make no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		result = apInt1.leftShift(7);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting 1 time should double it
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.leftShift(1);
+		assertTrue(result.toString(10, false, false).equals("46"));
+		
+		// Shifting 2 times should quadruple it
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.leftShift(2);
+		assertTrue(result.toString(10, false, false).equals("92"));
+		
+		// Shifting equal to bit width should zero it
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		result = apInt1.leftShift(64);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		apInt1 = new APInt(5, ULong.valueOf(17), false);
+		result = apInt1.leftShift(5);
+		assertTrue(result.toString(10, false, false).equals("0"));		
+		
+		// Shifting 1 to bit width -1 will be max width / 2
+		apInt1 = new APInt(7, ULong.valueOf(1), false);
+		result = apInt1.leftShift(6);
+		assertTrue(result.toString(10, false, false).equals("64"));				
+	}
+	
+	@Test
+	public void testSingleWordLogicalRightShiftWithAPInts() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.lshr(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+			
+	}
+	
 
 	/*
 	@Test

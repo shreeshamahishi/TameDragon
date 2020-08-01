@@ -155,7 +155,7 @@ public class APIntUtils {
 
 		APInt Val = V.zextOrSelf(NewLen);
 		for (int I = V.getNumBits(); I < NewLen; I <<= 1)
-			Val =  Val.or(Val.shiftLeft(I));
+			Val =  Val.or(Val.leftShift(I));
 
 		return Val;
 	}

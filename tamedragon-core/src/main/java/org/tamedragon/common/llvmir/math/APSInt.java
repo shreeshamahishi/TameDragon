@@ -247,7 +247,7 @@ public class APSInt extends APInt {
 	// signedness information.
 
 	public APSInt lsh(int Bits){
-		return new APSInt(((APInt)(this)).shiftLeft(Bits), IsUnsigned);
+		return new APSInt(((APInt)(this)).leftShift(Bits), IsUnsigned);
 	}
 
 	public APSInt incr() {
