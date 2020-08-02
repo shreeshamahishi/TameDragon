@@ -1349,7 +1349,176 @@ public class APIntTests {
 		APInt result = apInt1.lshr(apInt2);
 		assertTrue(result != apInt1);
 		assertTrue(result.toString(10, false, false).equals("10"));
-			
+		
+		// Shifting zero makes no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		apInt2 = new APInt(32, ULong.valueOf(7), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting by 1 should halve the value
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("11"));
+		
+		// Shifting by 2 make it 1/4
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(2), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("5"));
+		
+		// Shifting by bit width will make it zero
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		apInt2 = new APInt(32, ULong.valueOf(64), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting max val / 2  by bit width -1 will make it 1
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775808"), false);
+		apInt2 = new APInt(32, ULong.valueOf(63), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1"));
+		
+		apInt1 = new APInt(7, ULong.valueOf(64), false);
+		apInt2 = new APInt(32, ULong.valueOf(6), false);
+		result = apInt1.lshr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1"));			
+	}
+	
+	@Test
+	public void testSingleWordLogicalRightShiftOfAPIntsWithInt() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt result = apInt1.lshr(0);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+		
+		// Shifting zero makes no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		result = apInt1.lshr(7);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting by 1 should halve the value
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.lshr(1);
+		assertTrue(result.toString(10, false, false).equals("11"));
+		
+		// Shifting by 2 make it 1/4
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.lshr(2);
+		assertTrue(result.toString(10, false, false).equals("5"));
+		
+		// Shifting by bit width will make it zero
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		result = apInt1.lshr(64);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting max val / 2  by bit width -1 will make it 1
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775808"), false);
+		result = apInt1.lshr(63);
+		assertTrue(result.toString(10, false, false).equals("1"));
+		
+		apInt1 = new APInt(7, ULong.valueOf(64), false);
+		result = apInt1.lshr(6);
+		assertTrue(result.toString(10, false, false).equals("1"));			
+	}
+	
+	@Test
+	public void testSingleWordArithmeticRightShiftOfAPInts() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt apInt2 = new APInt(32, ULong.valueOf(0), false);
+		APInt result = apInt1.ashr(apInt2);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+		
+		// Shifting zero makes no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		apInt2 = new APInt(32, ULong.valueOf(7), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting by 1 should halve the value
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(1), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("11"));
+		
+		// Shifting by 2 make it 1/4
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		apInt2 = new APInt(32, ULong.valueOf(2), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("5"));
+		
+		// Shifting by bit width will make it zero
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		apInt2 = new APInt(32, ULong.valueOf(64), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting max val / 2  by bit width -1 will make it max for that bit width
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775808"), false);
+		apInt2 = new APInt(32, ULong.valueOf(63), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+		
+		apInt1 = new APInt(7, ULong.valueOf(64), false);
+		apInt2 = new APInt(32, ULong.valueOf(6), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("127"));			
+		
+		// Shifting max val / 2 -1 by bit width -2 will make it 1
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775807"), false);
+		apInt2 = new APInt(32, ULong.valueOf(62), false);
+		result = apInt1.ashr(apInt2);
+		assertTrue(result.toString(10, false, false).equals("1"));
+	}
+	
+	@Test
+	public void testSingleWordArithmeticRightShiftOfAPIntsWithInt() {
+		
+		// Shifting zero times should make no difference
+		APInt apInt1 = new APInt(32, ULong.valueOf(10), false);
+		APInt result = apInt1.ashr(0);
+		assertTrue(result != apInt1);
+		assertTrue(result.toString(10, false, false).equals("10"));
+		
+		// Shifting zero makes no difference
+		apInt1 = new APInt(32, ULong.valueOf(0), false);
+		result = apInt1.ashr(7);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting by 1 should halve the value
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.ashr(1);
+		assertTrue(result.toString(10, false, false).equals("11"));
+		
+		// Shifting by 2 make it 1/4
+		apInt1 = new APInt(32, ULong.valueOf(23), false);
+		result = apInt1.ashr(2);
+		assertTrue(result.toString(10, false, false).equals("5"));
+		
+		// Shifting by bit width will make it zero
+		apInt1 = new APInt(64, ULong.valueOf(2314), false);
+		result = apInt1.ashr(64);
+		assertTrue(result.toString(10, false, false).equals("0"));
+		
+		// Shifting max val / 2  by bit width -1 will make it max for that bit width
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775808"), false);
+		result = apInt1.ashr(63);
+		assertTrue(result.toString(10, false, false).equals("18446744073709551615"));
+		
+		apInt1 = new APInt(7, ULong.valueOf(64), false);
+		result = apInt1.ashr(6);
+		assertTrue(result.toString(10, false, false).equals("127"));			
+		
+		// Shifting max val / 2 -1 by bit width -2 will make it 1
+		apInt1 = new APInt(64, ULong.valueOf("9223372036854775807"), false);
+		result = apInt1.ashr(62);
+		assertTrue(result.toString(10, false, false).equals("1"));
 	}
 	
 

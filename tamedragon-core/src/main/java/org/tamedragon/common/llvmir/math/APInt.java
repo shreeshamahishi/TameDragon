@@ -878,6 +878,16 @@ public class APInt {
 		R.ashrInPlace(ShiftAmt);
 		return R;
 	}
+	
+
+	/* Arithmetic right-shift function.
+	 * Arithmetic right-shift this APInt by shiftAmt.
+	 */
+	public  APInt ashr(int ShiftAmt) {
+		APInt R = clone();
+		R.ashrInPlace(ShiftAmt);
+		return R;
+	}
 
 	/* 
 	 * Arithmetic right-shift this APInt by shiftAmt in place.
