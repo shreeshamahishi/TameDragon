@@ -310,7 +310,8 @@ public class APInt {
 	 */
 	public boolean isAllOnesValue() {
 		if (isSingleWord()) {
-			return unsignedVals[0].equals(ULong.valueOf(WORDTYPE_MAX.shiftRight(AP_INT_BITS_PER_WORD - numBits)));
+			ULong maxValForNumBits = ULong.valueOf(WORDTYPE_MAX).rightShift(AP_INT_BITS_PER_WORD - numBits);
+			return unsignedVals[0].equals(maxValForNumBits);
 		}
 		else {
 			return countTrailingOnesSlowCase() == numBits;

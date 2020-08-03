@@ -1,6 +1,7 @@
 package org.tamedragon.common.llvmir.math;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -1521,6 +1522,112 @@ public class APIntTests {
 		assertTrue(result.toString(10, false, false).equals("1"));
 	}
 	
+	@Test
+	public void testSingleWordIsBitSet() {
+		APInt apInt = new APInt(8, ULong.valueOf(255), false);
+		for(int i = 0; i < 8; i++) {
+			assertTrue(apInt.isBitSet(i));
+		}
+		
+		apInt = new APInt(8, ULong.valueOf(0), false);
+		for(int i = 0; i < 8; i++) {
+			assertFalse(apInt.isBitSet(i));
+		}
+		
+		apInt = new APInt(8, ULong.valueOf(231), false);
+		assertTrue(apInt.isBitSet(0));
+		assertTrue(apInt.isBitSet(1));
+		assertTrue(apInt.isBitSet(2));
+		assertFalse(apInt.isBitSet(3));
+		assertFalse(apInt.isBitSet(4));
+		assertTrue(apInt.isBitSet(5));
+		assertTrue(apInt.isBitSet(6));
+		assertTrue(apInt.isBitSet(7));
+	}
+	
+	@Test
+	public void testSingleWordIsNegative() {
+		APInt apInt = new APInt(8, ULong.valueOf(255), false);
+		assertTrue(apInt.isNegative());
+		assertFalse(apInt.isNonNegative());
+		
+		apInt = new APInt(8, ULong.valueOf(127), false);
+		assertFalse(apInt.isNegative());
+		assertTrue(apInt.isNonNegative());
+		
+		apInt = new APInt(8, ULong.valueOf(128), false);
+		assertTrue(apInt.isNegative());
+		assertFalse(apInt.isNonNegative());
+	}
+	
+	@Test
+	public void testSingleWordIsSignBitSet() {
+		APInt apInt = new APInt(32, ULong.valueOf(2147483647), false);
+		assertFalse(apInt.isSignBitSet());
+		assertTrue(apInt.isSignBitClear());
+		
+		apInt = new APInt(32, ULong.valueOf("2147483648"), false);
+		assertTrue(apInt.isSignBitSet());
+		assertFalse(apInt.isSignBitClear());
+		
+		apInt = new APInt(32, ULong.valueOf("2147483649"), false);
+		assertTrue(apInt.isSignBitSet());
+		assertFalse(apInt.isSignBitClear());
+		
+		apInt = new APInt(32, ULong.valueOf("4294967295"), false);
+		assertTrue(apInt.isSignBitSet());
+		assertFalse(apInt.isSignBitClear());
+		
+		apInt = new APInt(32, ULong.valueOf("4294967296"), false);
+		assertFalse(apInt.isSignBitSet());
+		assertTrue(apInt.isSignBitClear());
+	}
+	
+	@Test
+	public void testSingleWordIsStrictlyPositive() {
+		APInt apInt = new APInt(32, ULong.valueOf(2147483647), false);
+		assertTrue(apInt.isStrictlyPositive());
+		assertFalse(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf("2147483648"), false);
+		assertFalse(apInt.isStrictlyPositive());
+		assertTrue(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf("2147483649"), false);
+		assertFalse(apInt.isStrictlyPositive());
+		assertTrue(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf("4294967295"), false);
+		assertFalse(apInt.isStrictlyPositive());
+		assertTrue(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf("4294967296"), false);
+		assertFalse(apInt.isStrictlyPositive());
+		assertTrue(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf(0), false);
+		assertFalse(apInt.isStrictlyPositive());
+		assertTrue(apInt.isNonPositive());
+		
+		apInt = new APInt(32, ULong.valueOf(12), false);
+		assertTrue(apInt.isStrictlyPositive());
+		assertFalse(apInt.isNonPositive());
+	}
+	
+	@Test
+	public void testSingleWordIsAllOnesValue() {
+		APInt apInt = new APInt(32, ULong.valueOf("4294967295"), false);
+		assertTrue(apInt.isAllOnesValue());
+		assertTrue(apInt.isMaxValue());
+		
+		apInt = new APInt(64, ULong.valueOf("4294967295"), false);
+		assertFalse(apInt.isAllOnesValue());
+		assertFalse(apInt.isMaxValue());
+		
+		apInt = new APInt(32, ULong.valueOf("4294967294"), false);
+		assertFalse(apInt.isAllOnesValue());
+		assertFalse(apInt.isMaxValue());
+	}
 
 	/*
 	@Test
