@@ -1627,8 +1627,174 @@ public class APIntTests {
 		apInt = new APInt(32, ULong.valueOf("4294967294"), false);
 		assertFalse(apInt.isAllOnesValue());
 		assertFalse(apInt.isMaxValue());
+		
+		apInt = new APInt(5, ULong.valueOf("31"), false);
+		assertTrue(apInt.isAllOnesValue());
+		assertTrue(apInt.isMaxValue());
+		
+		apInt = new APInt(5, ULong.valueOf("29"), false);
+		assertFalse(apInt.isAllOnesValue());
+		assertFalse(apInt.isMaxValue());
+	}
+	
+	@Test
+	public void testSingleWordIsNullValue() {
+		APInt apInt = new APInt(32, ULong.valueOf(0), false);
+		assertTrue(apInt.isNullValue());
+		assertTrue(apInt.isMinValue());
+		
+		apInt = new APInt(64, ULong.valueOf(12234), false);
+		assertFalse(apInt.isNullValue());
+		assertFalse(apInt.isMinValue());
+		
+		apInt = new APInt(64, ULong.valueOf(0), false);
+		assertTrue(apInt.isNullValue());
+		assertTrue(apInt.isMinValue());
+		
+		apInt = new APInt(7, ULong.valueOf(0), false);
+		assertTrue(apInt.isNullValue());
+		assertTrue(apInt.isMinValue());
+		
+		apInt = new APInt(7, ULong.valueOf(121), false);
+		assertFalse(apInt.isNullValue());
+		assertFalse(apInt.isMinValue());
 	}
 
+	@Test
+	public void testSingleWordIsOneValue() {
+		APInt apInt = new APInt(32, ULong.valueOf(1), false);
+		assertTrue(apInt.isOneValue());
+		
+		apInt = new APInt(32, ULong.valueOf(42), false);
+		assertFalse(apInt.isOneValue());
+		
+		apInt = new APInt(64, ULong.valueOf(1), false);
+		assertTrue(apInt.isOneValue());
+		
+		apInt = new APInt(64, ULong.valueOf(9), false);
+		assertFalse(apInt.isOneValue());
+		
+		apInt = new APInt(5, ULong.valueOf(1), false);
+		assertTrue(apInt.isOneValue());
+		
+		apInt = new APInt(5, ULong.valueOf(17), false);
+		assertFalse(apInt.isOneValue());
+	}
+	
+	@Test
+	public void testSingleWordIsMaxSignedValue() {
+		APInt apInt = new APInt(32, ULong.valueOf(2147483647), false);
+		assertTrue(apInt.isMaxSignedValue());
+		
+		apInt = new APInt(32, ULong.valueOf(2147483645), false);
+		assertFalse(apInt.isMaxSignedValue());
+		
+		apInt = new APInt(64, ULong.valueOf("9223372036854775807"), false);
+		assertTrue(apInt.isMaxSignedValue());
+		
+		apInt = new APInt(64, ULong.valueOf("9223372036854775806"), false);
+		assertFalse(apInt.isMaxSignedValue());
+		
+		apInt = new APInt(5, ULong.valueOf("15"), false);
+		assertTrue(apInt.isMaxSignedValue());
+		
+		apInt = new APInt(5, ULong.valueOf("12"), false);
+		assertFalse(apInt.isMaxSignedValue());
+	}
+	
+	@Test
+	public void testSingleWordIsMinSignedValue() {
+		APInt apInt = new APInt(64, ULong.valueOf("-9223372036854775808"), false);
+		assertTrue(apInt.isMinSignedValue());
+		
+		apInt = new APInt(64, ULong.valueOf("-9223372036854775811"), false);
+		assertFalse(apInt.isMinSignedValue());
+		
+		apInt = new APInt(64, ULong.valueOf("-9223372036854775806"), false);
+		assertFalse(apInt.isMinSignedValue());
+		
+		apInt = new APInt(32, ULong.valueOf("-2147483648"), false);
+		assertTrue(apInt.isMinSignedValue());
+		
+		apInt = new APInt(32, ULong.valueOf("-2147483651"), false);
+		assertFalse(apInt.isMinSignedValue());
+		
+		apInt = new APInt(32, ULong.valueOf("-2147483644"), false);
+		assertFalse(apInt.isMinSignedValue());
+		
+		apInt = new APInt(5, ULong.valueOf("-16"), false);
+		assertTrue(apInt.isMinSignedValue());
+		
+		apInt = new APInt(5, ULong.valueOf("-18"), false);
+		assertFalse(apInt.isMinSignedValue());
+		
+		apInt = new APInt(5, ULong.valueOf("-14"), false);
+		assertFalse(apInt.isMinSignedValue());
+	}
+	
+	@Test
+	public void testSingleWordCountLeadingZeroesGetActiveBitsAndIsIntN() {
+		APInt apInt = new APInt(64, ULong.valueOf("18446744073709551615"), false);
+		assertTrue(apInt.countLeadingZeros() == 0);
+		assertTrue(apInt.getActiveBits() == 64);
+		assertTrue(apInt.isIntN(64));
+		assertFalse(apInt.isIntN(63));
+		
+		apInt = new APInt(64, ULong.valueOf("9223372036854775807"), false);
+		assertTrue(apInt.countLeadingZeros() == 1);
+		assertTrue(apInt.getActiveBits() == 63);
+		assertTrue(apInt.isIntN(63));
+		assertFalse(apInt.isIntN(62));
+		
+		apInt = new APInt(64, ULong.valueOf("9223372036854775806"), false);
+		assertTrue(apInt.countLeadingZeros() == 1);
+		assertTrue(apInt.getActiveBits() == 63);
+		assertTrue(apInt.isIntN(63));
+		assertFalse(apInt.isIntN(62));
+		
+		apInt = new APInt(64, ULong.valueOf("4611686018427387903"), false);
+		assertTrue(apInt.countLeadingZeros() == 2);
+		assertTrue(apInt.getActiveBits() == 62);
+		assertTrue(apInt.isIntN(62));
+		assertFalse(apInt.isIntN(61));
+		
+		apInt = new APInt(64, ULong.valueOf(0), false);
+		assertTrue(apInt.countLeadingZeros() == 64);
+		assertTrue(apInt.getActiveBits() == 0);
+		assertTrue(apInt.isIntN(1));
+		
+		apInt = new APInt(5, ULong.valueOf("31"), false);
+		assertTrue(apInt.countLeadingZeros() == 0);
+		assertTrue(apInt.getActiveBits() == 5);
+		assertTrue(apInt.isIntN(5));
+		assertFalse(apInt.isIntN(4));
+		
+		apInt = new APInt(5, ULong.valueOf("16"), false);
+		assertTrue(apInt.countLeadingZeros() == 0);
+		assertTrue(apInt.getActiveBits() == 5);
+		assertTrue(apInt.isIntN(5));
+		assertFalse(apInt.isIntN(4));
+		
+		apInt = new APInt(5, ULong.valueOf("15"), false);
+		assertTrue(apInt.countLeadingZeros() == 1);
+		assertTrue(apInt.getActiveBits() == 4);
+		assertTrue(apInt.isIntN(4));
+		assertFalse(apInt.isIntN(3));
+		
+		apInt = new APInt(5, ULong.valueOf(0), false);
+		assertTrue(apInt.countLeadingZeros() == 5);
+		assertTrue(apInt.getActiveBits() == 0);
+		assertTrue(apInt.isIntN(1));
+		
+		try {
+			apInt.isIntN(0);
+			assertTrue(false);
+		}
+		catch(IllegalArgumentException e) {
+			assertTrue(e.getMessage().equals("N must be a positive number"));
+		}
+	}
+	
 	/*
 	@Test
 	public void testAdditionOperationsOnSingleWordAPInt() {

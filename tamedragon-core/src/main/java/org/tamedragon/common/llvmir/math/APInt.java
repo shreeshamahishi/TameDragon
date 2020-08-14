@@ -323,12 +323,10 @@ public class APInt {
 	 * not.
 	 */
 	public boolean isNullValue() {
-		for(int i = 0; i < unsignedVals.length; i++) {
-			if(unsignedVals[i].longValue() != 0) {
-				return false;
-			}
+		if(isSingleWord()) {
+			return unsignedVals[0].equals(0);
 		}
-		return true;
+		return countLeadingZerosSlowCase() == numBits;
 	}
 
 	/*Determine if this is a value of 1.
@@ -380,7 +378,7 @@ public class APInt {
 	}
 
 	/* 
-	 *Check if this APInt has an N-bits int integer value.
+	 *Check if this APInt has an N-bits unsigned integer value.
 	 */
 	public boolean isIntN(int N) {
 		if(N <= 0) {
